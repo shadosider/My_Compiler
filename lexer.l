@@ -2,8 +2,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void parse_error(char *msg);
+// 定义一个全局变量来跟踪行号
+int line_number = 1;
+
+void parse_error(char *msg, int line, char *error_type);
 %}
+
+/* 标识符Ident的声明  */
+identifier-nondigit    [_a-zA-Z]
+digit                   [0-9]
+Ident      {identifier-nondigit}({identifier-nondigit}|{digit})*
+
 
 /* 有关Number的声明  */
 /* IntConst的声明  */
@@ -30,26 +39,27 @@ Number   {IntConst}|{floatConst}
 
 
 
+
+Exp      {AddExp}                     /* 表达式的声明  */
+LVal     {Ident}{[{Exp}]}*            /* 左值表达式的声明  */
+
+PrimaryExp    (Exp)|{LVal}|{Number}   /* 基本表达式的声明  */
+
+
 %%
 
-"int"               printf("INTTK int\n"); 
-[[:alpha:]_][[:alnum:]_]*   printf("ID %s\n", yytext); 
-"("                 printf("LPARENT (\n"); 
-")"                 printf("RPARENT )\n"); 
-"{"                 printf("LBRACE {\n"); 
-"}"                 printf("RBRACE }\n"); 
-";"                 printf("SEMICN ;\n"); 
-"="                 printf("ASSIGN =\n"); 
-"+"                 printf("PLUS +\n"); 
+
+{Ident}        printf("ID %s\n", yytext);
 {IntConst}          printf("INTCON %d\n", (int)strtol(yytext, NULL, 0));
 {floatConst}        printf("FLOATCON %s\n", yytext);
-[ \t\n]+            ; // 忽略空格、制表符和换行符
-.                   { parse_error("Unexpected character"); }
+[ \t]+            ; // 忽略空格、制表符和换行符
+\n                line_number++;
+.                   { parse_error("Unexpected character", line_number, "SYNTAX_ERROR"); }
 
 %%
 
-void parse_error(char *msg) {
-    fprintf(stderr, "%s\n", msg);
+void parse_error(char *msg, int line, char *error_type) {
+    fprintf(stderr, "Error Type: %s, Line: %d, %s\n", error_type, line, msg);
     exit(1);
 }
 

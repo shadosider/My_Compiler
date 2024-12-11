@@ -1,6 +1,6 @@
 int main()
 {
-  int i= 0123;
+  int i= 0103;
   int j= 0x3F;
   float k = 3.14;
 }
