@@ -42,4 +42,7 @@ or
 ./lexer test1.sy
 ```
 
+### How to write your own lexer.l
+参考https://blog.csdn.net/weixin_44007632/article/details/108666375
+
 ### bison
