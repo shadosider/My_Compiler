@@ -45,4 +45,5 @@ or
 ### How to write your own lexer.l
 参考https://blog.csdn.net/weixin_44007632/article/details/108666375
 
+参考flex相关的[pattern](./pattern.md)文档
 ### bison
