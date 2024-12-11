@@ -6,22 +6,24 @@
 int line_number = 1;
 
 void parse_error(char *msg, int line, char *error_type);
+
+
 %}
 
 /* 标识符Ident的声明  */
 identifier-nondigit    [_a-zA-Z]
 digit                   [0-9]
-Ident      {identifier-nondigit}({identifier-nondigit}|{digit})*
+Ident      ({identifier-nondigit}({identifier-nondigit}|{digit})*)
 
 
 /* 有关Number的声明  */
 /* IntConst的声明  */
 decimal-const   [1-9][0-9]*  
 octal-const   0[0-7]+
-hexadecimal-prefix  0x|0X
+hexadecimal-prefix  (0x|0X)
 hexadecimal-digit [0-9A-Fa-f]+
 hexadecimal-const  {hexadecimal-prefix}{hexadecimal-digit} 
-IntConst  {decimal-const}|{octal-const}|{hexadecimal-const}
+IntConst  ({decimal-const}|{octal-const}|{hexadecimal-const})
 
 /* floatConst的声明  */
 digit-sequence       [0-9]+
@@ -33,28 +35,39 @@ hexadecimal-digit-sequence    {hexadecimal-digit}
 hexadecimal-fractional-constant     {hexadecimal-digit-sequence}?\.{hexadecimal-digit-sequence}|{hexadecimal-digit-sequence}\.
 binary-exponent-part        p{sign}?{digit-sequence}|P{sign}?{digit-sequence}
 hexadecimal-floating-constant    {hexadecimal-prefix}{hexadecimal-fractional-constant}{binary-exponent-part}|{hexadecimal-prefix}{hexadecimal-digit-sequence}{binary-exponent-part} 
-floatConst  {decimal-floating-constant}|{hexadecimal-floating-constant}
+floatConst  ({decimal-floating-constant}|{hexadecimal-floating-constant})
 
-Number   {IntConst}|{floatConst}
+Number   ({IntConst}|{floatConst})
 
 
+
+
+FuncRParams   {Exp}(,{Exp})*   /* 函数实参表的声明  */
+/* 单目运算符的声明注：!仅出现在条件表达式中   */
+UnaryOp    [!*\-]            
+UnaryExp    {UnaryOp}*({PrimaryExp}|{Ident}'('{FuncRParams}?')')      /* 一元表达式的声明  */
+MulExp    {UnaryExp}([*/%]{UnaryExp})*    /* 乘除模表达式的声明  */
+
+AddExp    {MulExp}({sign}{MulExp})*   /* 加减表达式的声明  */
 
 
 Exp      {AddExp}                     /* 表达式的声明  */
-LVal     {Ident}{[{Exp}]}*            /* 左值表达式的声明  */
+LVal     {Ident}('['{Exp}']')*            /* 左值表达式的声明  */
 
-PrimaryExp    (Exp)|{LVal}|{Number}   /* 基本表达式的声明  */
+PrimaryExp    ('('{Exp}')'|{LVal}|{Number})   /* 基本表达式的声明  */
+
+
 
 
 %%
 
-
-{Ident}        printf("ID %s\n", yytext);
+{Ident}             printf("ID %s\n", yytext);
+{PrimaryExp}           printf("Exp %s\n", yytext);
 {IntConst}          printf("INTCON %d\n", (int)strtol(yytext, NULL, 0));
 {floatConst}        printf("FLOATCON %s\n", yytext);
 [ \t]+            ; // 忽略空格、制表符和换行符
 \n                line_number++;
-.                   { parse_error("Unexpected character", line_number, "SYNTAX_ERROR"); }
+.                  ;// { parse_error("Unexpected character", line_number, "SYNTAX_ERROR"); }
 
 %%
 
