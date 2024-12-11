@@ -832,7 +832,7 @@ printf("PLUS +\n");
 case 10:
 YY_RULE_SETUP
 #line 44 "lexer.l"
-printf("INTCON %s\n", yytext);
+printf("INTCON %d\n", (int)strtol(yytext, NULL, 0));
 	YY_BREAK
 case 11:
 YY_RULE_SETUP

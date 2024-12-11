@@ -41,7 +41,7 @@ Number   {IntConst}|{floatConst}
 ";"                 printf("SEMICN ;\n"); 
 "="                 printf("ASSIGN =\n"); 
 "+"                 printf("PLUS +\n"); 
-{IntConst}          printf("INTCON %s\n", yytext);
+{IntConst}          printf("INTCON %d\n", (int)strtol(yytext, NULL, 0));
 {floatConst}        printf("FLOATCON %s\n", yytext);
 [ \t\n]+            ; // 忽略空格、制表符和换行符
 .                   { parse_error("Unexpected character"); }
