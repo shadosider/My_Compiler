@@ -5,7 +5,7 @@ int yylex(void);
 void yyerror(char *);
 %}
 
-%token NUM ADD SUB MUL DIV VAR CR
+%token IDENT INTCON FLOATCON NUM ADD SUB MUL DIV VAR END CR
 
 %%
 
@@ -13,21 +13,13 @@ void yyerror(char *);
                 | line_list line
                 ;
 
-	       line : expression CR  {printf("YES\n");}
+	       line : expression END CR 
 
-      expression: term
-                | expression ADD term
-				| expression SUB term
+      expression: IDENT     {printf("ID \n");}
+                | INTCON     {printf("INTCON\n");}
+                | FLOATCON   {printf("FLOATCON \n");}
                 ;
 
-            term: single
-				| term MUL single
-				| term DIV single
-				;
-
-		  single: NUM
-				| VAR
-				;
 %%
 
 void yyerror(char *str){

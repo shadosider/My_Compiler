@@ -74,9 +74,15 @@ gcc -o test y.tab.c lex.yy.c
 ./test 
 ```
 
+### How to use Makefile
 
+当你写好了flex和bison文件后，例如a.l和a.y（注意必须是同名的），在cmd直接输入
+```
+make NAME=a
+```
+即可直接编译出可执行文件
 
-
+使用```make clean```来清除文件目录
 
 ### How to write your own project
 

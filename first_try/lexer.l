@@ -1,12 +1,9 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-
+#include "y.tab.h"
 // 定义一个全局变量来跟踪行号
 int line_number = 1;
-
-void parse_error(char *msg, int line, char *error_type);
-
 
 %}
 
@@ -42,61 +39,17 @@ Number   ({IntConst}|{floatConst})
 
 
 
-FuncRParams   {Exp}(,{Exp})*   /* 函数实参表的声明  */
-/* 单目运算符的声明注：!仅出现在条件表达式中   */
-UnaryOp    [!*\-]            
-UnaryExp    {UnaryOp}*({PrimaryExp}|{Ident}'('{FuncRParams}?')')      /* 一元表达式的声明  */
-MulExp    {UnaryExp}([*/%]{UnaryExp})*    /* 乘除模表达式的声明  */
-
-AddExp    {MulExp}({sign}{MulExp})*   /* 加减表达式的声明  */
-
-
-Exp      {AddExp}                     /* 表达式的声明  */
-LVal     {Ident}('['{Exp}']')*            /* 左值表达式的声明  */
-
-PrimaryExp    ('('{Exp}')'|{LVal}|{Number})   /* 基本表达式的声明  */
-
 
 
 
 %%
 
-{Ident}             printf("ID %s\n", yytext);
-{PrimaryExp}           printf("Exp %s\n", yytext);
-{IntConst}          printf("INTCON %d\n", (int)strtol(yytext, NULL, 0));
-{floatConst}        printf("FLOATCON %s\n", yytext);
+{Ident}             return IDENT;  //printf("ID %s\n", yytext);
+{IntConst}          return INTCON;  //printf("INTCON %d\n", (int)strtol(yytext, NULL, 0));
+{floatConst}        return FLOATCON;   //printf("FLOATCON %s\n", yytext);
 [ \t]+            ; // 忽略空格、制表符和换行符
-\n                line_number++;
-.                  ;// { parse_error("Unexpected character", line_number, "SYNTAX_ERROR"); }
+;                  return END;
+\n                line_number++;return CR;
+.                  ;
 
 %%
-
-void parse_error(char *msg, int line, char *error_type) {
-    fprintf(stderr, "Error Type: %s, Line: %d, %s\n", error_type, line, msg);
-    exit(1);
-}
-
-void process_file(const char *filename) {
-    FILE *file = fopen(filename, "r");
-    if (file == NULL) {
-        fprintf(stderr, "Error opening file %s\n", filename);
-        exit(EXIT_FAILURE);
-    }
-    yyin = file;
-    while(yylex());
-    fclose(yyin);
-}
-
-int main(int argc, char **argv) {
-    if (argc != 2) {
-        yylex();
-    }else{
-        process_file(argv[1]);
-    }
-    yywrap();
-}
-
-int yywrap()
-{
-	return 1;
-}
