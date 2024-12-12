@@ -1,7 +1,7 @@
 # Makefile
 
 # 定义变量，默认值为test
-NAME = test
+NAME = lexer
 
 # 目标：编译生成可执行文件
 $(NAME): y.tab.c lex.yy.c

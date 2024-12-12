@@ -1132,26 +1132,20 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-  case 5: /* expression: IDENT  */
-#line 18 "lexer.y"
-                            {printf("ID \n");}
-#line 1139 "y.tab.c"
-    break;
-
   case 6: /* expression: INTCON  */
 #line 19 "lexer.y"
                              {printf("INTCON\n");}
-#line 1145 "y.tab.c"
+#line 1139 "y.tab.c"
     break;
 
   case 7: /* expression: FLOATCON  */
 #line 20 "lexer.y"
                              {printf("FLOATCON \n");}
-#line 1151 "y.tab.c"
+#line 1145 "y.tab.c"
     break;
 
 
-#line 1155 "y.tab.c"
+#line 1149 "y.tab.c"
 
       default: break;
     }

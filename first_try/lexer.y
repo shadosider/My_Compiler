@@ -15,7 +15,7 @@ void yyerror(char *);
 
 	       line : expression END CR 
 
-      expression: IDENT     {printf("ID \n");}
+      expression: IDENT     //{printf("ID \n");}
                 | INTCON     {printf("INTCON\n");}
                 | FLOATCON   {printf("FLOATCON \n");}
                 ;

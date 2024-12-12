@@ -44,7 +44,7 @@ Number   ({IntConst}|{floatConst})
 
 %%
 
-{Ident}             return IDENT;  //printf("ID %s\n", yytext);
+{Ident}             {printf("ID %s\n", yytext);}  return IDENT;  
 {IntConst}          return INTCON;  //printf("INTCON %d\n", (int)strtol(yytext, NULL, 0));
 {floatConst}        return FLOATCON;   //printf("FLOATCON %s\n", yytext);
 [ \t]+            ; // 忽略空格、制表符和换行符
