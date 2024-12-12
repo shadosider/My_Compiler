@@ -78,7 +78,7 @@ gcc -o test y.tab.c lex.yy.c
 
 
 
-### How to write your own lexer.l
+### How to write your own project
 
 参考https://blog.csdn.net/weixin_44007632/article/details/108666375
 
