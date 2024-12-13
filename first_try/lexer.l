@@ -37,9 +37,10 @@ floatConst  ({decimal-floating-constant}|{hexadecimal-floating-constant})
 
 Number   ({IntConst}|{floatConst})
 
+Equal    ["!=""=="]
+Weight   ["<"">""<="">="]
 
-
-
+UnaryOP  ["!""+""-"]
 
 
 
@@ -50,6 +51,23 @@ Number   ({IntConst}|{floatConst})
 {Number}            {printf("Num %s\n", yytext);} return Number;
 {sign}              return SIGN;
 {mul}               return MUL; 
+{Equal}             return EQUAL;
+{Weight}            return WEIGHT;
+{UnaryOP}           return UNARYOP;
+"const"             return CONST;
+"void"              return VOID;
+"int"               return INT;
+"float"             return FLOAT;
+","                 return COMMA;
+"="                 return ASSIGN;
+"||"                return OR;
+"&&"                return AND;
+"if"                return IF;
+"else"              return ELSE;
+"while"             return WHILE;
+"break"             return BERAK;
+"continue"          return CONTINUE;
+"return"            return RETURN;
 "("                 {printf("LPARENT \( \n");} return LPARENT;
 ")"                 {printf("RPARENT \) \n");} return RPARENT;
 "["                 {printf("LBRACKET [ \n");} return LBRACKET;
