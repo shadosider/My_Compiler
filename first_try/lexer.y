@@ -1,11 +1,14 @@
 %{
 #include <stdio.h>
 #include <string.h>
+
+extern FILE *yyin;  // 声明 yyin，指向输入文件
+
 int yylex(void);
 void yyerror(char *);
 %}
 
-%token IDENT SIGN ASSIGN MUL VOID INT FLOAT UNARYOP CONST COMMA Number EQUAL OR AND WEIGHT IF ELSE WHILE BERAK CONTINUE RETURN LPARENT RPARENT LBRACKET RBRACKET LBRACE RBRACE END CR
+%token IDENT PLUS MINUS ASSIGN MUL VOID INT FLOAT UNARYOP CONST COMMA INTCONST FLOATCONST EQUAL OR AND WEIGHT IF ELSE WHILE BREAK CONTINUE RETURN LPARENT RPARENT LBRACKET RBRACKET LBRACE RBRACE END
 
 %%
 
@@ -13,11 +16,11 @@ void yyerror(char *);
                 | line_list line
                 ;
 
-	       line : CompUnit CR 
+	     line : CompUnit     
                 ;
 
-        CompUnit: CompUnitOpt Decl       /* 编译单元 */
-                | CompUnitOpt FuncDef
+        CompUnit: CompUnitOpt FuncDef     /* 编译单元 */
+                | CompUnitOpt Decl     
                 ;
 
      CompUnitOpt: CompUnit
@@ -30,9 +33,7 @@ void yyerror(char *);
 
        ConstDecl: CONST BType ConstDef ConstDefTail END      /* 常量声明  */  
 
-           BType: INT            /* 基本类型  */  
-                | FLOAT
-                ;
+           
 
         ConstDef: IDENT ConstExpTail ASSIGN ConstInitVal
                 ;
@@ -85,11 +86,15 @@ ConstInitValTail: COMMA ConstInitVal ConstInitValTail
                 | /* empty */
                 ;
 
-         FuncDef: FuncType IDENT LPARENT FuncFParamsOpt RPARENT Block  /* 函数定义  */ 
+         FuncDef: FuncType IDENT LPARENT FuncFParamsOpt RPARENT Block        /* 函数定义  */ 
                 ;
 
         FuncType: VOID      /* 函数类型 */
-                | INT
+                | INT          
+                | FLOAT
+                ;
+
+           BType: INT            /* 基本类型  */  
                 | FLOAT
                 ;
 
@@ -123,7 +128,7 @@ ConstInitValTail: COMMA ConstInitVal ConstInitValTail
                 | Block
                 | IF LPARENT Cond RPARENT Stmt StmtOpt
                 | WHILE LPARENT Cond RPARENT Stmt
-                | BERAK END
+                | BREAK END
                 | CONTINUE END
                 | RETURN ExpOpt END
                 ;
@@ -145,7 +150,8 @@ ConstInitValTail: COMMA ConstInitVal ConstInitValTail
 
       PrimaryExp: LPARENT Exp RPARENT    /* 基本表达式  */  
                 | LVal       
-                | Number  
+                | INTCONST
+                | FLOATCONST  
                 ;
 
              Exp: AddExp        /* 表达式  */
@@ -161,7 +167,8 @@ ConstInitValTail: COMMA ConstInitVal ConstInitValTail
           AddExp: MulExp AddExpTail  /* 加减表达式  */
                 ;
 
-      AddExpTail: SIGN MulExp AddExpTail
+      AddExpTail: PLUS MulExp AddExpTail
+                | MINUS MulExp AddExpTail
                 | /* empty */
                 ;
 
@@ -209,7 +216,8 @@ ConstInitValTail: COMMA ConstInitVal ConstInitValTail
                 ;
 
           AddExp: MulExp                /* 加减表达式  */  
-                | AddExp SIGN MulExp
+                | AddExp PLUS MulExp
+                | AddExp MINUS MulExp
                 ;
 
           MulExp: UnaryExp              /* 乘除模表达式  */  
@@ -233,8 +241,30 @@ void yyerror(char *str){
 int yywrap(){
     return 1;
 }
-int main()
+int main(int argc, char *argv[])
 {
+    if (argc != 2) {  // 确保命令行参数正确
+        //fprintf(stderr, "Usage: ./lexer <filename>\n");
+        yyparse();
+        return 0;
+    }
+
+    // 打开输入文件
+    yyin = fopen(argv[1], "r");
+    if (yyin == NULL) {  // 如果文件打开失败
+        perror("Error opening file");
+        return 1;
+    }
+
+    // 调用解析器
     yyparse();
+
+    // 关闭文件
+    fclose(yyin);
+    return 0;
+
+
+
+    
 }
 

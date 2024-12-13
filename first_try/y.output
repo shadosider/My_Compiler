@@ -1,0 +1,2314 @@
+Rules useless in parser due to conflicts
+
+    6 CompUnitOpt: CompUnit
+
+   98 AddExp: MulExp
+
+  101 MulExp: UnaryExp
+
+
+State 3 conflicts: 4 reduce/reduce
+State 8 conflicts: 1 reduce/reduce
+State 9 conflicts: 1 reduce/reduce
+State 45 conflicts: 2 shift/reduce, 11 reduce/reduce
+State 46 conflicts: 1 shift/reduce, 12 reduce/reduce
+State 94 conflicts: 2 shift/reduce
+State 95 conflicts: 2 shift/reduce
+State 97 conflicts: 1 shift/reduce
+State 165 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: line_list $end
+
+    1 line_list: line
+    2          | line_list line
+
+    3 line: CompUnit
+
+    4 CompUnit: CompUnitOpt FuncDef
+    5         | CompUnitOpt Decl
+
+    6 CompUnitOpt: CompUnit
+    7            | ε
+
+    8 Decl: ConstDecl
+    9     | VarDecl
+
+   10 ConstDecl: CONST BType ConstDef ConstDefTail END
+
+   11 ConstDef: IDENT ConstExpTail ASSIGN ConstInitVal
+
+   12 ConstExp: AddExp
+
+   13 ConstExpTail: LBRACKET ConstExp RBRACKET ConstExpTail
+   14             | ε
+
+   15 ConstInitVal: ConstExp
+   16             | LBRACE ConstInitValOpt RBRACE
+
+   17 ConstInitValOpt: ConstInitVal ConstInitValTail
+   18                | ε
+
+   19 ConstInitValTail: COMMA ConstInitVal ConstInitValTail
+   20                 | ε
+
+   21 ConstDefTail: COMMA ConstDef ConstDefTail
+   22             | ε
+
+   23 VarDecl: BType VarDef VarDeclTail END
+
+   24 VarDeclTail: COMMA VarDef VarDeclTail
+   25            | ε
+
+   26 VarDef: IDENT ConstExpTail
+   27       | IDENT ConstExpTail ASSIGN InitVal
+
+   28 InitVal: Exp
+   29        | LBRACE InitValOpt RBRACE
+
+   30 InitValOpt: InitVal InitValTail
+   31           | ε
+
+   32 InitValTail: COMMA InitVal InitValTail
+   33            | ε
+
+   34 FuncDef: FuncType IDENT LPARENT FuncFParamsOpt RPARENT Block
+
+   35 FuncType: VOID
+   36         | INT
+   37         | FLOAT
+
+   38 BType: INT
+   39      | FLOAT
+
+   40 FuncFParams: FuncFParam FuncFParamTail
+
+   41 FuncFParam: BType IDENT ExpOPT
+
+   42 ExpOPT: LBRACKET RBRACKET ExpTail
+   43       | ε
+
+   44 ExpTail: LBRACKET Exp RBRACKET ExpTail
+   45        | ε
+
+   46 FuncFParamTail: COMMA FuncFParam FuncFParamTail
+   47               | ε
+
+   48 FuncFParamsOpt: FuncFParams
+   49               | ε
+
+   50 Stmt: LVal ASSIGN Exp END
+   51     | ExpOpt END
+   52     | Block
+   53     | IF LPARENT Cond RPARENT Stmt StmtOpt
+   54     | WHILE LPARENT Cond RPARENT Stmt
+   55     | BREAK END
+   56     | CONTINUE END
+   57     | RETURN ExpOpt END
+
+   58 StmtOpt: ELSE Stmt
+   59        | ε
+
+   60 Block: LBRACE BlockItemTail RBRACE
+
+   61 BlockItem: Decl
+   62          | Stmt
+
+   63 BlockItemTail: BlockItem BlockItemTail
+   64              | ε
+
+   65 PrimaryExp: LPARENT Exp RPARENT
+   66           | LVal
+   67           | INTCONST
+   68           | FLOATCONST
+
+   69 Exp: AddExp
+
+   70 ExpOpt: Exp
+   71       | ε
+
+   72 Cond: LOrExp
+
+   73 AddExp: MulExp AddExpTail
+
+   74 AddExpTail: PLUS MulExp AddExpTail
+   75           | MINUS MulExp AddExpTail
+   76           | ε
+
+   77 MulExp: UnaryExp MulExpTail
+
+   78 MulExpTail: MUL UnaryExp MulExpTail
+   79           | ε
+
+   80 UnaryExp: PrimaryExp
+   81         | IDENT LPARENT FuncRParamsOpt RPARENT
+   82         | UNARYOP UnaryExp
+
+   83 FuncRParamsOpt: ε
+   84               | FuncRParams
+
+   85 FuncRParams: Exp
+   86            | Exp COMMA FuncRParams
+
+   87 LVal: IDENT LValTail
+
+   88 LValTail: LBRACKET Exp RBRACKET LValTail
+   89         | ε
+
+   90 LOrExp: LAndExp
+   91       | LOrExp OR LAndExp
+
+   92 LAndExp: EqExp
+   93        | LAndExp AND EqExp
+
+   94 EqExp: RelExp
+   95      | EqExp EQUAL RelExp
+
+   96 RelExp: AddExp
+   97       | RelExp WEIGHT AddExp
+
+   98 AddExp: MulExp
+   99       | AddExp PLUS MulExp
+  100       | AddExp MINUS MulExp
+
+  101 MulExp: UnaryExp
+  102       | MulExp MUL UnaryExp
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    error (256)
+    IDENT (258) 11 26 27 34 41 81 87
+    PLUS (259) 74 99
+    MINUS (260) 75 100
+    ASSIGN (261) 11 27 50
+    MUL (262) 78 102
+    VOID (263) 35
+    INT (264) 36 38
+    FLOAT (265) 37 39
+    UNARYOP (266) 82
+    CONST (267) 10
+    COMMA (268) 19 21 24 32 46 86
+    INTCONST (269) 67
+    FLOATCONST (270) 68
+    EQUAL (271) 95
+    OR (272) 91
+    AND (273) 93
+    WEIGHT (274) 97
+    IF (275) 53
+    ELSE (276) 58
+    WHILE (277) 54
+    BREAK (278) 55
+    CONTINUE (279) 56
+    RETURN (280) 57
+    LPARENT (281) 34 53 54 65 81
+    RPARENT (282) 34 53 54 65 81
+    LBRACKET (283) 13 42 44 88
+    RBRACKET (284) 13 42 44 88
+    LBRACE (285) 16 29 60
+    RBRACE (286) 16 29 60
+    END (287) 10 23 50 51 55 56 57
+
+
+Nonterminals, with rules where they appear
+
+    $accept (33)
+        on left: 0
+    line_list (34)
+        on left: 1 2
+        on right: 0 2
+    line (35)
+        on left: 3
+        on right: 1 2
+    CompUnit (36)
+        on left: 4 5
+        on right: 3 6
+    CompUnitOpt (37)
+        on left: 6 7
+        on right: 4 5
+    Decl (38)
+        on left: 8 9
+        on right: 5 61
+    ConstDecl (39)
+        on left: 10
+        on right: 8
+    ConstDef (40)
+        on left: 11
+        on right: 10 21
+    ConstExp (41)
+        on left: 12
+        on right: 13 15
+    ConstExpTail (42)
+        on left: 13 14
+        on right: 11 13 26 27
+    ConstInitVal (43)
+        on left: 15 16
+        on right: 11 17 19
+    ConstInitValOpt (44)
+        on left: 17 18
+        on right: 16
+    ConstInitValTail (45)
+        on left: 19 20
+        on right: 17 19
+    ConstDefTail (46)
+        on left: 21 22
+        on right: 10 21
+    VarDecl (47)
+        on left: 23
+        on right: 9
+    VarDeclTail (48)
+        on left: 24 25
+        on right: 23 24
+    VarDef (49)
+        on left: 26 27
+        on right: 23 24
+    InitVal (50)
+        on left: 28 29
+        on right: 27 30 32
+    InitValOpt (51)
+        on left: 30 31
+        on right: 29
+    InitValTail (52)
+        on left: 32 33
+        on right: 30 32
+    FuncDef (53)
+        on left: 34
+        on right: 4
+    FuncType (54)
+        on left: 35 36 37
+        on right: 34
+    BType (55)
+        on left: 38 39
+        on right: 10 23 41
+    FuncFParams (56)
+        on left: 40
+        on right: 48
+    FuncFParam (57)
+        on left: 41
+        on right: 40 46
+    ExpOPT (58)
+        on left: 42 43
+        on right: 41
+    ExpTail (59)
+        on left: 44 45
+        on right: 42 44
+    FuncFParamTail (60)
+        on left: 46 47
+        on right: 40 46
+    FuncFParamsOpt (61)
+        on left: 48 49
+        on right: 34
+    Stmt (62)
+        on left: 50 51 52 53 54 55 56 57
+        on right: 53 54 58 62
+    StmtOpt (63)
+        on left: 58 59
+        on right: 53
+    Block (64)
+        on left: 60
+        on right: 34 52
+    BlockItem (65)
+        on left: 61 62
+        on right: 63
+    BlockItemTail (66)
+        on left: 63 64
+        on right: 60 63
+    PrimaryExp (67)
+        on left: 65 66 67 68
+        on right: 80
+    Exp (68)
+        on left: 69
+        on right: 28 44 50 65 70 85 86 88
+    ExpOpt (69)
+        on left: 70 71
+        on right: 51 57
+    Cond (70)
+        on left: 72
+        on right: 53 54
+    AddExp (71)
+        on left: 73 98 99 100
+        on right: 12 69 96 97 99 100
+    AddExpTail (72)
+        on left: 74 75 76
+        on right: 73 74 75
+    MulExp (73)
+        on left: 77 101 102
+        on right: 73 74 75 98 99 100 102
+    MulExpTail (74)
+        on left: 78 79
+        on right: 77 78
+    UnaryExp (75)
+        on left: 80 81 82
+        on right: 77 78 82 101 102
+    FuncRParamsOpt (76)
+        on left: 83 84
+        on right: 81
+    FuncRParams (77)
+        on left: 85 86
+        on right: 84 86
+    LVal (78)
+        on left: 87
+        on right: 50 66
+    LValTail (79)
+        on left: 88 89
+        on right: 87 88
+    LOrExp (80)
+        on left: 90 91
+        on right: 72 91
+    LAndExp (81)
+        on left: 92 93
+        on right: 90 91 93
+    EqExp (82)
+        on left: 94 95
+        on right: 92 93 95
+    RelExp (83)
+        on left: 96 97
+        on right: 94 95 97
+
+
+State 0
+
+    0 $accept: • line_list $end
+
+    $default  reduce using rule 7 (CompUnitOpt)
+
+    line_list    go to state 1
+    line         go to state 2
+    CompUnit     go to state 3
+    CompUnitOpt  go to state 4
+
+
+State 1
+
+    0 $accept: line_list • $end
+    2 line_list: line_list • line
+
+    $end  shift, and go to state 5
+
+    $default  reduce using rule 7 (CompUnitOpt)
+
+    line         go to state 6
+    CompUnit     go to state 3
+    CompUnitOpt  go to state 4
+
+
+State 2
+
+    1 line_list: line •
+
+    $default  reduce using rule 1 (line_list)
+
+
+State 3
+
+    3 line: CompUnit •
+    6 CompUnitOpt: CompUnit •
+
+    VOID      reduce using rule 3 (line)
+    VOID      [reduce using rule 6 (CompUnitOpt)]
+    INT       reduce using rule 3 (line)
+    INT       [reduce using rule 6 (CompUnitOpt)]
+    FLOAT     reduce using rule 3 (line)
+    FLOAT     [reduce using rule 6 (CompUnitOpt)]
+    CONST     reduce using rule 3 (line)
+    CONST     [reduce using rule 6 (CompUnitOpt)]
+    $default  reduce using rule 3 (line)
+
+
+State 4
+
+    4 CompUnit: CompUnitOpt • FuncDef
+    5         | CompUnitOpt • Decl
+
+    VOID   shift, and go to state 7
+    INT    shift, and go to state 8
+    FLOAT  shift, and go to state 9
+    CONST  shift, and go to state 10
+
+    Decl       go to state 11
+    ConstDecl  go to state 12
+    VarDecl    go to state 13
+    FuncDef    go to state 14
+    FuncType   go to state 15
+    BType      go to state 16
+
+
+State 5
+
+    0 $accept: line_list $end •
+
+    $default  accept
+
+
+State 6
+
+    2 line_list: line_list line •
+
+    $default  reduce using rule 2 (line_list)
+
+
+State 7
+
+   35 FuncType: VOID •
+
+    $default  reduce using rule 35 (FuncType)
+
+
+State 8
+
+   36 FuncType: INT •
+   38 BType: INT •
+
+    IDENT     reduce using rule 36 (FuncType)
+    IDENT     [reduce using rule 38 (BType)]
+    $default  reduce using rule 36 (FuncType)
+
+
+State 9
+
+   37 FuncType: FLOAT •
+   39 BType: FLOAT •
+
+    IDENT     reduce using rule 37 (FuncType)
+    IDENT     [reduce using rule 39 (BType)]
+    $default  reduce using rule 37 (FuncType)
+
+
+State 10
+
+   10 ConstDecl: CONST • BType ConstDef ConstDefTail END
+
+    INT    shift, and go to state 17
+    FLOAT  shift, and go to state 18
+
+    BType  go to state 19
+
+
+State 11
+
+    5 CompUnit: CompUnitOpt Decl •
+
+    $default  reduce using rule 5 (CompUnit)
+
+
+State 12
+
+    8 Decl: ConstDecl •
+
+    $default  reduce using rule 8 (Decl)
+
+
+State 13
+
+    9 Decl: VarDecl •
+
+    $default  reduce using rule 9 (Decl)
+
+
+State 14
+
+    4 CompUnit: CompUnitOpt FuncDef •
+
+    $default  reduce using rule 4 (CompUnit)
+
+
+State 15
+
+   34 FuncDef: FuncType • IDENT LPARENT FuncFParamsOpt RPARENT Block
+
+    IDENT  shift, and go to state 20
+
+
+State 16
+
+   23 VarDecl: BType • VarDef VarDeclTail END
+
+    IDENT  shift, and go to state 21
+
+    VarDef  go to state 22
+
+
+State 17
+
+   38 BType: INT •
+
+    $default  reduce using rule 38 (BType)
+
+
+State 18
+
+   39 BType: FLOAT •
+
+    $default  reduce using rule 39 (BType)
+
+
+State 19
+
+   10 ConstDecl: CONST BType • ConstDef ConstDefTail END
+
+    IDENT  shift, and go to state 23
+
+    ConstDef  go to state 24
+
+
+State 20
+
+   34 FuncDef: FuncType IDENT • LPARENT FuncFParamsOpt RPARENT Block
+
+    LPARENT  shift, and go to state 25
+
+
+State 21
+
+   26 VarDef: IDENT • ConstExpTail
+   27       | IDENT • ConstExpTail ASSIGN InitVal
+
+    LBRACKET  shift, and go to state 26
+
+    $default  reduce using rule 14 (ConstExpTail)
+
+    ConstExpTail  go to state 27
+
+
+State 22
+
+   23 VarDecl: BType VarDef • VarDeclTail END
+
+    COMMA  shift, and go to state 28
+
+    $default  reduce using rule 25 (VarDeclTail)
+
+    VarDeclTail  go to state 29
+
+
+State 23
+
+   11 ConstDef: IDENT • ConstExpTail ASSIGN ConstInitVal
+
+    LBRACKET  shift, and go to state 26
+
+    $default  reduce using rule 14 (ConstExpTail)
+
+    ConstExpTail  go to state 30
+
+
+State 24
+
+   10 ConstDecl: CONST BType ConstDef • ConstDefTail END
+
+    COMMA  shift, and go to state 31
+
+    $default  reduce using rule 22 (ConstDefTail)
+
+    ConstDefTail  go to state 32
+
+
+State 25
+
+   34 FuncDef: FuncType IDENT LPARENT • FuncFParamsOpt RPARENT Block
+
+    INT    shift, and go to state 17
+    FLOAT  shift, and go to state 18
+
+    $default  reduce using rule 49 (FuncFParamsOpt)
+
+    BType           go to state 33
+    FuncFParams     go to state 34
+    FuncFParam      go to state 35
+    FuncFParamsOpt  go to state 36
+
+
+State 26
+
+   13 ConstExpTail: LBRACKET • ConstExp RBRACKET ConstExpTail
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    LPARENT     shift, and go to state 41
+
+    ConstExp    go to state 42
+    PrimaryExp  go to state 43
+    AddExp      go to state 44
+    MulExp      go to state 45
+    UnaryExp    go to state 46
+    LVal        go to state 47
+
+
+State 27
+
+   26 VarDef: IDENT ConstExpTail •
+   27       | IDENT ConstExpTail • ASSIGN InitVal
+
+    ASSIGN  shift, and go to state 48
+
+    $default  reduce using rule 26 (VarDef)
+
+
+State 28
+
+   24 VarDeclTail: COMMA • VarDef VarDeclTail
+
+    IDENT  shift, and go to state 21
+
+    VarDef  go to state 49
+
+
+State 29
+
+   23 VarDecl: BType VarDef VarDeclTail • END
+
+    END  shift, and go to state 50
+
+
+State 30
+
+   11 ConstDef: IDENT ConstExpTail • ASSIGN ConstInitVal
+
+    ASSIGN  shift, and go to state 51
+
+
+State 31
+
+   21 ConstDefTail: COMMA • ConstDef ConstDefTail
+
+    IDENT  shift, and go to state 23
+
+    ConstDef  go to state 52
+
+
+State 32
+
+   10 ConstDecl: CONST BType ConstDef ConstDefTail • END
+
+    END  shift, and go to state 53
+
+
+State 33
+
+   41 FuncFParam: BType • IDENT ExpOPT
+
+    IDENT  shift, and go to state 54
+
+
+State 34
+
+   48 FuncFParamsOpt: FuncFParams •
+
+    $default  reduce using rule 48 (FuncFParamsOpt)
+
+
+State 35
+
+   40 FuncFParams: FuncFParam • FuncFParamTail
+
+    COMMA  shift, and go to state 55
+
+    $default  reduce using rule 47 (FuncFParamTail)
+
+    FuncFParamTail  go to state 56
+
+
+State 36
+
+   34 FuncDef: FuncType IDENT LPARENT FuncFParamsOpt • RPARENT Block
+
+    RPARENT  shift, and go to state 57
+
+
+State 37
+
+   81 UnaryExp: IDENT • LPARENT FuncRParamsOpt RPARENT
+   87 LVal: IDENT • LValTail
+
+    LPARENT   shift, and go to state 58
+    LBRACKET  shift, and go to state 59
+
+    $default  reduce using rule 89 (LValTail)
+
+    LValTail  go to state 60
+
+
+State 38
+
+   82 UnaryExp: UNARYOP • UnaryExp
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    LPARENT     shift, and go to state 41
+
+    PrimaryExp  go to state 43
+    UnaryExp    go to state 61
+    LVal        go to state 47
+
+
+State 39
+
+   67 PrimaryExp: INTCONST •
+
+    $default  reduce using rule 67 (PrimaryExp)
+
+
+State 40
+
+   68 PrimaryExp: FLOATCONST •
+
+    $default  reduce using rule 68 (PrimaryExp)
+
+
+State 41
+
+   65 PrimaryExp: LPARENT • Exp RPARENT
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    LPARENT     shift, and go to state 41
+
+    PrimaryExp  go to state 43
+    Exp         go to state 62
+    AddExp      go to state 63
+    MulExp      go to state 45
+    UnaryExp    go to state 46
+    LVal        go to state 47
+
+
+State 42
+
+   13 ConstExpTail: LBRACKET ConstExp • RBRACKET ConstExpTail
+
+    RBRACKET  shift, and go to state 64
+
+
+State 43
+
+   80 UnaryExp: PrimaryExp •
+
+    $default  reduce using rule 80 (UnaryExp)
+
+
+State 44
+
+   12 ConstExp: AddExp •
+   99 AddExp: AddExp • PLUS MulExp
+  100       | AddExp • MINUS MulExp
+
+    PLUS   shift, and go to state 65
+    MINUS  shift, and go to state 66
+
+    $default  reduce using rule 12 (ConstExp)
+
+
+State 45
+
+   73 AddExp: MulExp • AddExpTail
+   98       | MulExp •
+  102 MulExp: MulExp • MUL UnaryExp
+
+    PLUS   shift, and go to state 67
+    MINUS  shift, and go to state 68
+    MUL    shift, and go to state 69
+
+    PLUS      [reduce using rule 76 (AddExpTail)]
+    PLUS      [reduce using rule 98 (AddExp)]
+    MINUS     [reduce using rule 76 (AddExpTail)]
+    MINUS     [reduce using rule 98 (AddExp)]
+    COMMA     reduce using rule 76 (AddExpTail)
+    COMMA     [reduce using rule 98 (AddExp)]
+    EQUAL     reduce using rule 76 (AddExpTail)
+    EQUAL     [reduce using rule 98 (AddExp)]
+    OR        reduce using rule 76 (AddExpTail)
+    OR        [reduce using rule 98 (AddExp)]
+    AND       reduce using rule 76 (AddExpTail)
+    AND       [reduce using rule 98 (AddExp)]
+    WEIGHT    reduce using rule 76 (AddExpTail)
+    WEIGHT    [reduce using rule 98 (AddExp)]
+    RPARENT   reduce using rule 76 (AddExpTail)
+    RPARENT   [reduce using rule 98 (AddExp)]
+    RBRACKET  reduce using rule 76 (AddExpTail)
+    RBRACKET  [reduce using rule 98 (AddExp)]
+    RBRACE    reduce using rule 76 (AddExpTail)
+    RBRACE    [reduce using rule 98 (AddExp)]
+    END       reduce using rule 76 (AddExpTail)
+    END       [reduce using rule 98 (AddExp)]
+    $default  reduce using rule 76 (AddExpTail)
+
+    AddExpTail  go to state 70
+
+
+State 46
+
+   77 MulExp: UnaryExp • MulExpTail
+  101       | UnaryExp •
+
+    MUL  shift, and go to state 71
+
+    PLUS      reduce using rule 79 (MulExpTail)
+    PLUS      [reduce using rule 101 (MulExp)]
+    MINUS     reduce using rule 79 (MulExpTail)
+    MINUS     [reduce using rule 101 (MulExp)]
+    MUL       [reduce using rule 79 (MulExpTail)]
+    MUL       [reduce using rule 101 (MulExp)]
+    COMMA     reduce using rule 79 (MulExpTail)
+    COMMA     [reduce using rule 101 (MulExp)]
+    EQUAL     reduce using rule 79 (MulExpTail)
+    EQUAL     [reduce using rule 101 (MulExp)]
+    OR        reduce using rule 79 (MulExpTail)
+    OR        [reduce using rule 101 (MulExp)]
+    AND       reduce using rule 79 (MulExpTail)
+    AND       [reduce using rule 101 (MulExp)]
+    WEIGHT    reduce using rule 79 (MulExpTail)
+    WEIGHT    [reduce using rule 101 (MulExp)]
+    RPARENT   reduce using rule 79 (MulExpTail)
+    RPARENT   [reduce using rule 101 (MulExp)]
+    RBRACKET  reduce using rule 79 (MulExpTail)
+    RBRACKET  [reduce using rule 101 (MulExp)]
+    RBRACE    reduce using rule 79 (MulExpTail)
+    RBRACE    [reduce using rule 101 (MulExp)]
+    END       reduce using rule 79 (MulExpTail)
+    END       [reduce using rule 101 (MulExp)]
+    $default  reduce using rule 79 (MulExpTail)
+
+    MulExpTail  go to state 72
+
+
+State 47
+
+   66 PrimaryExp: LVal •
+
+    $default  reduce using rule 66 (PrimaryExp)
+
+
+State 48
+
+   27 VarDef: IDENT ConstExpTail ASSIGN • InitVal
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    LPARENT     shift, and go to state 41
+    LBRACE      shift, and go to state 73
+
+    InitVal     go to state 74
+    PrimaryExp  go to state 43
+    Exp         go to state 75
+    AddExp      go to state 63
+    MulExp      go to state 45
+    UnaryExp    go to state 46
+    LVal        go to state 47
+
+
+State 49
+
+   24 VarDeclTail: COMMA VarDef • VarDeclTail
+
+    COMMA  shift, and go to state 28
+
+    $default  reduce using rule 25 (VarDeclTail)
+
+    VarDeclTail  go to state 76
+
+
+State 50
+
+   23 VarDecl: BType VarDef VarDeclTail END •
+
+    $default  reduce using rule 23 (VarDecl)
+
+
+State 51
+
+   11 ConstDef: IDENT ConstExpTail ASSIGN • ConstInitVal
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    LPARENT     shift, and go to state 41
+    LBRACE      shift, and go to state 77
+
+    ConstExp      go to state 78
+    ConstInitVal  go to state 79
+    PrimaryExp    go to state 43
+    AddExp        go to state 44
+    MulExp        go to state 45
+    UnaryExp      go to state 46
+    LVal          go to state 47
+
+
+State 52
+
+   21 ConstDefTail: COMMA ConstDef • ConstDefTail
+
+    COMMA  shift, and go to state 31
+
+    $default  reduce using rule 22 (ConstDefTail)
+
+    ConstDefTail  go to state 80
+
+
+State 53
+
+   10 ConstDecl: CONST BType ConstDef ConstDefTail END •
+
+    $default  reduce using rule 10 (ConstDecl)
+
+
+State 54
+
+   41 FuncFParam: BType IDENT • ExpOPT
+
+    LBRACKET  shift, and go to state 81
+
+    $default  reduce using rule 43 (ExpOPT)
+
+    ExpOPT  go to state 82
+
+
+State 55
+
+   46 FuncFParamTail: COMMA • FuncFParam FuncFParamTail
+
+    INT    shift, and go to state 17
+    FLOAT  shift, and go to state 18
+
+    BType       go to state 33
+    FuncFParam  go to state 83
+
+
+State 56
+
+   40 FuncFParams: FuncFParam FuncFParamTail •
+
+    $default  reduce using rule 40 (FuncFParams)
+
+
+State 57
+
+   34 FuncDef: FuncType IDENT LPARENT FuncFParamsOpt RPARENT • Block
+
+    LBRACE  shift, and go to state 84
+
+    Block  go to state 85
+
+
+State 58
+
+   81 UnaryExp: IDENT LPARENT • FuncRParamsOpt RPARENT
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    LPARENT     shift, and go to state 41
+
+    $default  reduce using rule 83 (FuncRParamsOpt)
+
+    PrimaryExp      go to state 43
+    Exp             go to state 86
+    AddExp          go to state 63
+    MulExp          go to state 45
+    UnaryExp        go to state 46
+    FuncRParamsOpt  go to state 87
+    FuncRParams     go to state 88
+    LVal            go to state 47
+
+
+State 59
+
+   88 LValTail: LBRACKET • Exp RBRACKET LValTail
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    LPARENT     shift, and go to state 41
+
+    PrimaryExp  go to state 43
+    Exp         go to state 89
+    AddExp      go to state 63
+    MulExp      go to state 45
+    UnaryExp    go to state 46
+    LVal        go to state 47
+
+
+State 60
+
+   87 LVal: IDENT LValTail •
+
+    $default  reduce using rule 87 (LVal)
+
+
+State 61
+
+   82 UnaryExp: UNARYOP UnaryExp •
+
+    $default  reduce using rule 82 (UnaryExp)
+
+
+State 62
+
+   65 PrimaryExp: LPARENT Exp • RPARENT
+
+    RPARENT  shift, and go to state 90
+
+
+State 63
+
+   69 Exp: AddExp •
+   99 AddExp: AddExp • PLUS MulExp
+  100       | AddExp • MINUS MulExp
+
+    PLUS   shift, and go to state 65
+    MINUS  shift, and go to state 66
+
+    $default  reduce using rule 69 (Exp)
+
+
+State 64
+
+   13 ConstExpTail: LBRACKET ConstExp RBRACKET • ConstExpTail
+
+    LBRACKET  shift, and go to state 26
+
+    $default  reduce using rule 14 (ConstExpTail)
+
+    ConstExpTail  go to state 91
+
+
+State 65
+
+   99 AddExp: AddExp PLUS • MulExp
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    LPARENT     shift, and go to state 41
+
+    PrimaryExp  go to state 43
+    MulExp      go to state 92
+    UnaryExp    go to state 46
+    LVal        go to state 47
+
+
+State 66
+
+  100 AddExp: AddExp MINUS • MulExp
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    LPARENT     shift, and go to state 41
+
+    PrimaryExp  go to state 43
+    MulExp      go to state 93
+    UnaryExp    go to state 46
+    LVal        go to state 47
+
+
+State 67
+
+   74 AddExpTail: PLUS • MulExp AddExpTail
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    LPARENT     shift, and go to state 41
+
+    PrimaryExp  go to state 43
+    MulExp      go to state 94
+    UnaryExp    go to state 46
+    LVal        go to state 47
+
+
+State 68
+
+   75 AddExpTail: MINUS • MulExp AddExpTail
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    LPARENT     shift, and go to state 41
+
+    PrimaryExp  go to state 43
+    MulExp      go to state 95
+    UnaryExp    go to state 46
+    LVal        go to state 47
+
+
+State 69
+
+  102 MulExp: MulExp MUL • UnaryExp
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    LPARENT     shift, and go to state 41
+
+    PrimaryExp  go to state 43
+    UnaryExp    go to state 96
+    LVal        go to state 47
+
+
+State 70
+
+   73 AddExp: MulExp AddExpTail •
+
+    $default  reduce using rule 73 (AddExp)
+
+
+State 71
+
+   78 MulExpTail: MUL • UnaryExp MulExpTail
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    LPARENT     shift, and go to state 41
+
+    PrimaryExp  go to state 43
+    UnaryExp    go to state 97
+    LVal        go to state 47
+
+
+State 72
+
+   77 MulExp: UnaryExp MulExpTail •
+
+    $default  reduce using rule 77 (MulExp)
+
+
+State 73
+
+   29 InitVal: LBRACE • InitValOpt RBRACE
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    LPARENT     shift, and go to state 41
+    LBRACE      shift, and go to state 73
+
+    $default  reduce using rule 31 (InitValOpt)
+
+    InitVal     go to state 98
+    InitValOpt  go to state 99
+    PrimaryExp  go to state 43
+    Exp         go to state 75
+    AddExp      go to state 63
+    MulExp      go to state 45
+    UnaryExp    go to state 46
+    LVal        go to state 47
+
+
+State 74
+
+   27 VarDef: IDENT ConstExpTail ASSIGN InitVal •
+
+    $default  reduce using rule 27 (VarDef)
+
+
+State 75
+
+   28 InitVal: Exp •
+
+    $default  reduce using rule 28 (InitVal)
+
+
+State 76
+
+   24 VarDeclTail: COMMA VarDef VarDeclTail •
+
+    $default  reduce using rule 24 (VarDeclTail)
+
+
+State 77
+
+   16 ConstInitVal: LBRACE • ConstInitValOpt RBRACE
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    LPARENT     shift, and go to state 41
+    LBRACE      shift, and go to state 77
+
+    $default  reduce using rule 18 (ConstInitValOpt)
+
+    ConstExp         go to state 78
+    ConstInitVal     go to state 100
+    ConstInitValOpt  go to state 101
+    PrimaryExp       go to state 43
+    AddExp           go to state 44
+    MulExp           go to state 45
+    UnaryExp         go to state 46
+    LVal             go to state 47
+
+
+State 78
+
+   15 ConstInitVal: ConstExp •
+
+    $default  reduce using rule 15 (ConstInitVal)
+
+
+State 79
+
+   11 ConstDef: IDENT ConstExpTail ASSIGN ConstInitVal •
+
+    $default  reduce using rule 11 (ConstDef)
+
+
+State 80
+
+   21 ConstDefTail: COMMA ConstDef ConstDefTail •
+
+    $default  reduce using rule 21 (ConstDefTail)
+
+
+State 81
+
+   42 ExpOPT: LBRACKET • RBRACKET ExpTail
+
+    RBRACKET  shift, and go to state 102
+
+
+State 82
+
+   41 FuncFParam: BType IDENT ExpOPT •
+
+    $default  reduce using rule 41 (FuncFParam)
+
+
+State 83
+
+   46 FuncFParamTail: COMMA FuncFParam • FuncFParamTail
+
+    COMMA  shift, and go to state 55
+
+    $default  reduce using rule 47 (FuncFParamTail)
+
+    FuncFParamTail  go to state 103
+
+
+State 84
+
+   60 Block: LBRACE • BlockItemTail RBRACE
+
+    IDENT       shift, and go to state 37
+    INT         shift, and go to state 17
+    FLOAT       shift, and go to state 18
+    UNARYOP     shift, and go to state 38
+    CONST       shift, and go to state 10
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    IF          shift, and go to state 104
+    WHILE       shift, and go to state 105
+    BREAK       shift, and go to state 106
+    CONTINUE    shift, and go to state 107
+    RETURN      shift, and go to state 108
+    LPARENT     shift, and go to state 41
+    LBRACE      shift, and go to state 84
+
+    END       reduce using rule 71 (ExpOpt)
+    $default  reduce using rule 64 (BlockItemTail)
+
+    Decl           go to state 109
+    ConstDecl      go to state 12
+    VarDecl        go to state 13
+    BType          go to state 16
+    Stmt           go to state 110
+    Block          go to state 111
+    BlockItem      go to state 112
+    BlockItemTail  go to state 113
+    PrimaryExp     go to state 43
+    Exp            go to state 114
+    ExpOpt         go to state 115
+    AddExp         go to state 63
+    MulExp         go to state 45
+    UnaryExp       go to state 46
+    LVal           go to state 116
+
+
+State 85
+
+   34 FuncDef: FuncType IDENT LPARENT FuncFParamsOpt RPARENT Block •
+
+    $default  reduce using rule 34 (FuncDef)
+
+
+State 86
+
+   85 FuncRParams: Exp •
+   86            | Exp • COMMA FuncRParams
+
+    COMMA  shift, and go to state 117
+
+    $default  reduce using rule 85 (FuncRParams)
+
+
+State 87
+
+   81 UnaryExp: IDENT LPARENT FuncRParamsOpt • RPARENT
+
+    RPARENT  shift, and go to state 118
+
+
+State 88
+
+   84 FuncRParamsOpt: FuncRParams •
+
+    $default  reduce using rule 84 (FuncRParamsOpt)
+
+
+State 89
+
+   88 LValTail: LBRACKET Exp • RBRACKET LValTail
+
+    RBRACKET  shift, and go to state 119
+
+
+State 90
+
+   65 PrimaryExp: LPARENT Exp RPARENT •
+
+    $default  reduce using rule 65 (PrimaryExp)
+
+
+State 91
+
+   13 ConstExpTail: LBRACKET ConstExp RBRACKET ConstExpTail •
+
+    $default  reduce using rule 13 (ConstExpTail)
+
+
+State 92
+
+   99 AddExp: AddExp PLUS MulExp •
+  102 MulExp: MulExp • MUL UnaryExp
+
+    MUL  shift, and go to state 69
+
+    $default  reduce using rule 99 (AddExp)
+
+
+State 93
+
+  100 AddExp: AddExp MINUS MulExp •
+  102 MulExp: MulExp • MUL UnaryExp
+
+    MUL  shift, and go to state 69
+
+    $default  reduce using rule 100 (AddExp)
+
+
+State 94
+
+   74 AddExpTail: PLUS MulExp • AddExpTail
+  102 MulExp: MulExp • MUL UnaryExp
+
+    PLUS   shift, and go to state 67
+    MINUS  shift, and go to state 68
+    MUL    shift, and go to state 69
+
+    PLUS      [reduce using rule 76 (AddExpTail)]
+    MINUS     [reduce using rule 76 (AddExpTail)]
+    $default  reduce using rule 76 (AddExpTail)
+
+    AddExpTail  go to state 120
+
+
+State 95
+
+   75 AddExpTail: MINUS MulExp • AddExpTail
+  102 MulExp: MulExp • MUL UnaryExp
+
+    PLUS   shift, and go to state 67
+    MINUS  shift, and go to state 68
+    MUL    shift, and go to state 69
+
+    PLUS      [reduce using rule 76 (AddExpTail)]
+    MINUS     [reduce using rule 76 (AddExpTail)]
+    $default  reduce using rule 76 (AddExpTail)
+
+    AddExpTail  go to state 121
+
+
+State 96
+
+  102 MulExp: MulExp MUL UnaryExp •
+
+    $default  reduce using rule 102 (MulExp)
+
+
+State 97
+
+   78 MulExpTail: MUL UnaryExp • MulExpTail
+
+    MUL  shift, and go to state 71
+
+    MUL       [reduce using rule 79 (MulExpTail)]
+    $default  reduce using rule 79 (MulExpTail)
+
+    MulExpTail  go to state 122
+
+
+State 98
+
+   30 InitValOpt: InitVal • InitValTail
+
+    COMMA  shift, and go to state 123
+
+    $default  reduce using rule 33 (InitValTail)
+
+    InitValTail  go to state 124
+
+
+State 99
+
+   29 InitVal: LBRACE InitValOpt • RBRACE
+
+    RBRACE  shift, and go to state 125
+
+
+State 100
+
+   17 ConstInitValOpt: ConstInitVal • ConstInitValTail
+
+    COMMA  shift, and go to state 126
+
+    $default  reduce using rule 20 (ConstInitValTail)
+
+    ConstInitValTail  go to state 127
+
+
+State 101
+
+   16 ConstInitVal: LBRACE ConstInitValOpt • RBRACE
+
+    RBRACE  shift, and go to state 128
+
+
+State 102
+
+   42 ExpOPT: LBRACKET RBRACKET • ExpTail
+
+    LBRACKET  shift, and go to state 129
+
+    $default  reduce using rule 45 (ExpTail)
+
+    ExpTail  go to state 130
+
+
+State 103
+
+   46 FuncFParamTail: COMMA FuncFParam FuncFParamTail •
+
+    $default  reduce using rule 46 (FuncFParamTail)
+
+
+State 104
+
+   53 Stmt: IF • LPARENT Cond RPARENT Stmt StmtOpt
+
+    LPARENT  shift, and go to state 131
+
+
+State 105
+
+   54 Stmt: WHILE • LPARENT Cond RPARENT Stmt
+
+    LPARENT  shift, and go to state 132
+
+
+State 106
+
+   55 Stmt: BREAK • END
+
+    END  shift, and go to state 133
+
+
+State 107
+
+   56 Stmt: CONTINUE • END
+
+    END  shift, and go to state 134
+
+
+State 108
+
+   57 Stmt: RETURN • ExpOpt END
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    LPARENT     shift, and go to state 41
+
+    $default  reduce using rule 71 (ExpOpt)
+
+    PrimaryExp  go to state 43
+    Exp         go to state 114
+    ExpOpt      go to state 135
+    AddExp      go to state 63
+    MulExp      go to state 45
+    UnaryExp    go to state 46
+    LVal        go to state 47
+
+
+State 109
+
+   61 BlockItem: Decl •
+
+    $default  reduce using rule 61 (BlockItem)
+
+
+State 110
+
+   62 BlockItem: Stmt •
+
+    $default  reduce using rule 62 (BlockItem)
+
+
+State 111
+
+   52 Stmt: Block •
+
+    $default  reduce using rule 52 (Stmt)
+
+
+State 112
+
+   63 BlockItemTail: BlockItem • BlockItemTail
+
+    IDENT       shift, and go to state 37
+    INT         shift, and go to state 17
+    FLOAT       shift, and go to state 18
+    UNARYOP     shift, and go to state 38
+    CONST       shift, and go to state 10
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    IF          shift, and go to state 104
+    WHILE       shift, and go to state 105
+    BREAK       shift, and go to state 106
+    CONTINUE    shift, and go to state 107
+    RETURN      shift, and go to state 108
+    LPARENT     shift, and go to state 41
+    LBRACE      shift, and go to state 84
+
+    END       reduce using rule 71 (ExpOpt)
+    $default  reduce using rule 64 (BlockItemTail)
+
+    Decl           go to state 109
+    ConstDecl      go to state 12
+    VarDecl        go to state 13
+    BType          go to state 16
+    Stmt           go to state 110
+    Block          go to state 111
+    BlockItem      go to state 112
+    BlockItemTail  go to state 136
+    PrimaryExp     go to state 43
+    Exp            go to state 114
+    ExpOpt         go to state 115
+    AddExp         go to state 63
+    MulExp         go to state 45
+    UnaryExp       go to state 46
+    LVal           go to state 116
+
+
+State 113
+
+   60 Block: LBRACE BlockItemTail • RBRACE
+
+    RBRACE  shift, and go to state 137
+
+
+State 114
+
+   70 ExpOpt: Exp •
+
+    $default  reduce using rule 70 (ExpOpt)
+
+
+State 115
+
+   51 Stmt: ExpOpt • END
+
+    END  shift, and go to state 138
+
+
+State 116
+
+   50 Stmt: LVal • ASSIGN Exp END
+   66 PrimaryExp: LVal •
+
+    ASSIGN  shift, and go to state 139
+
+    $default  reduce using rule 66 (PrimaryExp)
+
+
+State 117
+
+   86 FuncRParams: Exp COMMA • FuncRParams
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    LPARENT     shift, and go to state 41
+
+    PrimaryExp   go to state 43
+    Exp          go to state 86
+    AddExp       go to state 63
+    MulExp       go to state 45
+    UnaryExp     go to state 46
+    FuncRParams  go to state 140
+    LVal         go to state 47
+
+
+State 118
+
+   81 UnaryExp: IDENT LPARENT FuncRParamsOpt RPARENT •
+
+    $default  reduce using rule 81 (UnaryExp)
+
+
+State 119
+
+   88 LValTail: LBRACKET Exp RBRACKET • LValTail
+
+    LBRACKET  shift, and go to state 59
+
+    $default  reduce using rule 89 (LValTail)
+
+    LValTail  go to state 141
+
+
+State 120
+
+   74 AddExpTail: PLUS MulExp AddExpTail •
+
+    $default  reduce using rule 74 (AddExpTail)
+
+
+State 121
+
+   75 AddExpTail: MINUS MulExp AddExpTail •
+
+    $default  reduce using rule 75 (AddExpTail)
+
+
+State 122
+
+   78 MulExpTail: MUL UnaryExp MulExpTail •
+
+    $default  reduce using rule 78 (MulExpTail)
+
+
+State 123
+
+   32 InitValTail: COMMA • InitVal InitValTail
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    LPARENT     shift, and go to state 41
+    LBRACE      shift, and go to state 73
+
+    InitVal     go to state 142
+    PrimaryExp  go to state 43
+    Exp         go to state 75
+    AddExp      go to state 63
+    MulExp      go to state 45
+    UnaryExp    go to state 46
+    LVal        go to state 47
+
+
+State 124
+
+   30 InitValOpt: InitVal InitValTail •
+
+    $default  reduce using rule 30 (InitValOpt)
+
+
+State 125
+
+   29 InitVal: LBRACE InitValOpt RBRACE •
+
+    $default  reduce using rule 29 (InitVal)
+
+
+State 126
+
+   19 ConstInitValTail: COMMA • ConstInitVal ConstInitValTail
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    LPARENT     shift, and go to state 41
+    LBRACE      shift, and go to state 77
+
+    ConstExp      go to state 78
+    ConstInitVal  go to state 143
+    PrimaryExp    go to state 43
+    AddExp        go to state 44
+    MulExp        go to state 45
+    UnaryExp      go to state 46
+    LVal          go to state 47
+
+
+State 127
+
+   17 ConstInitValOpt: ConstInitVal ConstInitValTail •
+
+    $default  reduce using rule 17 (ConstInitValOpt)
+
+
+State 128
+
+   16 ConstInitVal: LBRACE ConstInitValOpt RBRACE •
+
+    $default  reduce using rule 16 (ConstInitVal)
+
+
+State 129
+
+   44 ExpTail: LBRACKET • Exp RBRACKET ExpTail
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    LPARENT     shift, and go to state 41
+
+    PrimaryExp  go to state 43
+    Exp         go to state 144
+    AddExp      go to state 63
+    MulExp      go to state 45
+    UnaryExp    go to state 46
+    LVal        go to state 47
+
+
+State 130
+
+   42 ExpOPT: LBRACKET RBRACKET ExpTail •
+
+    $default  reduce using rule 42 (ExpOPT)
+
+
+State 131
+
+   53 Stmt: IF LPARENT • Cond RPARENT Stmt StmtOpt
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    LPARENT     shift, and go to state 41
+
+    PrimaryExp  go to state 43
+    Cond        go to state 145
+    AddExp      go to state 146
+    MulExp      go to state 45
+    UnaryExp    go to state 46
+    LVal        go to state 47
+    LOrExp      go to state 147
+    LAndExp     go to state 148
+    EqExp       go to state 149
+    RelExp      go to state 150
+
+
+State 132
+
+   54 Stmt: WHILE LPARENT • Cond RPARENT Stmt
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    LPARENT     shift, and go to state 41
+
+    PrimaryExp  go to state 43
+    Cond        go to state 151
+    AddExp      go to state 146
+    MulExp      go to state 45
+    UnaryExp    go to state 46
+    LVal        go to state 47
+    LOrExp      go to state 147
+    LAndExp     go to state 148
+    EqExp       go to state 149
+    RelExp      go to state 150
+
+
+State 133
+
+   55 Stmt: BREAK END •
+
+    $default  reduce using rule 55 (Stmt)
+
+
+State 134
+
+   56 Stmt: CONTINUE END •
+
+    $default  reduce using rule 56 (Stmt)
+
+
+State 135
+
+   57 Stmt: RETURN ExpOpt • END
+
+    END  shift, and go to state 152
+
+
+State 136
+
+   63 BlockItemTail: BlockItem BlockItemTail •
+
+    $default  reduce using rule 63 (BlockItemTail)
+
+
+State 137
+
+   60 Block: LBRACE BlockItemTail RBRACE •
+
+    $default  reduce using rule 60 (Block)
+
+
+State 138
+
+   51 Stmt: ExpOpt END •
+
+    $default  reduce using rule 51 (Stmt)
+
+
+State 139
+
+   50 Stmt: LVal ASSIGN • Exp END
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    LPARENT     shift, and go to state 41
+
+    PrimaryExp  go to state 43
+    Exp         go to state 153
+    AddExp      go to state 63
+    MulExp      go to state 45
+    UnaryExp    go to state 46
+    LVal        go to state 47
+
+
+State 140
+
+   86 FuncRParams: Exp COMMA FuncRParams •
+
+    $default  reduce using rule 86 (FuncRParams)
+
+
+State 141
+
+   88 LValTail: LBRACKET Exp RBRACKET LValTail •
+
+    $default  reduce using rule 88 (LValTail)
+
+
+State 142
+
+   32 InitValTail: COMMA InitVal • InitValTail
+
+    COMMA  shift, and go to state 123
+
+    $default  reduce using rule 33 (InitValTail)
+
+    InitValTail  go to state 154
+
+
+State 143
+
+   19 ConstInitValTail: COMMA ConstInitVal • ConstInitValTail
+
+    COMMA  shift, and go to state 126
+
+    $default  reduce using rule 20 (ConstInitValTail)
+
+    ConstInitValTail  go to state 155
+
+
+State 144
+
+   44 ExpTail: LBRACKET Exp • RBRACKET ExpTail
+
+    RBRACKET  shift, and go to state 156
+
+
+State 145
+
+   53 Stmt: IF LPARENT Cond • RPARENT Stmt StmtOpt
+
+    RPARENT  shift, and go to state 157
+
+
+State 146
+
+   96 RelExp: AddExp •
+   99 AddExp: AddExp • PLUS MulExp
+  100       | AddExp • MINUS MulExp
+
+    PLUS   shift, and go to state 65
+    MINUS  shift, and go to state 66
+
+    $default  reduce using rule 96 (RelExp)
+
+
+State 147
+
+   72 Cond: LOrExp •
+   91 LOrExp: LOrExp • OR LAndExp
+
+    OR  shift, and go to state 158
+
+    $default  reduce using rule 72 (Cond)
+
+
+State 148
+
+   90 LOrExp: LAndExp •
+   93 LAndExp: LAndExp • AND EqExp
+
+    AND  shift, and go to state 159
+
+    $default  reduce using rule 90 (LOrExp)
+
+
+State 149
+
+   92 LAndExp: EqExp •
+   95 EqExp: EqExp • EQUAL RelExp
+
+    EQUAL  shift, and go to state 160
+
+    $default  reduce using rule 92 (LAndExp)
+
+
+State 150
+
+   94 EqExp: RelExp •
+   97 RelExp: RelExp • WEIGHT AddExp
+
+    WEIGHT  shift, and go to state 161
+
+    $default  reduce using rule 94 (EqExp)
+
+
+State 151
+
+   54 Stmt: WHILE LPARENT Cond • RPARENT Stmt
+
+    RPARENT  shift, and go to state 162
+
+
+State 152
+
+   57 Stmt: RETURN ExpOpt END •
+
+    $default  reduce using rule 57 (Stmt)
+
+
+State 153
+
+   50 Stmt: LVal ASSIGN Exp • END
+
+    END  shift, and go to state 163
+
+
+State 154
+
+   32 InitValTail: COMMA InitVal InitValTail •
+
+    $default  reduce using rule 32 (InitValTail)
+
+
+State 155
+
+   19 ConstInitValTail: COMMA ConstInitVal ConstInitValTail •
+
+    $default  reduce using rule 19 (ConstInitValTail)
+
+
+State 156
+
+   44 ExpTail: LBRACKET Exp RBRACKET • ExpTail
+
+    LBRACKET  shift, and go to state 129
+
+    $default  reduce using rule 45 (ExpTail)
+
+    ExpTail  go to state 164
+
+
+State 157
+
+   53 Stmt: IF LPARENT Cond RPARENT • Stmt StmtOpt
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    IF          shift, and go to state 104
+    WHILE       shift, and go to state 105
+    BREAK       shift, and go to state 106
+    CONTINUE    shift, and go to state 107
+    RETURN      shift, and go to state 108
+    LPARENT     shift, and go to state 41
+    LBRACE      shift, and go to state 84
+
+    $default  reduce using rule 71 (ExpOpt)
+
+    Stmt        go to state 165
+    Block       go to state 111
+    PrimaryExp  go to state 43
+    Exp         go to state 114
+    ExpOpt      go to state 115
+    AddExp      go to state 63
+    MulExp      go to state 45
+    UnaryExp    go to state 46
+    LVal        go to state 116
+
+
+State 158
+
+   91 LOrExp: LOrExp OR • LAndExp
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    LPARENT     shift, and go to state 41
+
+    PrimaryExp  go to state 43
+    AddExp      go to state 146
+    MulExp      go to state 45
+    UnaryExp    go to state 46
+    LVal        go to state 47
+    LAndExp     go to state 166
+    EqExp       go to state 149
+    RelExp      go to state 150
+
+
+State 159
+
+   93 LAndExp: LAndExp AND • EqExp
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    LPARENT     shift, and go to state 41
+
+    PrimaryExp  go to state 43
+    AddExp      go to state 146
+    MulExp      go to state 45
+    UnaryExp    go to state 46
+    LVal        go to state 47
+    EqExp       go to state 167
+    RelExp      go to state 150
+
+
+State 160
+
+   95 EqExp: EqExp EQUAL • RelExp
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    LPARENT     shift, and go to state 41
+
+    PrimaryExp  go to state 43
+    AddExp      go to state 146
+    MulExp      go to state 45
+    UnaryExp    go to state 46
+    LVal        go to state 47
+    RelExp      go to state 168
+
+
+State 161
+
+   97 RelExp: RelExp WEIGHT • AddExp
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    LPARENT     shift, and go to state 41
+
+    PrimaryExp  go to state 43
+    AddExp      go to state 169
+    MulExp      go to state 45
+    UnaryExp    go to state 46
+    LVal        go to state 47
+
+
+State 162
+
+   54 Stmt: WHILE LPARENT Cond RPARENT • Stmt
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    IF          shift, and go to state 104
+    WHILE       shift, and go to state 105
+    BREAK       shift, and go to state 106
+    CONTINUE    shift, and go to state 107
+    RETURN      shift, and go to state 108
+    LPARENT     shift, and go to state 41
+    LBRACE      shift, and go to state 84
+
+    $default  reduce using rule 71 (ExpOpt)
+
+    Stmt        go to state 170
+    Block       go to state 111
+    PrimaryExp  go to state 43
+    Exp         go to state 114
+    ExpOpt      go to state 115
+    AddExp      go to state 63
+    MulExp      go to state 45
+    UnaryExp    go to state 46
+    LVal        go to state 116
+
+
+State 163
+
+   50 Stmt: LVal ASSIGN Exp END •
+
+    $default  reduce using rule 50 (Stmt)
+
+
+State 164
+
+   44 ExpTail: LBRACKET Exp RBRACKET ExpTail •
+
+    $default  reduce using rule 44 (ExpTail)
+
+
+State 165
+
+   53 Stmt: IF LPARENT Cond RPARENT Stmt • StmtOpt
+
+    ELSE  shift, and go to state 171
+
+    ELSE      [reduce using rule 59 (StmtOpt)]
+    $default  reduce using rule 59 (StmtOpt)
+
+    StmtOpt  go to state 172
+
+
+State 166
+
+   91 LOrExp: LOrExp OR LAndExp •
+   93 LAndExp: LAndExp • AND EqExp
+
+    AND  shift, and go to state 159
+
+    $default  reduce using rule 91 (LOrExp)
+
+
+State 167
+
+   93 LAndExp: LAndExp AND EqExp •
+   95 EqExp: EqExp • EQUAL RelExp
+
+    EQUAL  shift, and go to state 160
+
+    $default  reduce using rule 93 (LAndExp)
+
+
+State 168
+
+   95 EqExp: EqExp EQUAL RelExp •
+   97 RelExp: RelExp • WEIGHT AddExp
+
+    WEIGHT  shift, and go to state 161
+
+    $default  reduce using rule 95 (EqExp)
+
+
+State 169
+
+   97 RelExp: RelExp WEIGHT AddExp •
+   99 AddExp: AddExp • PLUS MulExp
+  100       | AddExp • MINUS MulExp
+
+    PLUS   shift, and go to state 65
+    MINUS  shift, and go to state 66
+
+    $default  reduce using rule 97 (RelExp)
+
+
+State 170
+
+   54 Stmt: WHILE LPARENT Cond RPARENT Stmt •
+
+    $default  reduce using rule 54 (Stmt)
+
+
+State 171
+
+   58 StmtOpt: ELSE • Stmt
+
+    IDENT       shift, and go to state 37
+    UNARYOP     shift, and go to state 38
+    INTCONST    shift, and go to state 39
+    FLOATCONST  shift, and go to state 40
+    IF          shift, and go to state 104
+    WHILE       shift, and go to state 105
+    BREAK       shift, and go to state 106
+    CONTINUE    shift, and go to state 107
+    RETURN      shift, and go to state 108
+    LPARENT     shift, and go to state 41
+    LBRACE      shift, and go to state 84
+
+    $default  reduce using rule 71 (ExpOpt)
+
+    Stmt        go to state 173
+    Block       go to state 111
+    PrimaryExp  go to state 43
+    Exp         go to state 114
+    ExpOpt      go to state 115
+    AddExp      go to state 63
+    MulExp      go to state 45
+    UnaryExp    go to state 46
+    LVal        go to state 116
+
+
+State 172
+
+   53 Stmt: IF LPARENT Cond RPARENT Stmt StmtOpt •
+
+    $default  reduce using rule 53 (Stmt)
+
+
+State 173
+
+   58 StmtOpt: ELSE Stmt •
+
+    $default  reduce using rule 58 (StmtOpt)

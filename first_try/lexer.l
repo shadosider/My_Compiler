@@ -25,8 +25,7 @@ IntConst  ({decimal-const}|{octal-const}|{hexadecimal-const})
 /* floatConst的声明  */
 digit-sequence       [0-9]+
 fractional-constant  {digit-sequence}?\.{digit-sequence}|{digit-sequence}\.
-sign          [+-]
-mul           [*/%]           
+mul           ([*/%])
 exponent-part      e{sign}?{digit-sequence}|E{sign}?{digit-sequence}
 decimal-floating-constant   {fractional-constant}{exponent-part}?|{digit-sequence}{exponent-part}
 hexadecimal-digit-sequence    {hexadecimal-digit}
@@ -36,9 +35,11 @@ hexadecimal-floating-constant    {hexadecimal-prefix}{hexadecimal-fractional-con
 floatConst  ({decimal-floating-constant}|{hexadecimal-floating-constant})
 
 Number   ({IntConst}|{floatConst})
+sign          ([+-])
 
-Equal    ["!=""=="]
-Weight   ["<"">""<="">="]
+Equal    "!="|"=="
+Weight   "<"|">"|"<="|">="
+
 
 UnaryOP  ["!""+""-"]
 
@@ -46,28 +47,34 @@ UnaryOP  ["!""+""-"]
 
 %%
 
+"void"              {printf("VOIDTK \n");} return VOID;
+"int"               {printf("INTTK int\n");} return INT;
+"const"             return CONST;
+"float"             {printf("FLOATTK \n");} return FLOAT;
 
-{Ident}             {printf("ID %s\n", yytext);}  return IDENT;  
-{Number}            {printf("Num %s\n", yytext);} return Number;
-{sign}              return SIGN;
+"if"                return IF;
+"else"              return ELSE;
+"while"             return WHILE;
+"break"             return BREAK;
+"continue"          return CONTINUE;
+"return"            return RETURN;
+
+{Ident}             {printf("ID %s\n", yytext);} return IDENT;  
+{IntConst}          {printf("INTCON %d\n", (int)strtol(yytext, NULL, 0));} return INTCONST;
+{floatConst}        {printf("FLOATCON %d\n", (int)strtol(yytext, NULL, 0));} return FLOATCONST;
+
+"+"                 {printf("PLUS +\n");} return PLUS;
+"-"                 {printf("MINUS -\n");} return MINUS;
 {mul}               return MUL; 
 {Equal}             return EQUAL;
 {Weight}            return WEIGHT;
 {UnaryOP}           return UNARYOP;
-"const"             return CONST;
-"void"              return VOID;
-"int"               return INT;
-"float"             return FLOAT;
-","                 return COMMA;
-"="                 return ASSIGN;
+
+","                 {printf("COMMA ,\n");} return COMMA;
+"="                 {printf("ASSIGN =\n");} return ASSIGN;
 "||"                return OR;
 "&&"                return AND;
-"if"                return IF;
-"else"              return ELSE;
-"while"             return WHILE;
-"break"             return BERAK;
-"continue"          return CONTINUE;
-"return"            return RETURN;
+
 "("                 {printf("LPARENT \( \n");} return LPARENT;
 ")"                 {printf("RPARENT \) \n");} return RPARENT;
 "["                 {printf("LBRACKET [ \n");} return LBRACKET;
@@ -75,9 +82,9 @@ UnaryOP  ["!""+""-"]
 "{"                 {printf("LBRACE \{ \n");} return LBRACE;
 "}"                 {printf("RBRACE \} \n");} return RBRACE;
 
-[ \t]+            ; // 忽略空格、制表符和换行符
-;                  return END;
-\n                line_number++;return CR;
-.                  ;
+[ \t]+              ; // 忽略空格、制表符和换行符
+;                   {printf("SEMICN ;\n");} return END;
+\n                  line_number++;
+.                   ;
 
 %%
