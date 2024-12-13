@@ -5,7 +5,7 @@ int yylex(void);
 void yyerror(char *);
 %}
 
-%token IDENT INTCON FLOATCON NUM ADD SUB MUL DIV VAR END CR
+%token IDENT SIGN MUL Number LPARENT RPARENT LBRACKET RBRACKET LBRACE RBRACE END CR
 
 %%
 
@@ -13,12 +13,53 @@ void yyerror(char *);
                 | line_list line
                 ;
 
-	       line : expression END CR 
-
-      expression: IDENT     //{printf("ID \n");}
-                | INTCON     {printf("INTCON\n");}
-                | FLOATCON   {printf("FLOATCON \n");}
+	       line : PrimaryExp END CR 
                 ;
+
+      PrimaryExp: LPARENT Exp RPARENT    /* 基本表达式的声明  */  
+                | LVal       
+                | Number  
+                ;
+
+             Exp: AddExp        /* 表达式的声明  */
+                ;
+
+          AddExp: MulExp AddExpTail  /* 加减表达式的声明  */
+                ;
+
+      AddExpTail: SIGN MulExp AddExpTail
+                | /* empty */
+                ;
+
+          MulExp: UnaryExp MulExpTail   /* 乘除模表达式的声明  */
+                ;
+
+      MulExpTail: MUL UnaryExp MulExpTail
+                | /* empty */
+                ;
+
+        UnaryExp: PrimaryExp    /* 单目运算符的声明注：!仅出现在条件表达式中   */
+                | IDENT LPARENT FuncRParamsOpt RPARENT
+                | '!' UnaryExp
+                | '+' UnaryExp
+                | '-' UnaryExp
+                ;
+
+  FuncRParamsOpt: /* empty */
+                | FuncRParams
+                ;
+
+     FuncRParams: Exp           /* 函数实参表的声明  */
+                | Exp ',' FuncRParams    
+                ;
+
+            LVal: IDENT LValTail    /* 左值表达式的声明  */
+                ;
+
+        LValTail: LBRACKET Exp RBRACKET LValTail
+                | /* empty */   
+                ;
+                 
 
 %%
 

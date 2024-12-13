@@ -55,16 +55,17 @@ extern int yydebug;
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
     IDENT = 258,                   /* IDENT  */
-    INTCON = 259,                  /* INTCON  */
-    FLOATCON = 260,                /* FLOATCON  */
-    NUM = 261,                     /* NUM  */
-    ADD = 262,                     /* ADD  */
-    SUB = 263,                     /* SUB  */
-    MUL = 264,                     /* MUL  */
-    DIV = 265,                     /* DIV  */
-    VAR = 266,                     /* VAR  */
-    END = 267,                     /* END  */
-    CR = 268                       /* CR  */
+    SIGN = 259,                    /* SIGN  */
+    MUL = 260,                     /* MUL  */
+    Number = 261,                  /* Number  */
+    LPARENT = 262,                 /* LPARENT  */
+    RPARENT = 263,                 /* RPARENT  */
+    LBRACKET = 264,                /* LBRACKET  */
+    RBRACKET = 265,                /* RBRACKET  */
+    LBRACE = 266,                  /* LBRACE  */
+    RBRACE = 267,                  /* RBRACE  */
+    END = 268,                     /* END  */
+    CR = 269                       /* CR  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -74,16 +75,17 @@ extern int yydebug;
 #define YYerror 256
 #define YYUNDEF 257
 #define IDENT 258
-#define INTCON 259
-#define FLOATCON 260
-#define NUM 261
-#define ADD 262
-#define SUB 263
-#define MUL 264
-#define DIV 265
-#define VAR 266
-#define END 267
-#define CR 268
+#define SIGN 259
+#define MUL 260
+#define Number 261
+#define LPARENT 262
+#define RPARENT 263
+#define LBRACKET 264
+#define RBRACKET 265
+#define LBRACE 266
+#define RBRACE 267
+#define END 268
+#define CR 269
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

@@ -1,11 +1,7 @@
 Terminals unused in grammar
 
-    NUM
-    ADD
-    SUB
-    MUL
-    DIV
-    VAR
+    LBRACE
+    RBRACE
 
 
 Grammar
@@ -15,77 +11,158 @@ Grammar
     1 line_list: line
     2          | line_list line
 
-    3 line: expression END CR
+    3 line: PrimaryExp END CR
 
-    4 expression: IDENT
-    5           | INTCON
-    6           | FLOATCON
+    4 PrimaryExp: LPARENT Exp RPARENT
+    5           | LVal
+    6           | Number
+
+    7 Exp: AddExp
+
+    8 AddExp: MulExp AddExpTail
+
+    9 AddExpTail: SIGN MulExp AddExpTail
+   10           | ε
+
+   11 MulExp: UnaryExp MulExpTail
+
+   12 MulExpTail: MUL UnaryExp MulExpTail
+   13           | ε
+
+   14 UnaryExp: PrimaryExp
+   15         | IDENT LPARENT FuncRParamsOpt RPARENT
+   16         | '!' UnaryExp
+   17         | '+' UnaryExp
+   18         | '-' UnaryExp
+
+   19 FuncRParamsOpt: ε
+   20               | FuncRParams
+
+   21 FuncRParams: Exp
+   22            | Exp ',' FuncRParams
+
+   23 LVal: IDENT LValTail
+
+   24 LValTail: LBRACKET Exp RBRACKET LValTail
+   25         | ε
 
 
 Terminals, with rules where they appear
 
     $end (0) 0
+    '!' (33) 16
+    '+' (43) 17
+    ',' (44) 22
+    '-' (45) 18
     error (256)
-    IDENT (258) 4
-    INTCON (259) 5
-    FLOATCON (260) 6
-    NUM (261)
-    ADD (262)
-    SUB (263)
-    MUL (264)
-    DIV (265)
-    VAR (266)
-    END (267) 3
-    CR (268) 3
+    IDENT (258) 15 23
+    SIGN (259) 9
+    MUL (260) 12
+    Number (261) 6
+    LPARENT (262) 4 15
+    RPARENT (263) 4 15
+    LBRACKET (264) 24
+    RBRACKET (265) 24
+    LBRACE (266)
+    RBRACE (267)
+    END (268) 3
+    CR (269) 3
 
 
 Nonterminals, with rules where they appear
 
-    $accept (14)
+    $accept (19)
         on left: 0
-    line_list (15)
+    line_list (20)
         on left: 1 2
         on right: 0 2
-    line (16)
+    line (21)
         on left: 3
         on right: 1 2
-    expression (17)
+    PrimaryExp (22)
         on left: 4 5 6
-        on right: 3
+        on right: 3 14
+    Exp (23)
+        on left: 7
+        on right: 4 21 22 24
+    AddExp (24)
+        on left: 8
+        on right: 7
+    AddExpTail (25)
+        on left: 9 10
+        on right: 8 9
+    MulExp (26)
+        on left: 11
+        on right: 8 9
+    MulExpTail (27)
+        on left: 12 13
+        on right: 11 12
+    UnaryExp (28)
+        on left: 14 15 16 17 18
+        on right: 11 12 16 17 18
+    FuncRParamsOpt (29)
+        on left: 19 20
+        on right: 15
+    FuncRParams (30)
+        on left: 21 22
+        on right: 20 22
+    LVal (31)
+        on left: 23
+        on right: 5
+    LValTail (32)
+        on left: 24 25
+        on right: 23 24
 
 
 State 0
 
     0 $accept: • line_list $end
 
-    IDENT     shift, and go to state 1
-    INTCON    shift, and go to state 2
-    FLOATCON  shift, and go to state 3
+    IDENT    shift, and go to state 1
+    Number   shift, and go to state 2
+    LPARENT  shift, and go to state 3
 
     line_list   go to state 4
     line        go to state 5
-    expression  go to state 6
+    PrimaryExp  go to state 6
+    LVal        go to state 7
 
 
 State 1
 
-    4 expression: IDENT •
+   23 LVal: IDENT • LValTail
 
-    $default  reduce using rule 4 (expression)
+    LBRACKET  shift, and go to state 8
+
+    $default  reduce using rule 25 (LValTail)
+
+    LValTail  go to state 9
 
 
 State 2
 
-    5 expression: INTCON •
+    6 PrimaryExp: Number •
 
-    $default  reduce using rule 5 (expression)
+    $default  reduce using rule 6 (PrimaryExp)
 
 
 State 3
 
-    6 expression: FLOATCON •
+    4 PrimaryExp: LPARENT • Exp RPARENT
 
-    $default  reduce using rule 6 (expression)
+    IDENT    shift, and go to state 10
+    Number   shift, and go to state 2
+    LPARENT  shift, and go to state 3
+    '!'      shift, and go to state 11
+    '+'      shift, and go to state 12
+    '-'      shift, and go to state 13
+
+    PrimaryExp  go to state 14
+    Exp         go to state 15
+    AddExp      go to state 16
+    MulExp      go to state 17
+    UnaryExp    go to state 18
+    LVal        go to state 7
 
 
 State 4
@@ -93,13 +170,14 @@ State 4
     0 $accept: line_list • $end
     2 line_list: line_list • line
 
-    $end      shift, and go to state 7
-    IDENT     shift, and go to state 1
-    INTCON    shift, and go to state 2
-    FLOATCON  shift, and go to state 3
+    $end     shift, and go to state 19
+    IDENT    shift, and go to state 1
+    Number   shift, and go to state 2
+    LPARENT  shift, and go to state 3
 
-    line        go to state 8
-    expression  go to state 6
+    line        go to state 20
+    PrimaryExp  go to state 6
+    LVal        go to state 7
 
 
 State 5
@@ -111,34 +189,388 @@ State 5
 
 State 6
 
-    3 line: expression • END CR
+    3 line: PrimaryExp • END CR
 
-    END  shift, and go to state 9
+    END  shift, and go to state 21
 
 
 State 7
+
+    5 PrimaryExp: LVal •
+
+    $default  reduce using rule 5 (PrimaryExp)
+
+
+State 8
+
+   24 LValTail: LBRACKET • Exp RBRACKET LValTail
+
+    IDENT    shift, and go to state 10
+    Number   shift, and go to state 2
+    LPARENT  shift, and go to state 3
+    '!'      shift, and go to state 11
+    '+'      shift, and go to state 12
+    '-'      shift, and go to state 13
+
+    PrimaryExp  go to state 14
+    Exp         go to state 22
+    AddExp      go to state 16
+    MulExp      go to state 17
+    UnaryExp    go to state 18
+    LVal        go to state 7
+
+
+State 9
+
+   23 LVal: IDENT LValTail •
+
+    $default  reduce using rule 23 (LVal)
+
+
+State 10
+
+   15 UnaryExp: IDENT • LPARENT FuncRParamsOpt RPARENT
+   23 LVal: IDENT • LValTail
+
+    LPARENT   shift, and go to state 23
+    LBRACKET  shift, and go to state 8
+
+    $default  reduce using rule 25 (LValTail)
+
+    LValTail  go to state 9
+
+
+State 11
+
+   16 UnaryExp: '!' • UnaryExp
+
+    IDENT    shift, and go to state 10
+    Number   shift, and go to state 2
+    LPARENT  shift, and go to state 3
+    '!'      shift, and go to state 11
+    '+'      shift, and go to state 12
+    '-'      shift, and go to state 13
+
+    PrimaryExp  go to state 14
+    UnaryExp    go to state 24
+    LVal        go to state 7
+
+
+State 12
+
+   17 UnaryExp: '+' • UnaryExp
+
+    IDENT    shift, and go to state 10
+    Number   shift, and go to state 2
+    LPARENT  shift, and go to state 3
+    '!'      shift, and go to state 11
+    '+'      shift, and go to state 12
+    '-'      shift, and go to state 13
+
+    PrimaryExp  go to state 14
+    UnaryExp    go to state 25
+    LVal        go to state 7
+
+
+State 13
+
+   18 UnaryExp: '-' • UnaryExp
+
+    IDENT    shift, and go to state 10
+    Number   shift, and go to state 2
+    LPARENT  shift, and go to state 3
+    '!'      shift, and go to state 11
+    '+'      shift, and go to state 12
+    '-'      shift, and go to state 13
+
+    PrimaryExp  go to state 14
+    UnaryExp    go to state 26
+    LVal        go to state 7
+
+
+State 14
+
+   14 UnaryExp: PrimaryExp •
+
+    $default  reduce using rule 14 (UnaryExp)
+
+
+State 15
+
+    4 PrimaryExp: LPARENT Exp • RPARENT
+
+    RPARENT  shift, and go to state 27
+
+
+State 16
+
+    7 Exp: AddExp •
+
+    $default  reduce using rule 7 (Exp)
+
+
+State 17
+
+    8 AddExp: MulExp • AddExpTail
+
+    SIGN  shift, and go to state 28
+
+    $default  reduce using rule 10 (AddExpTail)
+
+    AddExpTail  go to state 29
+
+
+State 18
+
+   11 MulExp: UnaryExp • MulExpTail
+
+    MUL  shift, and go to state 30
+
+    $default  reduce using rule 13 (MulExpTail)
+
+    MulExpTail  go to state 31
+
+
+State 19
 
     0 $accept: line_list $end •
 
     $default  accept
 
 
-State 8
+State 20
 
     2 line_list: line_list line •
 
     $default  reduce using rule 2 (line_list)
 
 
-State 9
+State 21
 
-    3 line: expression END • CR
+    3 line: PrimaryExp END • CR
 
-    CR  shift, and go to state 10
+    CR  shift, and go to state 32
 
 
-State 10
+State 22
 
-    3 line: expression END CR •
+   24 LValTail: LBRACKET Exp • RBRACKET LValTail
+
+    RBRACKET  shift, and go to state 33
+
+
+State 23
+
+   15 UnaryExp: IDENT LPARENT • FuncRParamsOpt RPARENT
+
+    IDENT    shift, and go to state 10
+    Number   shift, and go to state 2
+    LPARENT  shift, and go to state 3
+    '!'      shift, and go to state 11
+    '+'      shift, and go to state 12
+    '-'      shift, and go to state 13
+
+    $default  reduce using rule 19 (FuncRParamsOpt)
+
+    PrimaryExp      go to state 14
+    Exp             go to state 34
+    AddExp          go to state 16
+    MulExp          go to state 17
+    UnaryExp        go to state 18
+    FuncRParamsOpt  go to state 35
+    FuncRParams     go to state 36
+    LVal            go to state 7
+
+
+State 24
+
+   16 UnaryExp: '!' UnaryExp •
+
+    $default  reduce using rule 16 (UnaryExp)
+
+
+State 25
+
+   17 UnaryExp: '+' UnaryExp •
+
+    $default  reduce using rule 17 (UnaryExp)
+
+
+State 26
+
+   18 UnaryExp: '-' UnaryExp •
+
+    $default  reduce using rule 18 (UnaryExp)
+
+
+State 27
+
+    4 PrimaryExp: LPARENT Exp RPARENT •
+
+    $default  reduce using rule 4 (PrimaryExp)
+
+
+State 28
+
+    9 AddExpTail: SIGN • MulExp AddExpTail
+
+    IDENT    shift, and go to state 10
+    Number   shift, and go to state 2
+    LPARENT  shift, and go to state 3
+    '!'      shift, and go to state 11
+    '+'      shift, and go to state 12
+    '-'      shift, and go to state 13
+
+    PrimaryExp  go to state 14
+    MulExp      go to state 37
+    UnaryExp    go to state 18
+    LVal        go to state 7
+
+
+State 29
+
+    8 AddExp: MulExp AddExpTail •
+
+    $default  reduce using rule 8 (AddExp)
+
+
+State 30
+
+   12 MulExpTail: MUL • UnaryExp MulExpTail
+
+    IDENT    shift, and go to state 10
+    Number   shift, and go to state 2
+    LPARENT  shift, and go to state 3
+    '!'      shift, and go to state 11
+    '+'      shift, and go to state 12
+    '-'      shift, and go to state 13
+
+    PrimaryExp  go to state 14
+    UnaryExp    go to state 38
+    LVal        go to state 7
+
+
+State 31
+
+   11 MulExp: UnaryExp MulExpTail •
+
+    $default  reduce using rule 11 (MulExp)
+
+
+State 32
+
+    3 line: PrimaryExp END CR •
 
     $default  reduce using rule 3 (line)
+
+
+State 33
+
+   24 LValTail: LBRACKET Exp RBRACKET • LValTail
+
+    LBRACKET  shift, and go to state 8
+
+    $default  reduce using rule 25 (LValTail)
+
+    LValTail  go to state 39
+
+
+State 34
+
+   21 FuncRParams: Exp •
+   22            | Exp • ',' FuncRParams
+
+    ','  shift, and go to state 40
+
+    $default  reduce using rule 21 (FuncRParams)
+
+
+State 35
+
+   15 UnaryExp: IDENT LPARENT FuncRParamsOpt • RPARENT
+
+    RPARENT  shift, and go to state 41
+
+
+State 36
+
+   20 FuncRParamsOpt: FuncRParams •
+
+    $default  reduce using rule 20 (FuncRParamsOpt)
+
+
+State 37
+
+    9 AddExpTail: SIGN MulExp • AddExpTail
+
+    SIGN  shift, and go to state 28
+
+    $default  reduce using rule 10 (AddExpTail)
+
+    AddExpTail  go to state 42
+
+
+State 38
+
+   12 MulExpTail: MUL UnaryExp • MulExpTail
+
+    MUL  shift, and go to state 30
+
+    $default  reduce using rule 13 (MulExpTail)
+
+    MulExpTail  go to state 43
+
+
+State 39
+
+   24 LValTail: LBRACKET Exp RBRACKET LValTail •
+
+    $default  reduce using rule 24 (LValTail)
+
+
+State 40
+
+   22 FuncRParams: Exp ',' • FuncRParams
+
+    IDENT    shift, and go to state 10
+    Number   shift, and go to state 2
+    LPARENT  shift, and go to state 3
+    '!'      shift, and go to state 11
+    '+'      shift, and go to state 12
+    '-'      shift, and go to state 13
+
+    PrimaryExp   go to state 14
+    Exp          go to state 34
+    AddExp       go to state 16
+    MulExp       go to state 17
+    UnaryExp     go to state 18
+    FuncRParams  go to state 44
+    LVal         go to state 7
+
+
+State 41
+
+   15 UnaryExp: IDENT LPARENT FuncRParamsOpt RPARENT •
+
+    $default  reduce using rule 15 (UnaryExp)
+
+
+State 42
+
+    9 AddExpTail: SIGN MulExp AddExpTail •
+
+    $default  reduce using rule 9 (AddExpTail)
+
+
+State 43
+
+   12 MulExpTail: MUL UnaryExp MulExpTail •
+
+    $default  reduce using rule 12 (MulExpTail)
+
+
+State 44
+
+   22 FuncRParams: Exp ',' FuncRParams •
+
+    $default  reduce using rule 22 (FuncRParams)

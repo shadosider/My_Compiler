@@ -8,9 +8,9 @@ int line_number = 1;
 %}
 
 /* 标识符Ident的声明  */
-identifier-nondigit    [_a-zA-Z]
-digit                   [0-9]
-Ident      ({identifier-nondigit}({identifier-nondigit}|{digit})*)
+identifier-nondigit    [_a-zA-Z]    
+digit                   [0-9]        
+Ident                   {identifier-nondigit}({identifier-nondigit}|{digit})* 
 
 
 /* 有关Number的声明  */
@@ -26,6 +26,7 @@ IntConst  ({decimal-const}|{octal-const}|{hexadecimal-const})
 digit-sequence       [0-9]+
 fractional-constant  {digit-sequence}?\.{digit-sequence}|{digit-sequence}\.
 sign          [+-]
+mul           [*/%]           
 exponent-part      e{sign}?{digit-sequence}|E{sign}?{digit-sequence}
 decimal-floating-constant   {fractional-constant}{exponent-part}?|{digit-sequence}{exponent-part}
 hexadecimal-digit-sequence    {hexadecimal-digit}
@@ -44,9 +45,18 @@ Number   ({IntConst}|{floatConst})
 
 %%
 
+
 {Ident}             {printf("ID %s\n", yytext);}  return IDENT;  
-{IntConst}          return INTCON;  //printf("INTCON %d\n", (int)strtol(yytext, NULL, 0));
-{floatConst}        return FLOATCON;   //printf("FLOATCON %s\n", yytext);
+{Number}            {printf("Num %s\n", yytext);} return Number;
+{sign}              return SIGN;
+{mul}               return MUL; 
+"("                 {printf("LPARENT \( \n");} return LPARENT;
+")"                 {printf("RPARENT \) \n");} return RPARENT;
+"["                 {printf("LBRACKET [ \n");} return LBRACKET;
+"]"                 {printf("RBRACKET ] \n");} return RBRACKET;
+"{"                 {printf("LBRACE \{ \n");} return LBRACE;
+"}"                 {printf("RBRACE \} \n");} return RBRACE;
+
 [ \t]+            ; // 忽略空格、制表符和换行符
 ;                  return END;
 \n                line_number++;return CR;
