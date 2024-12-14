@@ -843,7 +843,7 @@ YY_RULE_SETUP
 case 3:
 YY_RULE_SETUP
 #line 52 "lexer.l"
-return CONST;
+{printf("CONST \n");} return CONST;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
@@ -893,7 +893,7 @@ YY_RULE_SETUP
 case 13:
 YY_RULE_SETUP
 #line 64 "lexer.l"
-{printf("FLOATCON %d\n", (int)strtol(yytext, NULL, 0));} return FLOATCONST;
+{printf("FLOATCON %s\n", yytext);} return FLOATCONST;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
@@ -928,7 +928,7 @@ return UNARYOP;
 case 20:
 YY_RULE_SETUP
 #line 73 "lexer.l"
-return COMMA;
+{printf("COMMA ,\n");} return COMMA;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
@@ -938,12 +938,12 @@ YY_RULE_SETUP
 case 22:
 YY_RULE_SETUP
 #line 75 "lexer.l"
-return OR;
+{printf("OR ||\n");} return OR;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 76 "lexer.l"
-return AND;
+{printf("AND &&\n");} return AND;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP

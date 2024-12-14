@@ -49,7 +49,7 @@ UnaryOP  ["!""+""-"]
 
 "void"              {printf("VOIDTK \n");} return VOID;
 "int"               {printf("INTTK int\n");} return INT;
-"const"             return CONST;
+"const"             {printf("CONST \n");} return CONST;
 "float"             {printf("FLOATTK \n");} return FLOAT;
 
 "if"                return IF;
@@ -61,7 +61,7 @@ UnaryOP  ["!""+""-"]
 
 {Ident}             {printf("ID %s\n", yytext);} return IDENT;  
 {IntConst}          {printf("INTCON %d\n", (int)strtol(yytext, NULL, 0));} return INTCONST;
-{floatConst}        {printf("FLOATCON %d\n", (int)strtol(yytext, NULL, 0));} return FLOATCONST;
+{floatConst}        {printf("FLOATCON %s\n", yytext);} return FLOATCONST;
 
 "+"                 {printf("PLUS +\n");} return PLUS;
 "-"                 {printf("MINUS -\n");} return MINUS;
@@ -72,8 +72,8 @@ UnaryOP  ["!""+""-"]
 
 ","                 {printf("COMMA ,\n");} return COMMA;
 "="                 {printf("ASSIGN =\n");} return ASSIGN;
-"||"                return OR;
-"&&"                return AND;
+"||"                {printf("OR ||\n");} return OR;
+"&&"                {printf("AND &&\n");} return AND;
 
 "("                 {printf("LPARENT \( \n");} return LPARENT;
 ")"                 {printf("RPARENT \) \n");} return RPARENT;
