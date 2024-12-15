@@ -4,11 +4,31 @@
 
 extern FILE *yyin;  // 声明 yyin，指向输入文件
 
+
 int yylex(void);
 void yyerror(char *);
+
+int indent_level = 0; // 用于控制缩进
+void print_indent() {
+    for (int i = 0; i < indent_level; i++) {
+        printf("  ");
+    }
+}
+
+
 %}
 
-%token IDENT PLUS MINUS ASSIGN MUL VOID INT FLOAT UNARYOP CONST COMMA INTCONST FLOATCONST EQUAL OR AND WEIGHT IF ELSE WHILE BREAK CONTINUE RETURN LPARENT RPARENT LBRACKET RBRACKET LBRACE RBRACE END
+%union {
+    int ival;      // 用于存储整数
+    float fval;    // 用于存储浮点数
+    char *strval;  // 用于存储字符串
+}
+
+
+%token <ival> INTCONST
+%token <fval> FLOATCONST
+%token <strval> INT VOID FLOAT IDENT PLUS MINUS ASSIGN MUL UNARYOP CONST COMMA EQUAL OR AND WEIGHT IF ELSE WHILE BREAK CONTINUE RETURN LPARENT RPARENT LBRACKET RBRACKET LBRACE RBRACE END
+
 
 %%
 
@@ -16,10 +36,16 @@ void yyerror(char *);
                 | line_list line
                 ;
 
-	     line : CompUnit     
+	     line : CompUnit      {
+                    print_indent();
+                    printf("Parsed line\n");
+                    indent_level++;
+                };
                 ;
 
-        CompUnit: CompUnitOpt FuncDef     /* 编译单元 */
+        CompUnit: CompUnitOpt FuncDef  {        /* 编译单元 */
+                    
+                }    
                 | CompUnitOpt Decl     
                 ;
 
@@ -85,13 +111,16 @@ ConstInitValTail: COMMA ConstInitVal ConstInitValTail
      InitValTail: COMMA InitVal InitValTail
                 | /* empty */
                 ;
-
-         FuncDef: FuncType IDENT LPARENT FuncFParamsOpt RPARENT Block        /* 函数定义  */ 
+ 
+         FuncDef: FuncType IDENT LPARENT FuncFParamsOpt RPARENT Block {  /* 函数定义  */
+                    
+                    
+                }
                 ;
 
-        FuncType: VOID      /* 函数类型 */
-                | INT          
-                | FLOAT
+        FuncType: VOID     /* 函数类型 */
+                | INT    { printf("FuncDef: %s\n", (char*)$1); }     
+                | FLOAT    
                 ;
 
            BType: INT            /* 基本类型  */  
@@ -150,7 +179,7 @@ ConstInitValTail: COMMA ConstInitVal ConstInitValTail
 
       PrimaryExp: LPARENT Exp RPARENT    /* 基本表达式  */  
                 | LVal       
-                | INTCONST
+                | INTCONST  
                 | FLOATCONST  
                 ;
 
@@ -235,7 +264,7 @@ ConstInitValTail: COMMA ConstInitVal ConstInitValTail
 %%
 
 void yyerror(char *str){
-    fprintf(stderr,"error:%s\n",str);
+    fprintf(stderr,"Error :%s\n",str);
 }
 
 int yywrap(){

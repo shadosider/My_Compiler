@@ -4,7 +4,10 @@
 #include "y.tab.h"
 // 定义一个全局变量来跟踪行号
 int line_number = 1;
-
+void error(const char *str, const char *yytext) {
+    fprintf(stderr, "Error type A at Line %d: %s '%s'\n", line_number, str, yytext);
+    exit(1);  // 立即退出
+}
 %}
 
 /* 标识符Ident的声明  */
@@ -16,7 +19,7 @@ Ident                   {identifier-nondigit}({identifier-nondigit}|{digit})*
 /* 有关Number的声明  */
 /* IntConst的声明  */
 decimal-const   [1-9][0-9]*  
-octal-const   0[0-7]+
+octal-const   0[0-7]*
 hexadecimal-prefix  (0x|0X)
 hexadecimal-digit [0-9A-Fa-f]+
 hexadecimal-const  {hexadecimal-prefix}{hexadecimal-digit} 
@@ -47,44 +50,53 @@ UnaryOP  ["!""+""-"]
 
 %%
 
-"void"              {printf("VOIDTK \n");} return VOID;
-"int"               {printf("INTTK int\n");} return INT;
-"const"             {printf("CONST \n");} return CONST;
-"float"             {printf("FLOATTK \n");} return FLOAT;
+"void"               return VOID;{printf("VOIDTK \n");}
+"int"                {yylval.strval = strdup(yytext);}return INT;{printf("INTTK int\n");}
+"const"              return CONST;{printf("CONST \n");}
+"float"              return FLOAT;{printf("FLOATTK \n");}
 
-"if"                return IF;
-"else"              return ELSE;
-"while"             return WHILE;
-"break"             return BREAK;
-"continue"          return CONTINUE;
-"return"            return RETURN;
+"if"                 return IF;{printf("IF \n");}
+"else"               return ELSE;{printf("ELSE \n");}
+"while"              return WHILE;{printf("WHILE \n");}
+"break"              return BREAK;{printf("BREAK \n");}
+"continue"           return CONTINUE;{printf("CONTINUE \n");}
+"return"             return RETURN;{printf("RETURN \n");}
 
-{Ident}             {printf("ID %s\n", yytext);} return IDENT;  
-{IntConst}          {printf("INTCON %d\n", (int)strtol(yytext, NULL, 0));} return INTCONST;
-{floatConst}        {printf("FLOATCON %s\n", yytext);} return FLOATCONST;
+{Ident}              return IDENT;  {printf("ID %s\n", yytext);}
+{IntConst}           return INTCONST;{printf("INTCON %d\n", (int)strtol(yytext, NULL, 0));}
+{floatConst}         return FLOATCONST;{printf("FLOATCON %s\n", yytext);}
 
-"+"                 {printf("PLUS +\n");} return PLUS;
-"-"                 {printf("MINUS -\n");} return MINUS;
+"+"                  return PLUS;{printf("PLUS +\n");}
+"-"                  return MINUS;{printf("MINUS -\n");}
 {mul}               return MUL; 
 {Equal}             return EQUAL;
 {Weight}            return WEIGHT;
 {UnaryOP}           return UNARYOP;
 
-","                 {printf("COMMA ,\n");} return COMMA;
-"="                 {printf("ASSIGN =\n");} return ASSIGN;
-"||"                {printf("OR ||\n");} return OR;
-"&&"                {printf("AND &&\n");} return AND;
+","                  return COMMA;{printf("COMMA ,\n");}
+"="                  return ASSIGN;{printf("ASSIGN =\n");}
+"||"                 return OR;{printf("OR ||\n");}
+"&&"                 return AND;{printf("AND &&\n");}
 
-"("                 {printf("LPARENT \( \n");} return LPARENT;
-")"                 {printf("RPARENT \) \n");} return RPARENT;
-"["                 {printf("LBRACKET [ \n");} return LBRACKET;
-"]"                 {printf("RBRACKET ] \n");} return RBRACKET;
-"{"                 {printf("LBRACE \{ \n");} return LBRACE;
-"}"                 {printf("RBRACE \} \n");} return RBRACE;
+"("                  return LPARENT;{printf("LPARENT \( \n");}
+")"                  return RPARENT;{printf("RPARENT \) \n");}
+"["                  return LBRACKET;{printf("LBRACKET [ \n");}
+"]"                  return RBRACKET;{printf("RBRACKET ] \n");}
+"{"                  return LBRACE;{printf("LBRACE \{ \n");}
+"}"                  return RBRACE;{printf("RBRACE \} \n");}
 
 [ \t]+              ; // 忽略空格、制表符和换行符
-;                   {printf("SEMICN ;\n");} return END;
+;                    return END;{printf("SEMICN\n");}
 \n                  line_number++;
-.                   ;
+
+
+0[89]              {fprintf(stderr, "Error type A at Line %d: Illegal octal number %s\n",line_number, yytext); exit(1);}    /* 错误：非法八进制数字 */
+
+
+0[xX][0-9A-Fa-f]*[^0-9A-Fa-f]  {fprintf(stderr, "Error type A at Line %d: Illegal hexadecimal number %s\n",line_number, yytext); exit(1);}   /* 错误：非法十六进制数字 */
+
+
+.                     {error("Invalid character", yytext);}
+
 
 %%

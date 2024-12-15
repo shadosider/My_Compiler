@@ -8,7 +8,7 @@ Rules useless in parser due to conflicts
 
 
 State 3 conflicts: 4 reduce/reduce
-State 8 conflicts: 1 reduce/reduce
+State 7 conflicts: 1 reduce/reduce
 State 9 conflicts: 1 reduce/reduce
 State 45 conflicts: 2 shift/reduce, 11 reduce/reduce
 State 46 conflicts: 1 shift/reduce, 12 reduce/reduce
@@ -181,36 +181,36 @@ Terminals, with rules where they appear
 
     $end (0) 0
     error (256)
-    IDENT (258) 11 26 27 34 41 81 87
-    PLUS (259) 74 99
-    MINUS (260) 75 100
-    ASSIGN (261) 11 27 50
-    MUL (262) 78 102
-    VOID (263) 35
-    INT (264) 36 38
-    FLOAT (265) 37 39
-    UNARYOP (266) 82
-    CONST (267) 10
-    COMMA (268) 19 21 24 32 46 86
-    INTCONST (269) 67
-    FLOATCONST (270) 68
-    EQUAL (271) 95
-    OR (272) 91
-    AND (273) 93
-    WEIGHT (274) 97
-    IF (275) 53
-    ELSE (276) 58
-    WHILE (277) 54
-    BREAK (278) 55
-    CONTINUE (279) 56
-    RETURN (280) 57
-    LPARENT (281) 34 53 54 65 81
-    RPARENT (282) 34 53 54 65 81
-    LBRACKET (283) 13 42 44 88
-    RBRACKET (284) 13 42 44 88
-    LBRACE (285) 16 29 60
-    RBRACE (286) 16 29 60
-    END (287) 10 23 50 51 55 56 57
+    INTCONST <ival> (258) 67
+    FLOATCONST <fval> (259) 68
+    INT <strval> (260) 36 38
+    VOID <strval> (261) 35
+    FLOAT <strval> (262) 37 39
+    IDENT <strval> (263) 11 26 27 34 41 81 87
+    PLUS <strval> (264) 74 99
+    MINUS <strval> (265) 75 100
+    ASSIGN <strval> (266) 11 27 50
+    MUL <strval> (267) 78 102
+    UNARYOP <strval> (268) 82
+    CONST <strval> (269) 10
+    COMMA <strval> (270) 19 21 24 32 46 86
+    EQUAL <strval> (271) 95
+    OR <strval> (272) 91
+    AND <strval> (273) 93
+    WEIGHT <strval> (274) 97
+    IF <strval> (275) 53
+    ELSE <strval> (276) 58
+    WHILE <strval> (277) 54
+    BREAK <strval> (278) 55
+    CONTINUE <strval> (279) 56
+    RETURN <strval> (280) 57
+    LPARENT <strval> (281) 34 53 54 65 81
+    RPARENT <strval> (282) 34 53 54 65 81
+    LBRACKET <strval> (283) 13 42 44 88
+    RBRACKET <strval> (284) 13 42 44 88
+    LBRACE <strval> (285) 16 29 60
+    RBRACE <strval> (286) 16 29 60
+    END <strval> (287) 10 23 50 51 55 56 57
 
 
 Nonterminals, with rules where they appear
@@ -407,10 +407,10 @@ State 3
     3 line: CompUnit •
     6 CompUnitOpt: CompUnit •
 
-    VOID      reduce using rule 3 (line)
-    VOID      [reduce using rule 6 (CompUnitOpt)]
     INT       reduce using rule 3 (line)
     INT       [reduce using rule 6 (CompUnitOpt)]
+    VOID      reduce using rule 3 (line)
+    VOID      [reduce using rule 6 (CompUnitOpt)]
     FLOAT     reduce using rule 3 (line)
     FLOAT     [reduce using rule 6 (CompUnitOpt)]
     CONST     reduce using rule 3 (line)
@@ -423,8 +423,8 @@ State 4
     4 CompUnit: CompUnitOpt • FuncDef
     5         | CompUnitOpt • Decl
 
-    VOID   shift, and go to state 7
-    INT    shift, and go to state 8
+    INT    shift, and go to state 7
+    VOID   shift, and go to state 8
     FLOAT  shift, and go to state 9
     CONST  shift, and go to state 10
 
@@ -452,19 +452,19 @@ State 6
 
 State 7
 
-   35 FuncType: VOID •
-
-    $default  reduce using rule 35 (FuncType)
-
-
-State 8
-
    36 FuncType: INT •
    38 BType: INT •
 
     IDENT     reduce using rule 36 (FuncType)
     IDENT     [reduce using rule 38 (BType)]
     $default  reduce using rule 36 (FuncType)
+
+
+State 8
+
+   35 FuncType: VOID •
+
+    $default  reduce using rule 35 (FuncType)
 
 
 State 9
@@ -625,10 +625,10 @@ State 26
 
    13 ConstExpTail: LBRACKET • ConstExp RBRACKET ConstExpTail
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     LPARENT     shift, and go to state 41
 
     ConstExp    go to state 42
@@ -722,6 +722,20 @@ State 36
 
 State 37
 
+   67 PrimaryExp: INTCONST •
+
+    $default  reduce using rule 67 (PrimaryExp)
+
+
+State 38
+
+   68 PrimaryExp: FLOATCONST •
+
+    $default  reduce using rule 68 (PrimaryExp)
+
+
+State 39
+
    81 UnaryExp: IDENT • LPARENT FuncRParamsOpt RPARENT
    87 LVal: IDENT • LValTail
 
@@ -733,14 +747,14 @@ State 37
     LValTail  go to state 60
 
 
-State 38
+State 40
 
    82 UnaryExp: UNARYOP • UnaryExp
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     LPARENT     shift, and go to state 41
 
     PrimaryExp  go to state 43
@@ -748,28 +762,14 @@ State 38
     LVal        go to state 47
 
 
-State 39
-
-   67 PrimaryExp: INTCONST •
-
-    $default  reduce using rule 67 (PrimaryExp)
-
-
-State 40
-
-   68 PrimaryExp: FLOATCONST •
-
-    $default  reduce using rule 68 (PrimaryExp)
-
-
 State 41
 
    65 PrimaryExp: LPARENT • Exp RPARENT
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     LPARENT     shift, and go to state 41
 
     PrimaryExp  go to state 43
@@ -890,10 +890,10 @@ State 48
 
    27 VarDef: IDENT ConstExpTail ASSIGN • InitVal
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     LPARENT     shift, and go to state 41
     LBRACE      shift, and go to state 73
 
@@ -928,10 +928,10 @@ State 51
 
    11 ConstDef: IDENT ConstExpTail ASSIGN • ConstInitVal
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     LPARENT     shift, and go to state 41
     LBRACE      shift, and go to state 77
 
@@ -1004,10 +1004,10 @@ State 58
 
    81 UnaryExp: IDENT LPARENT • FuncRParamsOpt RPARENT
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     LPARENT     shift, and go to state 41
 
     $default  reduce using rule 83 (FuncRParamsOpt)
@@ -1026,10 +1026,10 @@ State 59
 
    88 LValTail: LBRACKET • Exp RBRACKET LValTail
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     LPARENT     shift, and go to state 41
 
     PrimaryExp  go to state 43
@@ -1088,10 +1088,10 @@ State 65
 
    99 AddExp: AddExp PLUS • MulExp
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     LPARENT     shift, and go to state 41
 
     PrimaryExp  go to state 43
@@ -1104,10 +1104,10 @@ State 66
 
   100 AddExp: AddExp MINUS • MulExp
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     LPARENT     shift, and go to state 41
 
     PrimaryExp  go to state 43
@@ -1120,10 +1120,10 @@ State 67
 
    74 AddExpTail: PLUS • MulExp AddExpTail
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     LPARENT     shift, and go to state 41
 
     PrimaryExp  go to state 43
@@ -1136,10 +1136,10 @@ State 68
 
    75 AddExpTail: MINUS • MulExp AddExpTail
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     LPARENT     shift, and go to state 41
 
     PrimaryExp  go to state 43
@@ -1152,10 +1152,10 @@ State 69
 
   102 MulExp: MulExp MUL • UnaryExp
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     LPARENT     shift, and go to state 41
 
     PrimaryExp  go to state 43
@@ -1174,10 +1174,10 @@ State 71
 
    78 MulExpTail: MUL • UnaryExp MulExpTail
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     LPARENT     shift, and go to state 41
 
     PrimaryExp  go to state 43
@@ -1196,10 +1196,10 @@ State 73
 
    29 InitVal: LBRACE • InitValOpt RBRACE
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     LPARENT     shift, and go to state 41
     LBRACE      shift, and go to state 73
 
@@ -1240,10 +1240,10 @@ State 77
 
    16 ConstInitVal: LBRACE • ConstInitValOpt RBRACE
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     LPARENT     shift, and go to state 41
     LBRACE      shift, and go to state 77
 
@@ -1309,13 +1309,13 @@ State 84
 
    60 Block: LBRACE • BlockItemTail RBRACE
 
-    IDENT       shift, and go to state 37
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
     INT         shift, and go to state 17
     FLOAT       shift, and go to state 18
-    UNARYOP     shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     CONST       shift, and go to state 10
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
     IF          shift, and go to state 104
     WHILE       shift, and go to state 105
     BREAK       shift, and go to state 106
@@ -1553,10 +1553,10 @@ State 108
 
    57 Stmt: RETURN • ExpOpt END
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     LPARENT     shift, and go to state 41
 
     $default  reduce using rule 71 (ExpOpt)
@@ -1595,13 +1595,13 @@ State 112
 
    63 BlockItemTail: BlockItem • BlockItemTail
 
-    IDENT       shift, and go to state 37
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
     INT         shift, and go to state 17
     FLOAT       shift, and go to state 18
-    UNARYOP     shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     CONST       shift, and go to state 10
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
     IF          shift, and go to state 104
     WHILE       shift, and go to state 105
     BREAK       shift, and go to state 106
@@ -1665,10 +1665,10 @@ State 117
 
    86 FuncRParams: Exp COMMA • FuncRParams
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     LPARENT     shift, and go to state 41
 
     PrimaryExp   go to state 43
@@ -1723,10 +1723,10 @@ State 123
 
    32 InitValTail: COMMA • InitVal InitValTail
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     LPARENT     shift, and go to state 41
     LBRACE      shift, and go to state 73
 
@@ -1757,10 +1757,10 @@ State 126
 
    19 ConstInitValTail: COMMA • ConstInitVal ConstInitValTail
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     LPARENT     shift, and go to state 41
     LBRACE      shift, and go to state 77
 
@@ -1791,10 +1791,10 @@ State 129
 
    44 ExpTail: LBRACKET • Exp RBRACKET ExpTail
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     LPARENT     shift, and go to state 41
 
     PrimaryExp  go to state 43
@@ -1816,10 +1816,10 @@ State 131
 
    53 Stmt: IF LPARENT • Cond RPARENT Stmt StmtOpt
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     LPARENT     shift, and go to state 41
 
     PrimaryExp  go to state 43
@@ -1838,10 +1838,10 @@ State 132
 
    54 Stmt: WHILE LPARENT • Cond RPARENT Stmt
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     LPARENT     shift, and go to state 41
 
     PrimaryExp  go to state 43
@@ -1902,10 +1902,10 @@ State 139
 
    50 Stmt: LVal ASSIGN • Exp END
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     LPARENT     shift, and go to state 41
 
     PrimaryExp  go to state 43
@@ -2068,10 +2068,10 @@ State 157
 
    53 Stmt: IF LPARENT Cond RPARENT • Stmt StmtOpt
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     IF          shift, and go to state 104
     WHILE       shift, and go to state 105
     BREAK       shift, and go to state 106
@@ -2097,10 +2097,10 @@ State 158
 
    91 LOrExp: LOrExp OR • LAndExp
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     LPARENT     shift, and go to state 41
 
     PrimaryExp  go to state 43
@@ -2117,10 +2117,10 @@ State 159
 
    93 LAndExp: LAndExp AND • EqExp
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     LPARENT     shift, and go to state 41
 
     PrimaryExp  go to state 43
@@ -2136,10 +2136,10 @@ State 160
 
    95 EqExp: EqExp EQUAL • RelExp
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     LPARENT     shift, and go to state 41
 
     PrimaryExp  go to state 43
@@ -2154,10 +2154,10 @@ State 161
 
    97 RelExp: RelExp WEIGHT • AddExp
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     LPARENT     shift, and go to state 41
 
     PrimaryExp  go to state 43
@@ -2171,10 +2171,10 @@ State 162
 
    54 Stmt: WHILE LPARENT Cond RPARENT • Stmt
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     IF          shift, and go to state 104
     WHILE       shift, and go to state 105
     BREAK       shift, and go to state 106
@@ -2275,10 +2275,10 @@ State 171
 
    58 StmtOpt: ELSE • Stmt
 
-    IDENT       shift, and go to state 37
-    UNARYOP     shift, and go to state 38
-    INTCONST    shift, and go to state 39
-    FLOATCONST  shift, and go to state 40
+    INTCONST    shift, and go to state 37
+    FLOATCONST  shift, and go to state 38
+    IDENT       shift, and go to state 39
+    UNARYOP     shift, and go to state 40
     IF          shift, and go to state 104
     WHILE       shift, and go to state 105
     BREAK       shift, and go to state 106

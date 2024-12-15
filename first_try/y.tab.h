@@ -54,19 +54,19 @@ extern int yydebug;
     YYEOF = 0,                     /* "end of file"  */
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
-    IDENT = 258,                   /* IDENT  */
-    PLUS = 259,                    /* PLUS  */
-    MINUS = 260,                   /* MINUS  */
-    ASSIGN = 261,                  /* ASSIGN  */
-    MUL = 262,                     /* MUL  */
-    VOID = 263,                    /* VOID  */
-    INT = 264,                     /* INT  */
-    FLOAT = 265,                   /* FLOAT  */
-    UNARYOP = 266,                 /* UNARYOP  */
-    CONST = 267,                   /* CONST  */
-    COMMA = 268,                   /* COMMA  */
-    INTCONST = 269,                /* INTCONST  */
-    FLOATCONST = 270,              /* FLOATCONST  */
+    INTCONST = 258,                /* INTCONST  */
+    FLOATCONST = 259,              /* FLOATCONST  */
+    INT = 260,                     /* INT  */
+    VOID = 261,                    /* VOID  */
+    FLOAT = 262,                   /* FLOAT  */
+    IDENT = 263,                   /* IDENT  */
+    PLUS = 264,                    /* PLUS  */
+    MINUS = 265,                   /* MINUS  */
+    ASSIGN = 266,                  /* ASSIGN  */
+    MUL = 267,                     /* MUL  */
+    UNARYOP = 268,                 /* UNARYOP  */
+    CONST = 269,                   /* CONST  */
+    COMMA = 270,                   /* COMMA  */
     EQUAL = 271,                   /* EQUAL  */
     OR = 272,                      /* OR  */
     AND = 273,                     /* AND  */
@@ -92,19 +92,19 @@ extern int yydebug;
 #define YYEOF 0
 #define YYerror 256
 #define YYUNDEF 257
-#define IDENT 258
-#define PLUS 259
-#define MINUS 260
-#define ASSIGN 261
-#define MUL 262
-#define VOID 263
-#define INT 264
-#define FLOAT 265
-#define UNARYOP 266
-#define CONST 267
-#define COMMA 268
-#define INTCONST 269
-#define FLOATCONST 270
+#define INTCONST 258
+#define FLOATCONST 259
+#define INT 260
+#define VOID 261
+#define FLOAT 262
+#define IDENT 263
+#define PLUS 264
+#define MINUS 265
+#define ASSIGN 266
+#define MUL 267
+#define UNARYOP 268
+#define CONST 269
+#define COMMA 270
 #define EQUAL 271
 #define OR 272
 #define AND 273
@@ -125,7 +125,18 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+union YYSTYPE
+{
+#line 21 "lexer.y"
+
+    int ival;      // 用于存储整数
+    float fval;    // 用于存储浮点数
+    char *strval;  // 用于存储字符串
+
+#line 137 "y.tab.h"
+
+};
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
