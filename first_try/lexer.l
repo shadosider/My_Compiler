@@ -50,10 +50,10 @@ UnaryOP  ["!""+""-"]
 
 %%
 
-"void"               return VOID;{printf("VOIDTK \n");}
+"void"               {yylval.strval = strdup(yytext);}return VOID;{printf("VOIDTK \n");}
 "int"                {yylval.strval = strdup(yytext);}return INT;{printf("INTTK int\n");}
 "const"              return CONST;{printf("CONST \n");}
-"float"              return FLOAT;{printf("FLOATTK \n");}
+"float"              {yylval.strval = strdup(yytext);}return FLOAT;{printf("FLOATTK \n");}
 
 "if"                 return IF;{printf("IF \n");}
 "else"               return ELSE;{printf("ELSE \n");}
@@ -62,7 +62,7 @@ UnaryOP  ["!""+""-"]
 "continue"           return CONTINUE;{printf("CONTINUE \n");}
 "return"             return RETURN;{printf("RETURN \n");}
 
-{Ident}              return IDENT;  {printf("ID %s\n", yytext);}
+{Ident}              {yylval.strval = strdup(yytext);}return IDENT; {printf("ID %s\n", yytext);}
 {IntConst}           return INTCONST;{printf("INTCON %d\n", (int)strtol(yytext, NULL, 0));}
 {floatConst}         return FLOATCONST;{printf("FLOATCON %s\n", yytext);}
 
@@ -78,12 +78,12 @@ UnaryOP  ["!""+""-"]
 "||"                 return OR;{printf("OR ||\n");}
 "&&"                 return AND;{printf("AND &&\n");}
 
-"("                  return LPARENT;{printf("LPARENT \( \n");}
-")"                  return RPARENT;{printf("RPARENT \) \n");}
-"["                  return LBRACKET;{printf("LBRACKET [ \n");}
-"]"                  return RBRACKET;{printf("RBRACKET ] \n");}
-"{"                  return LBRACE;{printf("LBRACE \{ \n");}
-"}"                  return RBRACE;{printf("RBRACE \} \n");}
+"("                  {yylval.strval = strdup(yytext);}return LPARENT;{printf("LPARENT \( \n");}
+")"                  {yylval.strval = strdup(yytext);}return RPARENT;{printf("RPARENT \) \n");}
+"["                  {yylval.strval = strdup(yytext);}return LBRACKET;{printf("LBRACKET [ \n");}
+"]"                  {yylval.strval = strdup(yytext);}return RBRACKET;{printf("RBRACKET ] \n");}
+"{"                  {yylval.strval = strdup(yytext);}return LBRACE;{printf("LBRACE \{ \n");}
+"}"                  {yylval.strval = strdup(yytext);}return RBRACE;{printf("RBRACE \} \n");}
 
 [ \t]+              ; // 忽略空格、制表符和换行符
 ;                    return END;{printf("SEMICN\n");}

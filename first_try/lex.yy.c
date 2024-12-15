@@ -840,7 +840,7 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 53 "lexer.l"
-return VOID;{printf("VOIDTK \n");}
+{yylval.strval = strdup(yytext);}return VOID;{printf("VOIDTK \n");}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
@@ -855,7 +855,7 @@ return CONST;{printf("CONST \n");}
 case 4:
 YY_RULE_SETUP
 #line 56 "lexer.l"
-return FLOAT;{printf("FLOATTK \n");}
+{yylval.strval = strdup(yytext);}return FLOAT;{printf("FLOATTK \n");}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
@@ -890,7 +890,7 @@ return RETURN;{printf("RETURN \n");}
 case 11:
 YY_RULE_SETUP
 #line 65 "lexer.l"
-return IDENT;  {printf("ID %s\n", yytext);}
+{yylval.strval = strdup(yytext);}return IDENT; {printf("ID %s\n", yytext);}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
@@ -955,32 +955,32 @@ return AND;{printf("AND &&\n");}
 case 24:
 YY_RULE_SETUP
 #line 81 "lexer.l"
-return LPARENT;{printf("LPARENT \( \n");}
+{yylval.strval = strdup(yytext);}return LPARENT;{printf("LPARENT \( \n");}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 82 "lexer.l"
-return RPARENT;{printf("RPARENT \) \n");}
+{yylval.strval = strdup(yytext);}return RPARENT;{printf("RPARENT \) \n");}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 83 "lexer.l"
-return LBRACKET;{printf("LBRACKET [ \n");}
+{yylval.strval = strdup(yytext);}return LBRACKET;{printf("LBRACKET [ \n");}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
 #line 84 "lexer.l"
-return RBRACKET;{printf("RBRACKET ] \n");}
+{yylval.strval = strdup(yytext);}return RBRACKET;{printf("RBRACKET ] \n");}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
 #line 85 "lexer.l"
-return LBRACE;{printf("LBRACE \{ \n");}
+{yylval.strval = strdup(yytext);}return LBRACE;{printf("LBRACE \{ \n");}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
 #line 86 "lexer.l"
-return RBRACE;{printf("RBRACE \} \n");}
+{yylval.strval = strdup(yytext);}return RBRACE;{printf("RBRACE \} \n");}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP

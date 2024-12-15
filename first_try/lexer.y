@@ -3,7 +3,7 @@
 #include <string.h>
 
 extern FILE *yyin;  // 声明 yyin，指向输入文件
-
+extern char* yytext;     // 引入 Flex 的当前词法单元文本
 
 int yylex(void);
 void yyerror(char *);
@@ -28,25 +28,32 @@ void print_indent() {
 %token <ival> INTCONST
 %token <fval> FLOATCONST
 %token <strval> INT VOID FLOAT IDENT PLUS MINUS ASSIGN MUL UNARYOP CONST COMMA EQUAL OR AND WEIGHT IF ELSE WHILE BREAK CONTINUE RETURN LPARENT RPARENT LBRACKET RBRACKET LBRACE RBRACE END
-
+%type  <strval> FuncType
 
 %%
 
-       line_list: line
+        line_list: line
                 | line_list line
                 ;
 
-	     line : CompUnit      {
-                    print_indent();
-                    printf("Parsed line\n");
+	    line : CompUnit      {
                     indent_level++;
-                };
+                }
                 ;
 
-        CompUnit: CompUnitOpt FuncDef  {        /* 编译单元 */
+        CompUnit: CompUnitOpt{
+                    print_indent();
+                    indent_level++;
+                    printf("CompUnit (%d)\n", indent_level);
+                } 
+                FuncDef  {        /* 编译单元 */
                     
                 }    
-                | CompUnitOpt Decl     
+                | CompUnitOpt Decl     {
+                    print_indent(); 
+                    printf("Decl\n"); 
+                    indent_level++; 
+                }
                 ;
 
      CompUnitOpt: CompUnit
@@ -57,7 +64,7 @@ void print_indent() {
                 | VarDecl
                 ;
 
-       ConstDecl: CONST BType ConstDef ConstDefTail END      /* 常量声明  */  
+       ConstDecl: CONST BType ConstDef ConstDefTail END;     /* 常量声明  */  
 
            
 
@@ -112,32 +119,72 @@ ConstInitValTail: COMMA ConstInitVal ConstInitValTail
                 | /* empty */
                 ;
  
-         FuncDef: FuncType IDENT LPARENT FuncFParamsOpt RPARENT Block {  /* 函数定义  */
-                    
+         FuncDef: FuncType IDENT LPARENT{
+                    print_indent(); 
+                    printf("FuncDef (%d)\n", indent_level); 
+                    print_indent();
+                    printf("FuncType (%d)\n", indent_level);
+                    print_indent();
+                    printf("Type: %s\n", $1);
+                    print_indent();
+                    printf("Ident: %s\n", $2);
+                    print_indent();
+                    printf("LPARENT\n");
+                } 
+                FuncFParamsOpt RPARENT{
+                    print_indent();
+                    printf("RPARENT\n");
+                } 
+                Block {  /* 函数定义  */
                     
                 }
                 ;
-
-        FuncType: VOID     /* 函数类型 */
-                | INT    { printf("FuncDef: %s\n", (char*)$1); }     
-                | FLOAT    
+        /* 函数类型 */
+        FuncType: VOID      { $$ = $1; }
+                | INT       { $$ = $1; }     
+                | FLOAT     { $$ = $1; }   
                 ;
-
-           BType: INT            /* 基本类型  */  
-                | FLOAT
+        /* 基本类型  */
+           BType: INT       { $$ = $1; }  
+                | FLOAT     { $$ = $1; }
                 ;
 
      FuncFParams: FuncFParam FuncFParamTail     /* 函数形参表 */
                 ;
-
-      FuncFParam: BType IDENT ExpOPT        /* 函数形参 */
+    /* 函数形参 */
+      FuncFParam: BType IDENT{
+                    print_indent(); 
+                    printf("FuncFParam (%d)\n", indent_level);
+                    print_indent(); 
+                    printf("BType (%d)\n", indent_level);
+                    print_indent(); 
+                    printf("Type: %s\n", $1);
+                    print_indent();
+                    printf("Ident: %s\n", $2);
+                } 
+                ExpOPT   
                 ;
 
-          ExpOPT: LBRACKET RBRACKET ExpTail
+          ExpOPT: LBRACKET RBRACKET{
+                    print_indent(); 
+                    printf("LBRACKET\n");
+                    print_indent(); 
+                    printf("RBRACKET\n");
+                }
+                ExpTail
                 | /* empty */
                 ;
 
-         ExpTail: LBRACKET Exp RBRACKET ExpTail
+         ExpTail: LBRACKET{
+                    print_indent(); 
+                    printf("LBRACKET\n");
+                } 
+                Exp 
+                RBRACKET{
+                    print_indent(); 
+                    printf("RBRACKET\n");
+                } 
+                ExpTail
                 | /* empty */
                 ;
 
@@ -291,9 +338,5 @@ int main(int argc, char *argv[])
     // 关闭文件
     fclose(yyin);
     return 0;
-
-
-
-    
 }
 
