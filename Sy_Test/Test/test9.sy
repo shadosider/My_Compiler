@@ -1,0 +1,12 @@
+int main() {
+    int Student_ID1 = 22051024;
+    int Student_ID2 = 22051018;
+    int Student_ID3 = 22051011;
+    int Student_ID4 = 22051032;
+    float a = 5.5, b = 2.2;
+    float sum = a + b;
+    float diff = a - b;
+    float product = a * b;
+    float quotient = a / b;
+    return 0;
+}

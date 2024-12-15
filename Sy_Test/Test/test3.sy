@@ -1,0 +1,11 @@
+int main() {
+    int Student_ID1 = 22051024;
+    int Student_ID2 = 22051018;
+    int Student_ID3 = 22051011;
+    int Student_ID4 = 22051032;
+    int sum = 0;
+    for (int i = 1; i <= 5; i++) {
+        sum += i;
+    }
+    return 0;
+}
