@@ -895,62 +895,62 @@ YY_RULE_SETUP
 case 12:
 YY_RULE_SETUP
 #line 66 "lexer.l"
-return INTCONST;{printf("INTCON %d\n", (int)strtol(yytext, NULL, 0));}
+{yylval.ival = (int)strtol(yytext, NULL, 0);}return INTCONST;{printf("INTCON %d\n", (int)strtol(yytext, NULL, 0));}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 67 "lexer.l"
-return FLOATCONST;{printf("FLOATCON %s\n", yytext);}
+{yylval.strval = strdup(yytext);}return FLOATCONST;{printf("FLOATCON %s\n", yytext);}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 69 "lexer.l"
-return PLUS;{printf("PLUS +\n");}
+{yylval.strval = strdup(yytext);}return PLUS;{printf("PLUS +\n");}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 70 "lexer.l"
-return MINUS;{printf("MINUS -\n");}
+{yylval.strval = strdup(yytext);}return MINUS;{printf("MINUS -\n");}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 71 "lexer.l"
-return MUL; 
+{yylval.strval = strdup(yytext);}return MUL; 
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 72 "lexer.l"
-return EQUAL;
+{yylval.strval = strdup(yytext);}return EQUAL;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 73 "lexer.l"
-return WEIGHT;
+{yylval.strval = strdup(yytext);}return WEIGHT;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 74 "lexer.l"
-return UNARYOP;
+{yylval.strval = strdup(yytext);}return UNARYOP;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 76 "lexer.l"
-return COMMA;{printf("COMMA ,\n");}
+{yylval.strval = strdup(yytext);}return COMMA;{printf("COMMA ,\n");}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 77 "lexer.l"
-return ASSIGN;{printf("ASSIGN =\n");}
+{yylval.strval = strdup(yytext);}return ASSIGN;{printf("ASSIGN =\n");}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 78 "lexer.l"
-return OR;{printf("OR ||\n");}
+{yylval.strval = strdup(yytext);}return OR;{printf("OR ||\n");}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 79 "lexer.l"
-return AND;{printf("AND &&\n");}
+{yylval.strval = strdup(yytext);}return AND;{printf("AND &&\n");}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
@@ -990,7 +990,7 @@ YY_RULE_SETUP
 case 31:
 YY_RULE_SETUP
 #line 89 "lexer.l"
-return END;{printf("SEMICN\n");}
+{yylval.strval = strdup(yytext);}return END;{printf("SEMICN\n");}
 	YY_BREAK
 case 32:
 /* rule 32 can match eol */

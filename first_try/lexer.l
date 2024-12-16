@@ -63,20 +63,20 @@ UnaryOP  ["!""+""-"]
 "return"             return RETURN;{printf("RETURN \n");}
 
 {Ident}              {yylval.strval = strdup(yytext);}return IDENT; {printf("ID %s\n", yytext);}
-{IntConst}           return INTCONST;{printf("INTCON %d\n", (int)strtol(yytext, NULL, 0));}
-{floatConst}         return FLOATCONST;{printf("FLOATCON %s\n", yytext);}
+{IntConst}           {yylval.ival = (int)strtol(yytext, NULL, 0);}return INTCONST;{printf("INTCON %d\n", (int)strtol(yytext, NULL, 0));}
+{floatConst}         {yylval.strval = strdup(yytext);}return FLOATCONST;{printf("FLOATCON %s\n", yytext);}
 
-"+"                  return PLUS;{printf("PLUS +\n");}
-"-"                  return MINUS;{printf("MINUS -\n");}
-{mul}               return MUL; 
-{Equal}             return EQUAL;
-{Weight}            return WEIGHT;
-{UnaryOP}           return UNARYOP;
+"+"                  {yylval.strval = strdup(yytext);}return PLUS;{printf("PLUS +\n");}
+"-"                  {yylval.strval = strdup(yytext);}return MINUS;{printf("MINUS -\n");}
+{mul}                {yylval.strval = strdup(yytext);}return MUL; 
+{Equal}              {yylval.strval = strdup(yytext);}return EQUAL;
+{Weight}             {yylval.strval = strdup(yytext);}return WEIGHT;
+{UnaryOP}            {yylval.strval = strdup(yytext);}return UNARYOP;
 
-","                  return COMMA;{printf("COMMA ,\n");}
-"="                  return ASSIGN;{printf("ASSIGN =\n");}
-"||"                 return OR;{printf("OR ||\n");}
-"&&"                 return AND;{printf("AND &&\n");}
+","                  {yylval.strval = strdup(yytext);}return COMMA;{printf("COMMA ,\n");}
+"="                  {yylval.strval = strdup(yytext);}return ASSIGN;{printf("ASSIGN =\n");}
+"||"                 {yylval.strval = strdup(yytext);}return OR;{printf("OR ||\n");}
+"&&"                 {yylval.strval = strdup(yytext);}return AND;{printf("AND &&\n");}
 
 "("                  {yylval.strval = strdup(yytext);}return LPARENT;{printf("LPARENT \( \n");}
 ")"                  {yylval.strval = strdup(yytext);}return RPARENT;{printf("RPARENT \) \n");}
@@ -86,7 +86,7 @@ UnaryOP  ["!""+""-"]
 "}"                  {yylval.strval = strdup(yytext);}return RBRACE;{printf("RBRACE \} \n");}
 
 [ \t]+              ; // 忽略空格、制表符和换行符
-;                    return END;{printf("SEMICN\n");}
+;                    {yylval.strval = strdup(yytext);}return END;{printf("SEMICN\n");}
 \n                  line_number++;
 
 
