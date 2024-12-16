@@ -79,6 +79,8 @@ int yylex(void);
 void yyerror(char *);
 
 int indent_level = 0; // 用于控制缩进
+extern int line_number;
+
 void print_indent() {
     for (int i = 0; i < indent_level; i++) {
         printf("  ");
@@ -87,7 +89,7 @@ void print_indent() {
 
 
 
-#line 91 "y.tab.c"
+#line 93 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -204,13 +206,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 21 "lexer.y"
+#line 23 "lexer.y"
 
     int ival;      // 用于存储整数
     float fval;    // 用于存储浮点数
     char *strval;  // 用于存储字符串
 
-#line 214 "y.tab.c"
+#line 216 "y.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -782,25 +784,25 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    35,    35,    36,    39,    44,    44,    52,    52,    58,
-      59,    62,    62,    67,    67,    74,    74,    87,    94,    87,
-     101,   104,   109,   104,   114,   117,   118,   118,   129,   130,
-     133,   133,   138,   142,   142,   147,   151,   151,   167,   167,
-     172,   176,   176,   183,   190,   183,   197,   198,   198,   209,
-     210,   213,   213,   218,   221,   233,   221,   242,   243,   244,
-     247,   248,   251,   254,   254,   269,   269,   276,   279,   284,
-     279,   289,   293,   293,   298,   303,   304,   309,   314,   309,
-     323,   323,   332,   332,   337,   341,   348,   337,   353,   357,
-     364,   353,   368,   368,   378,   378,   388,   392,   388,   403,
-     403,   407,   410,   410,   423,   423,   428,   428,   435,   436,
-     440,   440,   451,   452,   460,   471,   471,   478,   479,   482,
-     482,   489,   489,   496,   496,   501,   501,   506,   509,   509,
-     516,   516,   521,   524,   524,   529,   533,   529,   544,   544,
-     551,   552,   556,   557,   557,   565,   565,   574,   579,   574,
-     584,   587,   587,   592,   597,   592,   604,   604,   609,   614,
-     609,   621,   621,   626,   631,   626,   638,   638,   643,   648,
-     643,   655,   655,   660,   665,   660,   670,   675,   670,   682,
-     682,   687,   692,   687
+       0,    37,    37,    38,    41,    46,    46,    54,    54,    60,
+      61,    64,    64,    69,    69,    76,    76,    89,    96,    89,
+     103,   106,   111,   106,   116,   119,   120,   120,   131,   132,
+     135,   135,   140,   144,   144,   149,   153,   153,   169,   169,
+     174,   178,   178,   185,   192,   185,   199,   200,   200,   211,
+     212,   215,   215,   220,   223,   235,   223,   244,   245,   246,
+     249,   250,   253,   256,   256,   271,   271,   278,   281,   286,
+     281,   291,   295,   295,   300,   305,   306,   311,   316,   311,
+     325,   325,   334,   334,   339,   343,   350,   339,   355,   359,
+     366,   355,   370,   370,   380,   380,   390,   394,   390,   405,
+     405,   409,   412,   412,   425,   425,   430,   430,   437,   438,
+     442,   442,   453,   454,   462,   473,   473,   480,   481,   484,
+     484,   491,   491,   498,   498,   503,   503,   508,   511,   511,
+     518,   518,   523,   526,   526,   531,   535,   531,   546,   546,
+     553,   554,   558,   559,   559,   567,   567,   576,   581,   576,
+     586,   589,   589,   594,   599,   594,   606,   606,   611,   616,
+     611,   623,   623,   628,   633,   628,   640,   640,   645,   650,
+     645,   657,   657,   662,   667,   662,   672,   677,   672,   684,
+     684,   689,   694,   689
 };
 #endif
 
@@ -1555,245 +1557,245 @@ yyreduce:
   switch (yyn)
     {
   case 4: /* line: CompUnit  */
-#line 39 "lexer.y"
+#line 41 "lexer.y"
                                  {
                     indent_level++;
                 }
-#line 1563 "y.tab.c"
+#line 1565 "y.tab.c"
     break;
 
   case 5: /* $@1: %empty  */
-#line 44 "lexer.y"
+#line 46 "lexer.y"
                              {
                     print_indent();
                     indent_level++;
-                    printf("CompUnit (%d)\n", indent_level);
+                    printf("CompUnit (%d)\n", line_number);
                 }
-#line 1573 "y.tab.c"
+#line 1575 "y.tab.c"
     break;
 
   case 6: /* CompUnit: CompUnitOpt $@1 FuncDef  */
-#line 49 "lexer.y"
+#line 51 "lexer.y"
                          {        /* 编译单元 */
                     
                 }
-#line 1581 "y.tab.c"
+#line 1583 "y.tab.c"
     break;
 
   case 7: /* $@2: %empty  */
-#line 52 "lexer.y"
+#line 54 "lexer.y"
                              {
                     indent_level++; 
                 }
-#line 1589 "y.tab.c"
+#line 1591 "y.tab.c"
     break;
 
   case 11: /* $@3: %empty  */
-#line 62 "lexer.y"
+#line 64 "lexer.y"
                   {
                     print_indent();
                     printf("Decl\n"); 
                 }
-#line 1598 "y.tab.c"
+#line 1600 "y.tab.c"
     break;
 
   case 13: /* $@4: %empty  */
-#line 67 "lexer.y"
+#line 69 "lexer.y"
                   {
                     print_indent();
                     printf("Decl\n"); 
                 }
-#line 1607 "y.tab.c"
+#line 1609 "y.tab.c"
     break;
 
   case 15: /* $@5: %empty  */
-#line 74 "lexer.y"
+#line 76 "lexer.y"
                        {
                     print_indent(); 
-                    printf("ConstDecl (%d)\n", indent_level);
+                    printf("ConstDecl (%d)\n", line_number);
                 }
-#line 1616 "y.tab.c"
+#line 1618 "y.tab.c"
     break;
 
   case 16: /* ConstDecl: CONST $@5 BType ConstDef ConstDefTail END  */
-#line 79 "lexer.y"
+#line 81 "lexer.y"
                    {
                     print_indent();
-                    printf("END\n");
+                    printf("SEMICN\n");
                 }
-#line 1625 "y.tab.c"
+#line 1627 "y.tab.c"
     break;
 
   case 17: /* $@6: %empty  */
-#line 87 "lexer.y"
+#line 89 "lexer.y"
                        {
                     print_indent(); 
-                    printf("ConstDef (%d)\n", indent_level);
+                    printf("ConstDef (%d)\n", line_number);
                     print_indent(); 
                     printf("Ident: %s\n", (yyvsp[0].strval));
                 }
-#line 1636 "y.tab.c"
+#line 1638 "y.tab.c"
     break;
 
   case 18: /* $@7: %empty  */
-#line 94 "lexer.y"
+#line 96 "lexer.y"
                       {
                     print_indent(); 
                     printf("ASSIGN\n");
                 }
-#line 1645 "y.tab.c"
+#line 1647 "y.tab.c"
     break;
 
   case 21: /* $@8: %empty  */
-#line 104 "lexer.y"
+#line 106 "lexer.y"
                           {
                     print_indent(); 
                     printf("LBRACKET\n");
                 }
-#line 1654 "y.tab.c"
+#line 1656 "y.tab.c"
     break;
 
   case 22: /* $@9: %empty  */
-#line 109 "lexer.y"
+#line 111 "lexer.y"
                         {
                     print_indent(); 
                     printf("RBRACKET\n");
                 }
-#line 1663 "y.tab.c"
+#line 1665 "y.tab.c"
     break;
 
   case 26: /* $@10: %empty  */
-#line 118 "lexer.y"
+#line 120 "lexer.y"
                         {
                     print_indent(); 
                     printf("LBRACE\n");
                 }
-#line 1672 "y.tab.c"
+#line 1674 "y.tab.c"
     break;
 
   case 27: /* ConstInitVal: LBRACE $@10 ConstInitValOpt RBRACE  */
-#line 123 "lexer.y"
+#line 125 "lexer.y"
                       {
                     print_indent(); 
                     printf("RBRACE\n");
                 }
-#line 1681 "y.tab.c"
+#line 1683 "y.tab.c"
     break;
 
   case 30: /* $@11: %empty  */
-#line 133 "lexer.y"
+#line 135 "lexer.y"
                        {
                     print_indent(); 
                     printf("COMMA\n");
                 }
-#line 1690 "y.tab.c"
+#line 1692 "y.tab.c"
     break;
 
   case 33: /* $@12: %empty  */
-#line 142 "lexer.y"
+#line 144 "lexer.y"
                        {
                     print_indent(); 
                     printf("COMMA\n");
                 }
-#line 1699 "y.tab.c"
+#line 1701 "y.tab.c"
     break;
 
   case 36: /* $@13: %empty  */
-#line 151 "lexer.y"
+#line 153 "lexer.y"
                        {
                     print_indent(); 
-                    printf("VarDecl (%d)\n", indent_level);
+                    printf("VarDecl (%d)\n", line_number);
                     print_indent(); 
-                    printf("BType (%d)\n", indent_level);
+                    printf("BType (%d)\n", line_number);
                     print_indent(); 
                     printf("Type: %s\n", (yyvsp[0].strval));
                 }
-#line 1712 "y.tab.c"
+#line 1714 "y.tab.c"
     break;
 
   case 37: /* VarDecl: BType $@13 VarDef VarDeclTail END  */
-#line 161 "lexer.y"
+#line 163 "lexer.y"
                    {
                     print_indent();
-                    printf("END\n");
+                    printf("SEMICN\n");
                 }
-#line 1721 "y.tab.c"
+#line 1723 "y.tab.c"
     break;
 
   case 38: /* $@14: %empty  */
-#line 167 "lexer.y"
+#line 169 "lexer.y"
                        {
                     print_indent(); 
                     printf("COMMA\n");
                 }
-#line 1730 "y.tab.c"
+#line 1732 "y.tab.c"
     break;
 
   case 41: /* $@15: %empty  */
-#line 176 "lexer.y"
+#line 178 "lexer.y"
                        {
                     print_indent(); 
-                    printf("VarDef (%d)\n", indent_level);
+                    printf("VarDef (%d)\n", line_number);
                     print_indent();
                     printf("Ident: %s\n", (yyvsp[0].strval));
                 }
-#line 1741 "y.tab.c"
+#line 1743 "y.tab.c"
     break;
 
   case 43: /* $@16: %empty  */
-#line 183 "lexer.y"
+#line 185 "lexer.y"
                        {
                     print_indent(); 
-                    printf("VarDef (%d)\n", indent_level);
+                    printf("VarDef (%d)\n", line_number);
                     print_indent();
                     printf("Ident: %s\n", (yyvsp[0].strval));
                 }
-#line 1752 "y.tab.c"
+#line 1754 "y.tab.c"
     break;
 
   case 44: /* $@17: %empty  */
-#line 190 "lexer.y"
+#line 192 "lexer.y"
                       {
                     print_indent(); 
                     printf("ASSIGN\n");
                 }
-#line 1761 "y.tab.c"
+#line 1763 "y.tab.c"
     break;
 
   case 47: /* $@18: %empty  */
-#line 198 "lexer.y"
+#line 200 "lexer.y"
                         {
                     print_indent(); 
                     printf("LBRACE\n");
                 }
-#line 1770 "y.tab.c"
+#line 1772 "y.tab.c"
     break;
 
   case 48: /* InitVal: LBRACE $@18 InitValOpt RBRACE  */
-#line 203 "lexer.y"
+#line 205 "lexer.y"
                       {
                     print_indent(); 
                     printf("RBRACE\n");
                 }
-#line 1779 "y.tab.c"
+#line 1781 "y.tab.c"
     break;
 
   case 51: /* $@19: %empty  */
-#line 213 "lexer.y"
+#line 215 "lexer.y"
                        {
                     print_indent(); 
                     printf("COMMA\n");
                 }
-#line 1788 "y.tab.c"
+#line 1790 "y.tab.c"
     break;
 
   case 54: /* $@20: %empty  */
-#line 221 "lexer.y"
+#line 223 "lexer.y"
                                         {
                     print_indent(); 
-                    printf("FuncDef (%d)\n", indent_level); 
+                    printf("FuncDef (%d)\n", line_number); 
                     print_indent();
-                    printf("FuncType (%d)\n", indent_level);
+                    printf("FuncType (%d)\n", line_number);
                     print_indent();
                     printf("Type: %s\n", (yyvsp[-2].strval));
                     print_indent();
@@ -1801,713 +1803,713 @@ yyreduce:
                     print_indent();
                     printf("LPARENT\n");
                 }
-#line 1805 "y.tab.c"
+#line 1807 "y.tab.c"
     break;
 
   case 55: /* $@21: %empty  */
-#line 233 "lexer.y"
+#line 235 "lexer.y"
                                       {
                     print_indent();
                     printf("RPARENT\n");
                 }
-#line 1814 "y.tab.c"
+#line 1816 "y.tab.c"
     break;
 
   case 56: /* FuncDef: FuncType IDENT LPARENT $@20 FuncFParamsOpt RPARENT $@21 Block  */
-#line 237 "lexer.y"
+#line 239 "lexer.y"
                       {  /* 函数定义  */
                     
                 }
-#line 1822 "y.tab.c"
+#line 1824 "y.tab.c"
     break;
 
   case 57: /* FuncType: VOID  */
-#line 242 "lexer.y"
+#line 244 "lexer.y"
                             { (yyval.strval) = (yyvsp[0].strval); }
-#line 1828 "y.tab.c"
+#line 1830 "y.tab.c"
     break;
 
   case 58: /* FuncType: INT  */
-#line 243 "lexer.y"
+#line 245 "lexer.y"
                             { (yyval.strval) = (yyvsp[0].strval); }
-#line 1834 "y.tab.c"
+#line 1836 "y.tab.c"
     break;
 
   case 59: /* FuncType: FLOAT  */
-#line 244 "lexer.y"
+#line 246 "lexer.y"
                             { (yyval.strval) = (yyvsp[0].strval); }
-#line 1840 "y.tab.c"
+#line 1842 "y.tab.c"
     break;
 
   case 60: /* BType: INT  */
-#line 247 "lexer.y"
+#line 249 "lexer.y"
                             { (yyval.strval) = (yyvsp[0].strval); }
-#line 1846 "y.tab.c"
+#line 1848 "y.tab.c"
     break;
 
   case 61: /* BType: FLOAT  */
-#line 248 "lexer.y"
+#line 250 "lexer.y"
                             { (yyval.strval) = (yyvsp[0].strval); }
-#line 1852 "y.tab.c"
+#line 1854 "y.tab.c"
     break;
 
   case 63: /* $@22: %empty  */
-#line 254 "lexer.y"
+#line 256 "lexer.y"
                              {
                     print_indent(); 
-                    printf("FuncFParams (%d)\n", indent_level);
+                    printf("FuncFParams (%d)\n", line_number);
                     print_indent(); 
-                    printf("FuncFParam (%d)\n", indent_level);
+                    printf("FuncFParam (%d)\n", line_number);
                     print_indent(); 
-                    printf("BType (%d)\n", indent_level);
+                    printf("BType (%d)\n", line_number);
                     print_indent(); 
                     printf("Type: %s\n", (yyvsp[-1].strval));
                     print_indent();
                     printf("Ident: %s\n", (yyvsp[0].strval));
                 }
-#line 1869 "y.tab.c"
+#line 1871 "y.tab.c"
     break;
 
   case 65: /* $@23: %empty  */
-#line 269 "lexer.y"
+#line 271 "lexer.y"
                                    {
                     print_indent(); 
                     printf("LBRACKET\n");
                     print_indent(); 
                     printf("RBRACKET\n");
                 }
-#line 1880 "y.tab.c"
+#line 1882 "y.tab.c"
     break;
 
   case 68: /* $@24: %empty  */
-#line 279 "lexer.y"
+#line 281 "lexer.y"
                           {
                     print_indent(); 
                     printf("LBRACKET\n");
                 }
-#line 1889 "y.tab.c"
+#line 1891 "y.tab.c"
     break;
 
   case 69: /* $@25: %empty  */
-#line 284 "lexer.y"
+#line 286 "lexer.y"
                         {
                     print_indent(); 
                     printf("RBRACKET\n");
                 }
-#line 1898 "y.tab.c"
+#line 1900 "y.tab.c"
     break;
 
   case 72: /* $@26: %empty  */
-#line 293 "lexer.y"
+#line 295 "lexer.y"
                        {
                     print_indent();
-                    printf("COMMA (%d)\n", indent_level);
+                    printf("COMMA (%d)\n", line_number);
                 }
-#line 1907 "y.tab.c"
+#line 1909 "y.tab.c"
     break;
 
   case 77: /* $@27: %empty  */
-#line 309 "lexer.y"
+#line 311 "lexer.y"
                   {
                     print_indent();
-                    printf("Stmt (%d)\n", indent_level);
+                    printf("Stmt (%d)\n", line_number);
                 }
-#line 1916 "y.tab.c"
+#line 1918 "y.tab.c"
     break;
 
   case 78: /* $@28: %empty  */
-#line 314 "lexer.y"
+#line 316 "lexer.y"
                       {
                     print_indent(); 
                     printf("ASSIGN\n");
                 }
-#line 1925 "y.tab.c"
+#line 1927 "y.tab.c"
     break;
 
   case 79: /* Stmt: $@27 LVal ASSIGN $@28 Exp END  */
-#line 319 "lexer.y"
+#line 321 "lexer.y"
                    {
                     print_indent(); 
-                    printf("END\n");
+                    printf("SEMICN\n");
                 }
-#line 1934 "y.tab.c"
+#line 1936 "y.tab.c"
     break;
 
   case 80: /* $@29: %empty  */
-#line 323 "lexer.y"
+#line 325 "lexer.y"
                   {
                     print_indent();
-                    printf("Stmt (%d)\n", indent_level);
+                    printf("Stmt (%d)\n", line_number);
                 }
-#line 1943 "y.tab.c"
+#line 1945 "y.tab.c"
     break;
 
   case 81: /* Stmt: $@29 ExpOpt END  */
-#line 328 "lexer.y"
+#line 330 "lexer.y"
                    {
                     print_indent(); 
-                    printf("END\n");
+                    printf("SEMICN\n");
                 }
-#line 1952 "y.tab.c"
+#line 1954 "y.tab.c"
     break;
 
   case 82: /* $@30: %empty  */
-#line 332 "lexer.y"
+#line 334 "lexer.y"
                   {
                     print_indent();
-                    printf("Stmt (%d)\n", indent_level);
+                    printf("Stmt (%d)\n", line_number);
                 }
-#line 1961 "y.tab.c"
+#line 1963 "y.tab.c"
     break;
 
   case 84: /* $@31: %empty  */
-#line 337 "lexer.y"
+#line 339 "lexer.y"
                   {
                     print_indent();
-                    printf("Stmt (%d)\n", indent_level);
+                    printf("Stmt (%d)\n", line_number);
                 }
-#line 1970 "y.tab.c"
+#line 1972 "y.tab.c"
     break;
 
   case 85: /* $@32: %empty  */
-#line 341 "lexer.y"
+#line 343 "lexer.y"
                           {
                     print_indent();
                     printf("IF\n");
                     print_indent();
                     printf("LPARENT\n");
                 }
-#line 1981 "y.tab.c"
+#line 1983 "y.tab.c"
     break;
 
   case 86: /* $@33: %empty  */
-#line 348 "lexer.y"
+#line 350 "lexer.y"
                        {
                     print_indent();
                     printf("RPARENT\n");
                 }
-#line 1990 "y.tab.c"
+#line 1992 "y.tab.c"
     break;
 
   case 88: /* $@34: %empty  */
-#line 353 "lexer.y"
+#line 355 "lexer.y"
                   {
                     print_indent();
-                    printf("Stmt (%d)\n", indent_level);
+                    printf("Stmt (%d)\n", line_number);
                 }
-#line 1999 "y.tab.c"
+#line 2001 "y.tab.c"
     break;
 
   case 89: /* $@35: %empty  */
-#line 357 "lexer.y"
+#line 359 "lexer.y"
                              {
                     print_indent();
                     printf("WHILE\n");
                     print_indent();
                     printf("LPARENT\n");
                 }
-#line 2010 "y.tab.c"
+#line 2012 "y.tab.c"
     break;
 
   case 90: /* $@36: %empty  */
-#line 364 "lexer.y"
+#line 366 "lexer.y"
                        {
                     print_indent();
                     printf("RPARENT\n");
                 }
-#line 2019 "y.tab.c"
+#line 2021 "y.tab.c"
     break;
 
   case 92: /* $@37: %empty  */
-#line 368 "lexer.y"
+#line 370 "lexer.y"
                   {
                     print_indent();
-                    printf("Stmt (%d)\n", indent_level);
+                    printf("Stmt (%d)\n", line_number);
                 }
-#line 2028 "y.tab.c"
+#line 2030 "y.tab.c"
     break;
 
   case 93: /* Stmt: $@37 BREAK END  */
-#line 372 "lexer.y"
+#line 374 "lexer.y"
                          {
                     print_indent();
                     printf("BREAK\n");
                     print_indent();
-                    printf("END\n");
+                    printf("SEMICN\n");
                 }
-#line 2039 "y.tab.c"
+#line 2041 "y.tab.c"
     break;
 
   case 94: /* $@38: %empty  */
-#line 378 "lexer.y"
+#line 380 "lexer.y"
                   {
                     print_indent();
-                    printf("Stmt (%d)\n", indent_level);
+                    printf("Stmt (%d)\n", line_number);
                 }
-#line 2048 "y.tab.c"
+#line 2050 "y.tab.c"
     break;
 
   case 95: /* Stmt: $@38 CONTINUE END  */
-#line 382 "lexer.y"
+#line 384 "lexer.y"
                             {
                     print_indent();
                     printf("CONTINUE\n");
                     print_indent();
-                    printf("END\n");
+                    printf("SEMICN\n");
                 }
-#line 2059 "y.tab.c"
+#line 2061 "y.tab.c"
     break;
 
   case 96: /* $@39: %empty  */
-#line 388 "lexer.y"
+#line 390 "lexer.y"
                   {
                     print_indent();
-                    printf("Stmt (%d)\n", indent_level);
+                    printf("Stmt (%d)\n", line_number);
                 }
-#line 2068 "y.tab.c"
+#line 2070 "y.tab.c"
     break;
 
   case 97: /* $@40: %empty  */
-#line 392 "lexer.y"
+#line 394 "lexer.y"
                       {
                     print_indent();
                     printf("RETURN\n");
                 }
-#line 2077 "y.tab.c"
+#line 2079 "y.tab.c"
     break;
 
   case 98: /* Stmt: $@39 RETURN $@40 ExpOpt END  */
-#line 397 "lexer.y"
+#line 399 "lexer.y"
                    {
                     print_indent();
-                    printf("END\n");
+                    printf("SEMICN\n");
                 }
-#line 2086 "y.tab.c"
+#line 2088 "y.tab.c"
     break;
 
   case 99: /* $@41: %empty  */
-#line 403 "lexer.y"
+#line 405 "lexer.y"
                       {
                     print_indent();
                     printf("ELSE\n");
                 }
-#line 2095 "y.tab.c"
+#line 2097 "y.tab.c"
     break;
 
   case 102: /* $@42: %empty  */
-#line 410 "lexer.y"
+#line 412 "lexer.y"
                         {
                     print_indent();
-                    printf("Block (%d)\n", indent_level);
+                    printf("Block (%d)\n", line_number);
                     print_indent();
                     printf("LBRACE\n");
                 }
-#line 2106 "y.tab.c"
+#line 2108 "y.tab.c"
     break;
 
   case 103: /* Block: LBRACE $@42 BlockItemTail RBRACE  */
-#line 417 "lexer.y"
+#line 419 "lexer.y"
                       {
                     print_indent();
                     printf("RBRACE\n");
                 }
-#line 2115 "y.tab.c"
+#line 2117 "y.tab.c"
     break;
 
   case 104: /* $@43: %empty  */
-#line 423 "lexer.y"
+#line 425 "lexer.y"
                   {
                     print_indent();
-                    printf("BlockItem (%d)\n", indent_level);
+                    printf("BlockItem (%d)\n", line_number);
                 }
-#line 2124 "y.tab.c"
+#line 2126 "y.tab.c"
     break;
 
   case 106: /* $@44: %empty  */
-#line 428 "lexer.y"
+#line 430 "lexer.y"
                   {
                     print_indent();
-                    printf("BlockItem (%d)\n", indent_level);
+                    printf("BlockItem (%d)\n", line_number);
                 }
-#line 2133 "y.tab.c"
+#line 2135 "y.tab.c"
     break;
 
   case 110: /* $@45: %empty  */
-#line 440 "lexer.y"
+#line 442 "lexer.y"
                          {
                     print_indent();
-                    printf("PrimaryExp (%d)\n", indent_level);
+                    printf("PrimaryExp (%d)\n", line_number);
                     print_indent();
                     printf("LPARENT\n");
                 }
-#line 2144 "y.tab.c"
+#line 2146 "y.tab.c"
     break;
 
   case 111: /* PrimaryExp: LPARENT $@45 Exp RPARENT  */
-#line 447 "lexer.y"
+#line 449 "lexer.y"
                        {
                     print_indent();
                     printf("RPARENT\n");
                 }
-#line 2153 "y.tab.c"
+#line 2155 "y.tab.c"
     break;
 
   case 113: /* PrimaryExp: INTCONST  */
-#line 452 "lexer.y"
+#line 454 "lexer.y"
                           {
                     print_indent();
-                    printf("PrimaryExp (%d)\n", indent_level);
+                    printf("PrimaryExp (%d)\n", line_number);
                     print_indent();
-                    printf("Number (%d)\n", indent_level);
+                    printf("Number (%d)\n", line_number);
                     print_indent();
                     printf("INTCON: %d\n", (yyvsp[0].ival));
                 }
-#line 2166 "y.tab.c"
+#line 2168 "y.tab.c"
     break;
 
   case 114: /* PrimaryExp: FLOATCONST  */
-#line 460 "lexer.y"
+#line 462 "lexer.y"
                             {
                     print_indent();
-                    printf("PrimaryExp (%d)\n", indent_level);
+                    printf("PrimaryExp (%d)\n", line_number);
                     print_indent();
-                    printf("Number (%d)\n", indent_level);
+                    printf("Number (%d)\n", line_number);
                     print_indent();
-                    printf("FLOATCON: %f\n", (yyvsp[0].fval));
+                    printf("FLOATCON: %s\n", (yyvsp[0].strval));
                 }
-#line 2179 "y.tab.c"
+#line 2181 "y.tab.c"
     break;
 
   case 115: /* $@46: %empty  */
-#line 471 "lexer.y"
+#line 473 "lexer.y"
                   {
                     print_indent();
-                    printf("Exp (%d)\n", indent_level);
+                    printf("Exp (%d)\n", line_number);
                 }
-#line 2188 "y.tab.c"
+#line 2190 "y.tab.c"
     break;
 
   case 119: /* $@47: %empty  */
-#line 482 "lexer.y"
+#line 484 "lexer.y"
                   {
                     print_indent();
-                    printf("Cond (%d)\n", indent_level);
+                    printf("Cond (%d)\n", line_number);
                 }
-#line 2197 "y.tab.c"
+#line 2199 "y.tab.c"
     break;
 
   case 121: /* $@48: %empty  */
-#line 489 "lexer.y"
+#line 491 "lexer.y"
                   {
                     print_indent();
-                    printf("AddExp (%d)\n", indent_level);
+                    printf("AddExp (%d)\n", line_number);
                 }
-#line 2206 "y.tab.c"
+#line 2208 "y.tab.c"
     break;
 
   case 123: /* $@49: %empty  */
-#line 496 "lexer.y"
+#line 498 "lexer.y"
                       {
                     print_indent();
                     printf("PLUS: %s\n", (yyvsp[0].strval));
                 }
-#line 2215 "y.tab.c"
+#line 2217 "y.tab.c"
     break;
 
   case 125: /* $@50: %empty  */
-#line 501 "lexer.y"
+#line 503 "lexer.y"
                        {
                     print_indent();
                     printf("MINUS: %s\n", (yyvsp[0].strval));
                 }
-#line 2224 "y.tab.c"
+#line 2226 "y.tab.c"
     break;
 
   case 128: /* $@51: %empty  */
-#line 509 "lexer.y"
+#line 511 "lexer.y"
                   {
                     print_indent();
-                    printf(" MulExp (%d)\n", indent_level);
+                    printf(" MulExp (%d)\n", line_number);
                 }
-#line 2233 "y.tab.c"
+#line 2235 "y.tab.c"
     break;
 
   case 130: /* $@52: %empty  */
-#line 516 "lexer.y"
+#line 518 "lexer.y"
                      {
                     print_indent();
                     printf("MUL: %s\n", (yyvsp[0].strval));
                 }
-#line 2242 "y.tab.c"
+#line 2244 "y.tab.c"
     break;
 
   case 133: /* $@53: %empty  */
-#line 524 "lexer.y"
+#line 526 "lexer.y"
                   {
                     print_indent();
-                    printf("UnaryExp (%d)\n", indent_level);
+                    printf("UnaryExp (%d)\n", line_number);
                 }
-#line 2251 "y.tab.c"
+#line 2253 "y.tab.c"
     break;
 
   case 135: /* $@54: %empty  */
-#line 529 "lexer.y"
+#line 531 "lexer.y"
                   {
                     print_indent();
-                    printf("UnaryExp (%d)\n", indent_level);
+                    printf("UnaryExp (%d)\n", line_number);
                 }
-#line 2260 "y.tab.c"
+#line 2262 "y.tab.c"
     break;
 
   case 136: /* $@55: %empty  */
-#line 533 "lexer.y"
+#line 535 "lexer.y"
                              {
                     print_indent();
                     printf("Ident: %s\n", (yyvsp[-1].strval));
                     print_indent();
                     printf("LPARENT\n");
                 }
-#line 2271 "y.tab.c"
+#line 2273 "y.tab.c"
     break;
 
   case 137: /* UnaryExp: $@54 IDENT LPARENT $@55 FuncRParamsOpt RPARENT  */
-#line 540 "lexer.y"
+#line 542 "lexer.y"
                        {
                     print_indent();
                     printf("RPARENT\n");
                 }
-#line 2280 "y.tab.c"
+#line 2282 "y.tab.c"
     break;
 
   case 138: /* $@56: %empty  */
-#line 544 "lexer.y"
+#line 546 "lexer.y"
                          {
                     print_indent();
                     printf("UNARYOP: %s\n", (yyvsp[0].strval));
                 }
-#line 2289 "y.tab.c"
+#line 2291 "y.tab.c"
     break;
 
   case 143: /* $@57: %empty  */
-#line 557 "lexer.y"
+#line 559 "lexer.y"
                            {
                     print_indent();
                     printf("COMMA\n");
                 }
-#line 2298 "y.tab.c"
+#line 2300 "y.tab.c"
     break;
 
   case 145: /* $@58: %empty  */
-#line 565 "lexer.y"
+#line 567 "lexer.y"
                        {
                     print_indent();
-                    printf("Lavl (%d)\n", indent_level);
+                    printf("Lavl (%d)\n", line_number);
                     print_indent();
                     printf("Ident: %s\n", (yyvsp[0].strval));
                 }
-#line 2309 "y.tab.c"
+#line 2311 "y.tab.c"
     break;
 
   case 147: /* $@59: %empty  */
-#line 574 "lexer.y"
+#line 576 "lexer.y"
                           {
                     print_indent();
                     printf("LBRACKET\n");
                 }
-#line 2318 "y.tab.c"
+#line 2320 "y.tab.c"
     break;
 
   case 148: /* $@60: %empty  */
-#line 579 "lexer.y"
+#line 581 "lexer.y"
                         {
                     print_indent();
                     printf("RBRACKET\n");
                 }
-#line 2327 "y.tab.c"
+#line 2329 "y.tab.c"
     break;
 
   case 151: /* $@61: %empty  */
-#line 587 "lexer.y"
+#line 589 "lexer.y"
                   {
                     print_indent();
-                    printf("LOrExp (%d)\n", indent_level);
+                    printf("LOrExp (%d)\n", line_number);
                 }
-#line 2336 "y.tab.c"
+#line 2338 "y.tab.c"
     break;
 
   case 153: /* $@62: %empty  */
-#line 592 "lexer.y"
+#line 594 "lexer.y"
                   {
                     print_indent();
-                    printf("LOrExp (%d)\n", indent_level);
+                    printf("LOrExp (%d)\n", line_number);
                 }
-#line 2345 "y.tab.c"
+#line 2347 "y.tab.c"
     break;
 
   case 154: /* $@63: %empty  */
-#line 597 "lexer.y"
+#line 599 "lexer.y"
                   {
                     print_indent();
                     printf("OR\n");
                 }
-#line 2354 "y.tab.c"
+#line 2356 "y.tab.c"
     break;
 
   case 156: /* $@64: %empty  */
-#line 604 "lexer.y"
+#line 606 "lexer.y"
                   {
                     print_indent();
-                    printf("LAndExp (%d)\n", indent_level);
+                    printf("LAndExp (%d)\n", line_number);
                 }
-#line 2363 "y.tab.c"
+#line 2365 "y.tab.c"
     break;
 
   case 158: /* $@65: %empty  */
-#line 609 "lexer.y"
+#line 611 "lexer.y"
                   {
                     print_indent();
-                    printf("LAndExp (%d)\n", indent_level);
+                    printf("LAndExp (%d)\n", line_number);
                 }
-#line 2372 "y.tab.c"
+#line 2374 "y.tab.c"
     break;
 
   case 159: /* $@66: %empty  */
-#line 614 "lexer.y"
+#line 616 "lexer.y"
                    {
                     print_indent();
                     printf("AND\n");
                 }
-#line 2381 "y.tab.c"
+#line 2383 "y.tab.c"
     break;
 
   case 161: /* $@67: %empty  */
-#line 621 "lexer.y"
+#line 623 "lexer.y"
                   {
                     print_indent();
-                    printf("EqExp (%d)\n", indent_level);
+                    printf("EqExp (%d)\n", line_number);
                 }
-#line 2390 "y.tab.c"
+#line 2392 "y.tab.c"
     break;
 
   case 163: /* $@68: %empty  */
-#line 626 "lexer.y"
+#line 628 "lexer.y"
                   {
                     print_indent();
-                    printf("EqExp (%d)\n", indent_level);
+                    printf("EqExp (%d)\n", line_number);
                 }
-#line 2399 "y.tab.c"
+#line 2401 "y.tab.c"
     break;
 
   case 164: /* $@69: %empty  */
-#line 631 "lexer.y"
+#line 633 "lexer.y"
                      {
                     print_indent();
                     printf("EQUAL\n");
                 }
-#line 2408 "y.tab.c"
+#line 2410 "y.tab.c"
     break;
 
   case 166: /* $@70: %empty  */
-#line 638 "lexer.y"
+#line 640 "lexer.y"
                   {
                     print_indent();
-                    printf("RelExp (%d)\n", indent_level);
+                    printf("RelExp (%d)\n", line_number);
                 }
-#line 2417 "y.tab.c"
+#line 2419 "y.tab.c"
     break;
 
   case 168: /* $@71: %empty  */
-#line 643 "lexer.y"
+#line 645 "lexer.y"
                   {
                     print_indent();
-                    printf("RelExp (%d)\n", indent_level);
+                    printf("RelExp (%d)\n", line_number);
                 }
-#line 2426 "y.tab.c"
+#line 2428 "y.tab.c"
     break;
 
   case 169: /* $@72: %empty  */
-#line 648 "lexer.y"
+#line 650 "lexer.y"
                       {
                     print_indent();
                     printf("WEIGHT\n");
                 }
-#line 2435 "y.tab.c"
+#line 2437 "y.tab.c"
     break;
 
   case 171: /* $@73: %empty  */
-#line 655 "lexer.y"
+#line 657 "lexer.y"
                   {
                     print_indent();
-                    printf("AddExp (%d)\n", indent_level);
+                    printf("AddExp (%d)\n", line_number);
                 }
-#line 2444 "y.tab.c"
+#line 2446 "y.tab.c"
     break;
 
   case 173: /* $@74: %empty  */
-#line 660 "lexer.y"
+#line 662 "lexer.y"
                   {
                     print_indent();
-                    printf("AddExp (%d)\n", indent_level);
+                    printf("AddExp (%d)\n", line_number);
                 }
-#line 2453 "y.tab.c"
+#line 2455 "y.tab.c"
     break;
 
   case 174: /* $@75: %empty  */
-#line 665 "lexer.y"
+#line 667 "lexer.y"
                     {
                     print_indent();
                     printf("PLUS: %s\n", (yyvsp[0].strval));
                 }
-#line 2462 "y.tab.c"
+#line 2464 "y.tab.c"
     break;
 
   case 176: /* $@76: %empty  */
-#line 670 "lexer.y"
+#line 672 "lexer.y"
                   {
                     print_indent();
-                    printf("AddExp (%d)\n", indent_level);
+                    printf("AddExp (%d)\n", line_number);
                 }
-#line 2471 "y.tab.c"
+#line 2473 "y.tab.c"
     break;
 
   case 177: /* $@77: %empty  */
-#line 675 "lexer.y"
+#line 677 "lexer.y"
                      {
                     print_indent();
                     printf("MINUS: %s\n", (yyvsp[0].strval));
                 }
-#line 2480 "y.tab.c"
+#line 2482 "y.tab.c"
     break;
 
   case 179: /* $@78: %empty  */
-#line 682 "lexer.y"
+#line 684 "lexer.y"
                   {
                     print_indent();
-                    printf("MulExp (%d)\n", indent_level);
+                    printf("MulExp (%d)\n", line_number);
                 }
-#line 2489 "y.tab.c"
+#line 2491 "y.tab.c"
     break;
 
   case 181: /* $@79: %empty  */
-#line 687 "lexer.y"
+#line 689 "lexer.y"
                   {
                     print_indent();
-                    printf("MulExp (%d)\n", indent_level);
+                    printf("MulExp (%d)\n", line_number);
                 }
-#line 2498 "y.tab.c"
+#line 2500 "y.tab.c"
     break;
 
   case 182: /* $@80: %empty  */
-#line 692 "lexer.y"
+#line 694 "lexer.y"
                    {
                     print_indent();
                     printf("MUL");
                 }
-#line 2507 "y.tab.c"
+#line 2509 "y.tab.c"
     break;
 
 
-#line 2511 "y.tab.c"
+#line 2513 "y.tab.c"
 
       default: break;
     }
@@ -2700,7 +2702,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 707 "lexer.y"
+#line 709 "lexer.y"
 
 
 void yyerror(char *str){

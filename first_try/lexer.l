@@ -4,11 +4,20 @@
 #include "y.tab.h"
 // 定义一个全局变量来跟踪行号
 int line_number = 1;
+
+
 void error(const char *str, const char *yytext) {
     fprintf(stderr, "Error type A at Line %d: %s '%s'\n", line_number, str, yytext);
     exit(1);  // 立即退出
 }
+
+
+
 %}
+
+
+
+
 
 /* 标识符Ident的声明  */
 identifier-nondigit    [_a-zA-Z]    
@@ -50,6 +59,11 @@ UnaryOP  ["!""+""-"]
 
 %%
 
+
+\/\*([^*]|\*[^/])*\*+\/      ;
+\/\/.*                       ;
+
+
 "void"               {yylval.strval = strdup(yytext);}return VOID;{printf("VOIDTK \n");}
 "int"                {yylval.strval = strdup(yytext);}return INT;{printf("INTTK int\n");}
 "const"              return CONST;{printf("CONST \n");}
@@ -64,7 +78,7 @@ UnaryOP  ["!""+""-"]
 
 {Ident}              {yylval.strval = strdup(yytext);}return IDENT; {printf("ID %s\n", yytext);}
 {IntConst}           {yylval.ival = (int)strtol(yytext, NULL, 0);}return INTCONST;{printf("INTCON %d\n", (int)strtol(yytext, NULL, 0));}
-{floatConst}         {yylval.strval = strdup(yytext);}return FLOATCONST;{printf("FLOATCON %s\n", yytext);}
+{floatConst}         {yylval.strval = strdup(yytext);}return FLOATCONST;
 
 "+"                  {yylval.strval = strdup(yytext);}return PLUS;{printf("PLUS +\n");}
 "-"                  {yylval.strval = strdup(yytext);}return MINUS;{printf("MINUS -\n");}

@@ -418,7 +418,7 @@ Terminals, with rules where they appear
     $end (0) 0
     error (256)
     INTCONST <ival> (258) 112
-    FLOATCONST <fval> (259) 113
+    FLOATCONST <strval> (259) 113
     INT <strval> (260) 57 59
     VOID <strval> (261) 56
     FLOAT <strval> (262) 58 60

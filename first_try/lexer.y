@@ -9,6 +9,8 @@ int yylex(void);
 void yyerror(char *);
 
 int indent_level = 0; // 用于控制缩进
+extern int line_number;
+
 void print_indent() {
     for (int i = 0; i < indent_level; i++) {
         printf("  ");
@@ -26,7 +28,7 @@ void print_indent() {
 
 
 %token <ival> INTCONST
-%token <fval> FLOATCONST
+%token <strval> FLOATCONST
 %token <strval> INT VOID FLOAT IDENT PLUS MINUS ASSIGN MUL UNARYOP CONST COMMA EQUAL OR AND WEIGHT IF ELSE WHILE BREAK CONTINUE RETURN LPARENT RPARENT LBRACKET RBRACKET LBRACE RBRACE END
 %type  <strval> FuncType BType
 
@@ -44,7 +46,7 @@ void print_indent() {
         CompUnit: CompUnitOpt{
                     print_indent();
                     indent_level++;
-                    printf("CompUnit (%d)\n", indent_level);
+                    printf("CompUnit (%d)\n", line_number);
                 } 
                 FuncDef  {        /* 编译单元 */
                     
@@ -73,12 +75,12 @@ void print_indent() {
 
        ConstDecl: CONST{
                     print_indent(); 
-                    printf("ConstDecl (%d)\n", indent_level);
+                    printf("ConstDecl (%d)\n", line_number);
                 }
                 BType ConstDef ConstDefTail
                 END{
                     print_indent();
-                    printf("END\n");
+                    printf("SEMICN\n");
                 }
                 ;     /* 常量声明  */  
 
@@ -86,7 +88,7 @@ void print_indent() {
 
         ConstDef: IDENT{
                     print_indent(); 
-                    printf("ConstDef (%d)\n", indent_level);
+                    printf("ConstDef (%d)\n", line_number);
                     print_indent(); 
                     printf("Ident: %s\n", $1);
                 }
@@ -150,9 +152,9 @@ ConstInitValTail: COMMA{
          /* 变量声明  */ 
          VarDecl: BType{
                     print_indent(); 
-                    printf("VarDecl (%d)\n", indent_level);
+                    printf("VarDecl (%d)\n", line_number);
                     print_indent(); 
-                    printf("BType (%d)\n", indent_level);
+                    printf("BType (%d)\n", line_number);
                     print_indent(); 
                     printf("Type: %s\n", $1);
                 }
@@ -160,7 +162,7 @@ ConstInitValTail: COMMA{
                 VarDeclTail
                 END{
                     print_indent();
-                    printf("END\n");
+                    printf("SEMICN\n");
                 }
                 ;
 
@@ -175,14 +177,14 @@ ConstInitValTail: COMMA{
           /* 变量定义  */
           VarDef: IDENT{
                     print_indent(); 
-                    printf("VarDef (%d)\n", indent_level);
+                    printf("VarDef (%d)\n", line_number);
                     print_indent();
                     printf("Ident: %s\n", $1);
                 }
                 ConstExpTail
                 | IDENT{
                     print_indent(); 
-                    printf("VarDef (%d)\n", indent_level);
+                    printf("VarDef (%d)\n", line_number);
                     print_indent();
                     printf("Ident: %s\n", $1);
                 }
@@ -220,9 +222,9 @@ ConstInitValTail: COMMA{
  
          FuncDef: FuncType IDENT LPARENT{
                     print_indent(); 
-                    printf("FuncDef (%d)\n", indent_level); 
+                    printf("FuncDef (%d)\n", line_number); 
                     print_indent();
-                    printf("FuncType (%d)\n", indent_level);
+                    printf("FuncType (%d)\n", line_number);
                     print_indent();
                     printf("Type: %s\n", $1);
                     print_indent();
@@ -253,11 +255,11 @@ ConstInitValTail: COMMA{
     /* 函数形参 */
       FuncFParam: BType IDENT{
                     print_indent(); 
-                    printf("FuncFParams (%d)\n", indent_level);
+                    printf("FuncFParams (%d)\n", line_number);
                     print_indent(); 
-                    printf("FuncFParam (%d)\n", indent_level);
+                    printf("FuncFParam (%d)\n", line_number);
                     print_indent(); 
-                    printf("BType (%d)\n", indent_level);
+                    printf("BType (%d)\n", line_number);
                     print_indent(); 
                     printf("Type: %s\n", $1);
                     print_indent();
@@ -292,7 +294,7 @@ ConstInitValTail: COMMA{
 
   FuncFParamTail: COMMA{
                     print_indent();
-                    printf("COMMA (%d)\n", indent_level);
+                    printf("COMMA (%d)\n", line_number);
                 } 
                 FuncFParam FuncFParamTail
                 | /* empty */
@@ -308,7 +310,7 @@ ConstInitValTail: COMMA{
             /* 语句  */
             Stmt: {
                     print_indent();
-                    printf("Stmt (%d)\n", indent_level);
+                    printf("Stmt (%d)\n", line_number);
                 }
                 LVal
                 ASSIGN{
@@ -318,25 +320,25 @@ ConstInitValTail: COMMA{
                 Exp
                 END{
                     print_indent(); 
-                    printf("END\n");
+                    printf("SEMICN\n");
                 }         
                 | {
                     print_indent();
-                    printf("Stmt (%d)\n", indent_level);
+                    printf("Stmt (%d)\n", line_number);
                 }
                 ExpOpt
                 END{
                     print_indent(); 
-                    printf("END\n");
+                    printf("SEMICN\n");
                 }
                 | {
                     print_indent();
-                    printf("Stmt (%d)\n", indent_level);
+                    printf("Stmt (%d)\n", line_number);
                 }
                 Block
                 | {
                     print_indent();
-                    printf("Stmt (%d)\n", indent_level);
+                    printf("Stmt (%d)\n", line_number);
                 }
                 IF LPARENT{
                     print_indent();
@@ -352,7 +354,7 @@ ConstInitValTail: COMMA{
                 Stmt StmtOpt
                 | {
                     print_indent();
-                    printf("Stmt (%d)\n", indent_level);
+                    printf("Stmt (%d)\n", line_number);
                 }
                 WHILE LPARENT{
                     print_indent();
@@ -367,27 +369,27 @@ ConstInitValTail: COMMA{
                 }Stmt
                 | {
                     print_indent();
-                    printf("Stmt (%d)\n", indent_level);
+                    printf("Stmt (%d)\n", line_number);
                 }
                 BREAK END{
                     print_indent();
                     printf("BREAK\n");
                     print_indent();
-                    printf("END\n");
+                    printf("SEMICN\n");
                 }
                 | {
                     print_indent();
-                    printf("Stmt (%d)\n", indent_level);
+                    printf("Stmt (%d)\n", line_number);
                 }
                 CONTINUE END{
                     print_indent();
                     printf("CONTINUE\n");
                     print_indent();
-                    printf("END\n");
+                    printf("SEMICN\n");
                 }
                 | {
                     print_indent();
-                    printf("Stmt (%d)\n", indent_level);
+                    printf("Stmt (%d)\n", line_number);
                 }
                 RETURN{
                     print_indent();
@@ -396,7 +398,7 @@ ConstInitValTail: COMMA{
                 ExpOpt
                 END{
                     print_indent();
-                    printf("END\n");
+                    printf("SEMICN\n");
                 }
                 ;
         
@@ -409,7 +411,7 @@ ConstInitValTail: COMMA{
 
            Block: LBRACE{
                     print_indent();
-                    printf("Block (%d)\n", indent_level);
+                    printf("Block (%d)\n", line_number);
                     print_indent();
                     printf("LBRACE\n");
                 } 
@@ -422,12 +424,12 @@ ConstInitValTail: COMMA{
        /* 语句块项  */ 
        BlockItem: {
                     print_indent();
-                    printf("BlockItem (%d)\n", indent_level);
+                    printf("BlockItem (%d)\n", line_number);
                 }
                 Decl           
                 | {
                     print_indent();
-                    printf("BlockItem (%d)\n", indent_level);
+                    printf("BlockItem (%d)\n", line_number);
                 }
                 Stmt
                 ;
@@ -439,7 +441,7 @@ ConstInitValTail: COMMA{
       /* 基本表达式  */
       PrimaryExp: LPARENT{
                     print_indent();
-                    printf("PrimaryExp (%d)\n", indent_level);
+                    printf("PrimaryExp (%d)\n", line_number);
                     print_indent();
                     printf("LPARENT\n");
                 } 
@@ -451,26 +453,26 @@ ConstInitValTail: COMMA{
                 | LVal     
                 | INTCONST{
                     print_indent();
-                    printf("PrimaryExp (%d)\n", indent_level);
+                    printf("PrimaryExp (%d)\n", line_number);
                     print_indent();
-                    printf("Number (%d)\n", indent_level);
+                    printf("Number (%d)\n", line_number);
                     print_indent();
                     printf("INTCON: %d\n", $1);
                 }  
                 | FLOATCONST{
                     print_indent();
-                    printf("PrimaryExp (%d)\n", indent_level);
+                    printf("PrimaryExp (%d)\n", line_number);
                     print_indent();
-                    printf("Number (%d)\n", indent_level);
+                    printf("Number (%d)\n", line_number);
                     print_indent();
-                    printf("FLOATCON: %f\n", $1);
+                    printf("FLOATCON: %s\n", $1);
                 }  
                 ;
 
              /* 表达式  */
              Exp: {
                     print_indent();
-                    printf("Exp (%d)\n", indent_level);
+                    printf("Exp (%d)\n", line_number);
                 }
                 AddExp        
                 ;
@@ -481,14 +483,14 @@ ConstInitValTail: COMMA{
 
             Cond: {
                     print_indent();
-                    printf("Cond (%d)\n", indent_level);
+                    printf("Cond (%d)\n", line_number);
                 }
                 LOrExp        /* 条件表达式  */  
                 ;
 
           AddExp: {
                     print_indent();
-                    printf("AddExp (%d)\n", indent_level);
+                    printf("AddExp (%d)\n", line_number);
                 }
                 MulExp AddExpTail  /* 加减表达式  */
                 ;
@@ -508,7 +510,7 @@ ConstInitValTail: COMMA{
 
           MulExp: {
                     print_indent();
-                    printf(" MulExp (%d)\n", indent_level);
+                    printf(" MulExp (%d)\n", line_number);
                 }
                 UnaryExp MulExpTail   /* 乘除模表达式  */
                 ;
@@ -523,12 +525,12 @@ ConstInitValTail: COMMA{
 
         UnaryExp: {
                     print_indent();
-                    printf("UnaryExp (%d)\n", indent_level);
+                    printf("UnaryExp (%d)\n", line_number);
                 }
                 PrimaryExp    /* 单目运算符 注：!仅出现在条件表达式中   */
                 | {
                     print_indent();
-                    printf("UnaryExp (%d)\n", indent_level);
+                    printf("UnaryExp (%d)\n", line_number);
                 }
                 IDENT LPARENT{
                     print_indent();
@@ -564,7 +566,7 @@ ConstInitValTail: COMMA{
             /* 左值表达式  */
             LVal: IDENT{
                     print_indent();
-                    printf("Lavl (%d)\n", indent_level);
+                    printf("Lavl (%d)\n", line_number);
                     print_indent();
                     printf("Ident: %s\n", $1);
                 } 
@@ -586,12 +588,12 @@ ConstInitValTail: COMMA{
 
           LOrExp: {
                     print_indent();
-                    printf("LOrExp (%d)\n", indent_level);
+                    printf("LOrExp (%d)\n", line_number);
                 }
                 LAndExp              /* 逻辑或表达式  */  
                 | {
                     print_indent();
-                    printf("LOrExp (%d)\n", indent_level);
+                    printf("LOrExp (%d)\n", line_number);
                 }
                 LOrExp
                 OR{
@@ -603,12 +605,12 @@ ConstInitValTail: COMMA{
 
          LAndExp: {
                     print_indent();
-                    printf("LAndExp (%d)\n", indent_level);
+                    printf("LAndExp (%d)\n", line_number);
                 }
                 EqExp                 /* 逻辑与表达式  */  
                 | {
                     print_indent();
-                    printf("LAndExp (%d)\n", indent_level);
+                    printf("LAndExp (%d)\n", line_number);
                 }
                 LAndExp
                 AND{
@@ -620,12 +622,12 @@ ConstInitValTail: COMMA{
             
            EqExp: {
                     print_indent();
-                    printf("EqExp (%d)\n", indent_level);
+                    printf("EqExp (%d)\n", line_number);
                 }
                 RelExp                /* 相等性表达式  */  
                 | {
                     print_indent();
-                    printf("EqExp (%d)\n", indent_level);
+                    printf("EqExp (%d)\n", line_number);
                 }
                 EqExp
                 EQUAL{
@@ -637,12 +639,12 @@ ConstInitValTail: COMMA{
 
           RelExp: {
                     print_indent();
-                    printf("RelExp (%d)\n", indent_level);
+                    printf("RelExp (%d)\n", line_number);
                 }
                 AddExp                /* 关系表达式  */  
                 | {
                     print_indent();
-                    printf("RelExp (%d)\n", indent_level);
+                    printf("RelExp (%d)\n", line_number);
                 }
                 RelExp
                 WEIGHT{
@@ -654,12 +656,12 @@ ConstInitValTail: COMMA{
 
           AddExp: {
                     print_indent();
-                    printf("AddExp (%d)\n", indent_level);
+                    printf("AddExp (%d)\n", line_number);
                 }
                 MulExp                /* 加减表达式  */  
                 | {
                     print_indent();
-                    printf("AddExp (%d)\n", indent_level);
+                    printf("AddExp (%d)\n", line_number);
                 }
                 AddExp
                 PLUS{
@@ -669,7 +671,7 @@ ConstInitValTail: COMMA{
                 MulExp
                 | {
                     print_indent();
-                    printf("AddExp (%d)\n", indent_level);
+                    printf("AddExp (%d)\n", line_number);
                 }
                 AddExp
                 MINUS{
@@ -681,12 +683,12 @@ ConstInitValTail: COMMA{
 
           MulExp: {
                     print_indent();
-                    printf("MulExp (%d)\n", indent_level);
+                    printf("MulExp (%d)\n", line_number);
                 }
                 UnaryExp              /* 乘除模表达式  */  
                 | {
                     print_indent();
-                    printf("MulExp (%d)\n", indent_level);
+                    printf("MulExp (%d)\n", line_number);
                 }
                 MulExp
                 MUL{

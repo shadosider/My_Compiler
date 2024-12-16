@@ -3,5 +3,6 @@ int main()
   int a[2];
   int i= 0;
   float j= 0.315;
+  float k=3e2;
   return 0;
 }

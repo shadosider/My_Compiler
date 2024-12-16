@@ -127,7 +127,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 21 "lexer.y"
+#line 23 "lexer.y"
 
     int ival;      // 用于存储整数
     float fval;    // 用于存储浮点数

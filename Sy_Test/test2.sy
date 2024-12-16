@@ -1,3 +1,4 @@
+/*    af  */
 void inc()
 {
     int i;
