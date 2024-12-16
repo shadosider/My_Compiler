@@ -1,7 +1,13 @@
-int main()
-{
-    int i = 09;
-    int j = ~1;
+int main() {
+    int Student_ID1 = 22051024;
+    int Student_ID2 = 22051018;
+    int Student_ID3 = 22051011;
+    int Student_ID4 = 22051032;
+    int a = 20, b = 10;
+    int sum = a + b;
+    int diff = a - b;
+    int product = a * b;
+    int quotient = a / b;
+    int remainder = a % b;
     return 0;
 }
-
