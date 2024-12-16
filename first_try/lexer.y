@@ -27,10 +27,13 @@ void print_indent() {
 }
 
 
+
 %token <ival> INTCONST
 %token <strval> FLOATCONST
 %token <strval> INT VOID FLOAT IDENT PLUS MINUS ASSIGN MUL UNARYOP CONST COMMA EQUAL OR AND WEIGHT IF ELSE WHILE BREAK CONTINUE RETURN LPARENT RPARENT LBRACKET RBRACKET LBRACE RBRACE END
 %type  <strval> FuncType BType
+
+%right WEIGHT
 
 %%
 
@@ -38,7 +41,7 @@ void print_indent() {
                 | line_list line
                 ;
 
-	    line : CompUnit      {
+	    line : RelExp      {
                     indent_level++;
                 }
                 ;
@@ -639,17 +642,17 @@ ConstInitValTail: COMMA{
 
           RelExp: {
                     print_indent();
-                    printf("RelExp (%d)\n", line_number);
+                    printf("RelExp1 (%d)\n", line_number);
                 }
                 AddExp                /* 关系表达式  */  
                 | {
                     print_indent();
-                    printf("RelExp (%d)\n", line_number);
+                    printf("RelExp2 (%d)\n", line_number);
                 }
                 RelExp
                 WEIGHT{
                     print_indent();
-                    printf("WEIGHT\n");
+                    printf("WEIGHT %s\n",$3);
                 }
                 AddExp
                 ;

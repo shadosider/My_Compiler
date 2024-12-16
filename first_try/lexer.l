@@ -50,7 +50,7 @@ Number   ({IntConst}|{floatConst})
 sign          ([+-])
 
 Equal    "!="|"=="
-Weight   "<"|">"|"<="|">="
+
 
 
 UnaryOP  ["!""+""-"]
@@ -84,7 +84,7 @@ UnaryOP  ["!""+""-"]
 "-"                  {yylval.strval = strdup(yytext);}return MINUS;{printf("MINUS -\n");}
 {mul}                {yylval.strval = strdup(yytext);}return MUL; 
 {Equal}              {yylval.strval = strdup(yytext);}return EQUAL;
-{Weight}             {yylval.strval = strdup(yytext);}return WEIGHT;
+">="|"<="|">"|"<"             {yylval.strval = strdup(yytext);}return WEIGHT;
 {UnaryOP}            {yylval.strval = strdup(yytext);}return UNARYOP;
 
 ","                  {yylval.strval = strdup(yytext);}return COMMA;{printf("COMMA ,\n");}

@@ -268,134 +268,44 @@ enum yysymbol_kind_t
   YYSYMBOL_YYACCEPT = 33,                  /* $accept  */
   YYSYMBOL_line_list = 34,                 /* line_list  */
   YYSYMBOL_line = 35,                      /* line  */
-  YYSYMBOL_CompUnit = 36,                  /* CompUnit  */
-  YYSYMBOL_37_1 = 37,                      /* $@1  */
-  YYSYMBOL_38_2 = 38,                      /* $@2  */
-  YYSYMBOL_CompUnitOpt = 39,               /* CompUnitOpt  */
-  YYSYMBOL_Decl = 40,                      /* Decl  */
-  YYSYMBOL_41_3 = 41,                      /* $@3  */
-  YYSYMBOL_42_4 = 42,                      /* $@4  */
-  YYSYMBOL_ConstDecl = 43,                 /* ConstDecl  */
-  YYSYMBOL_44_5 = 44,                      /* $@5  */
-  YYSYMBOL_ConstDef = 45,                  /* ConstDef  */
-  YYSYMBOL_46_6 = 46,                      /* $@6  */
-  YYSYMBOL_47_7 = 47,                      /* $@7  */
-  YYSYMBOL_ConstExp = 48,                  /* ConstExp  */
-  YYSYMBOL_ConstExpTail = 49,              /* ConstExpTail  */
-  YYSYMBOL_50_8 = 50,                      /* $@8  */
-  YYSYMBOL_51_9 = 51,                      /* $@9  */
-  YYSYMBOL_ConstInitVal = 52,              /* ConstInitVal  */
-  YYSYMBOL_53_10 = 53,                     /* $@10  */
-  YYSYMBOL_ConstInitValOpt = 54,           /* ConstInitValOpt  */
-  YYSYMBOL_ConstInitValTail = 55,          /* ConstInitValTail  */
-  YYSYMBOL_56_11 = 56,                     /* $@11  */
-  YYSYMBOL_ConstDefTail = 57,              /* ConstDefTail  */
-  YYSYMBOL_58_12 = 58,                     /* $@12  */
-  YYSYMBOL_VarDecl = 59,                   /* VarDecl  */
-  YYSYMBOL_60_13 = 60,                     /* $@13  */
-  YYSYMBOL_VarDeclTail = 61,               /* VarDeclTail  */
-  YYSYMBOL_62_14 = 62,                     /* $@14  */
-  YYSYMBOL_VarDef = 63,                    /* VarDef  */
-  YYSYMBOL_64_15 = 64,                     /* $@15  */
-  YYSYMBOL_65_16 = 65,                     /* $@16  */
-  YYSYMBOL_66_17 = 66,                     /* $@17  */
-  YYSYMBOL_InitVal = 67,                   /* InitVal  */
-  YYSYMBOL_68_18 = 68,                     /* $@18  */
-  YYSYMBOL_InitValOpt = 69,                /* InitValOpt  */
-  YYSYMBOL_InitValTail = 70,               /* InitValTail  */
-  YYSYMBOL_71_19 = 71,                     /* $@19  */
-  YYSYMBOL_FuncDef = 72,                   /* FuncDef  */
-  YYSYMBOL_73_20 = 73,                     /* $@20  */
-  YYSYMBOL_74_21 = 74,                     /* $@21  */
-  YYSYMBOL_FuncType = 75,                  /* FuncType  */
-  YYSYMBOL_BType = 76,                     /* BType  */
-  YYSYMBOL_FuncFParams = 77,               /* FuncFParams  */
-  YYSYMBOL_FuncFParam = 78,                /* FuncFParam  */
-  YYSYMBOL_79_22 = 79,                     /* $@22  */
-  YYSYMBOL_ExpOPT = 80,                    /* ExpOPT  */
-  YYSYMBOL_81_23 = 81,                     /* $@23  */
-  YYSYMBOL_ExpTail = 82,                   /* ExpTail  */
-  YYSYMBOL_83_24 = 83,                     /* $@24  */
-  YYSYMBOL_84_25 = 84,                     /* $@25  */
-  YYSYMBOL_FuncFParamTail = 85,            /* FuncFParamTail  */
-  YYSYMBOL_86_26 = 86,                     /* $@26  */
-  YYSYMBOL_FuncFParamsOpt = 87,            /* FuncFParamsOpt  */
-  YYSYMBOL_Stmt = 88,                      /* Stmt  */
-  YYSYMBOL_89_27 = 89,                     /* $@27  */
-  YYSYMBOL_90_28 = 90,                     /* $@28  */
-  YYSYMBOL_91_29 = 91,                     /* $@29  */
-  YYSYMBOL_92_30 = 92,                     /* $@30  */
-  YYSYMBOL_93_31 = 93,                     /* $@31  */
-  YYSYMBOL_94_32 = 94,                     /* $@32  */
-  YYSYMBOL_95_33 = 95,                     /* $@33  */
-  YYSYMBOL_96_34 = 96,                     /* $@34  */
-  YYSYMBOL_97_35 = 97,                     /* $@35  */
-  YYSYMBOL_98_36 = 98,                     /* $@36  */
-  YYSYMBOL_99_37 = 99,                     /* $@37  */
-  YYSYMBOL_100_38 = 100,                   /* $@38  */
-  YYSYMBOL_101_39 = 101,                   /* $@39  */
-  YYSYMBOL_102_40 = 102,                   /* $@40  */
-  YYSYMBOL_StmtOpt = 103,                  /* StmtOpt  */
-  YYSYMBOL_104_41 = 104,                   /* $@41  */
-  YYSYMBOL_Block = 105,                    /* Block  */
-  YYSYMBOL_106_42 = 106,                   /* $@42  */
-  YYSYMBOL_BlockItem = 107,                /* BlockItem  */
-  YYSYMBOL_108_43 = 108,                   /* $@43  */
-  YYSYMBOL_109_44 = 109,                   /* $@44  */
-  YYSYMBOL_BlockItemTail = 110,            /* BlockItemTail  */
-  YYSYMBOL_PrimaryExp = 111,               /* PrimaryExp  */
-  YYSYMBOL_112_45 = 112,                   /* $@45  */
-  YYSYMBOL_Exp = 113,                      /* Exp  */
-  YYSYMBOL_114_46 = 114,                   /* $@46  */
-  YYSYMBOL_ExpOpt = 115,                   /* ExpOpt  */
-  YYSYMBOL_Cond = 116,                     /* Cond  */
-  YYSYMBOL_117_47 = 117,                   /* $@47  */
-  YYSYMBOL_AddExp = 118,                   /* AddExp  */
-  YYSYMBOL_119_48 = 119,                   /* $@48  */
-  YYSYMBOL_AddExpTail = 120,               /* AddExpTail  */
-  YYSYMBOL_121_49 = 121,                   /* $@49  */
-  YYSYMBOL_122_50 = 122,                   /* $@50  */
-  YYSYMBOL_MulExp = 123,                   /* MulExp  */
-  YYSYMBOL_124_51 = 124,                   /* $@51  */
-  YYSYMBOL_MulExpTail = 125,               /* MulExpTail  */
-  YYSYMBOL_126_52 = 126,                   /* $@52  */
-  YYSYMBOL_UnaryExp = 127,                 /* UnaryExp  */
-  YYSYMBOL_128_53 = 128,                   /* $@53  */
-  YYSYMBOL_129_54 = 129,                   /* $@54  */
-  YYSYMBOL_130_55 = 130,                   /* $@55  */
-  YYSYMBOL_131_56 = 131,                   /* $@56  */
-  YYSYMBOL_FuncRParamsOpt = 132,           /* FuncRParamsOpt  */
-  YYSYMBOL_FuncRParams = 133,              /* FuncRParams  */
-  YYSYMBOL_134_57 = 134,                   /* $@57  */
-  YYSYMBOL_LVal = 135,                     /* LVal  */
-  YYSYMBOL_136_58 = 136,                   /* $@58  */
-  YYSYMBOL_LValTail = 137,                 /* LValTail  */
-  YYSYMBOL_138_59 = 138,                   /* $@59  */
-  YYSYMBOL_139_60 = 139,                   /* $@60  */
-  YYSYMBOL_LOrExp = 140,                   /* LOrExp  */
-  YYSYMBOL_141_61 = 141,                   /* $@61  */
-  YYSYMBOL_142_62 = 142,                   /* $@62  */
-  YYSYMBOL_143_63 = 143,                   /* $@63  */
-  YYSYMBOL_LAndExp = 144,                  /* LAndExp  */
-  YYSYMBOL_145_64 = 145,                   /* $@64  */
-  YYSYMBOL_146_65 = 146,                   /* $@65  */
-  YYSYMBOL_147_66 = 147,                   /* $@66  */
-  YYSYMBOL_EqExp = 148,                    /* EqExp  */
-  YYSYMBOL_149_67 = 149,                   /* $@67  */
-  YYSYMBOL_150_68 = 150,                   /* $@68  */
-  YYSYMBOL_151_69 = 151,                   /* $@69  */
-  YYSYMBOL_RelExp = 152,                   /* RelExp  */
-  YYSYMBOL_153_70 = 153,                   /* $@70  */
-  YYSYMBOL_154_71 = 154,                   /* $@71  */
-  YYSYMBOL_155_72 = 155,                   /* $@72  */
-  YYSYMBOL_156_73 = 156,                   /* $@73  */
-  YYSYMBOL_157_74 = 157,                   /* $@74  */
-  YYSYMBOL_158_75 = 158,                   /* $@75  */
-  YYSYMBOL_159_76 = 159,                   /* $@76  */
-  YYSYMBOL_160_77 = 160,                   /* $@77  */
-  YYSYMBOL_161_78 = 161,                   /* $@78  */
-  YYSYMBOL_162_79 = 162,                   /* $@79  */
-  YYSYMBOL_163_80 = 163                    /* $@80  */
+  YYSYMBOL_PrimaryExp = 36,                /* PrimaryExp  */
+  YYSYMBOL_37_45 = 37,                     /* $@45  */
+  YYSYMBOL_Exp = 38,                       /* Exp  */
+  YYSYMBOL_39_46 = 39,                     /* $@46  */
+  YYSYMBOL_AddExp = 40,                    /* AddExp  */
+  YYSYMBOL_41_48 = 41,                     /* $@48  */
+  YYSYMBOL_AddExpTail = 42,                /* AddExpTail  */
+  YYSYMBOL_43_49 = 43,                     /* $@49  */
+  YYSYMBOL_44_50 = 44,                     /* $@50  */
+  YYSYMBOL_MulExp = 45,                    /* MulExp  */
+  YYSYMBOL_46_51 = 46,                     /* $@51  */
+  YYSYMBOL_MulExpTail = 47,                /* MulExpTail  */
+  YYSYMBOL_48_52 = 48,                     /* $@52  */
+  YYSYMBOL_UnaryExp = 49,                  /* UnaryExp  */
+  YYSYMBOL_50_53 = 50,                     /* $@53  */
+  YYSYMBOL_51_54 = 51,                     /* $@54  */
+  YYSYMBOL_52_55 = 52,                     /* $@55  */
+  YYSYMBOL_53_56 = 53,                     /* $@56  */
+  YYSYMBOL_FuncRParamsOpt = 54,            /* FuncRParamsOpt  */
+  YYSYMBOL_FuncRParams = 55,               /* FuncRParams  */
+  YYSYMBOL_56_57 = 56,                     /* $@57  */
+  YYSYMBOL_LVal = 57,                      /* LVal  */
+  YYSYMBOL_58_58 = 58,                     /* $@58  */
+  YYSYMBOL_LValTail = 59,                  /* LValTail  */
+  YYSYMBOL_60_59 = 60,                     /* $@59  */
+  YYSYMBOL_61_60 = 61,                     /* $@60  */
+  YYSYMBOL_RelExp = 62,                    /* RelExp  */
+  YYSYMBOL_63_70 = 63,                     /* $@70  */
+  YYSYMBOL_64_71 = 64,                     /* $@71  */
+  YYSYMBOL_65_72 = 65,                     /* $@72  */
+  YYSYMBOL_66_73 = 66,                     /* $@73  */
+  YYSYMBOL_67_74 = 67,                     /* $@74  */
+  YYSYMBOL_68_75 = 68,                     /* $@75  */
+  YYSYMBOL_69_76 = 69,                     /* $@76  */
+  YYSYMBOL_70_77 = 70,                     /* $@77  */
+  YYSYMBOL_71_78 = 71,                     /* $@78  */
+  YYSYMBOL_72_79 = 72,                     /* $@79  */
+  YYSYMBOL_73_80 = 73                      /* $@80  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -512,7 +422,7 @@ typedef int yytype_uint16;
 
 
 /* Stored state numbers (used for stacks). */
-typedef yytype_int16 yy_state_t;
+typedef yytype_int8 yy_state_t;
 
 /* State numbers in computations.  */
 typedef int yy_state_fast_t;
@@ -721,18 +631,18 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  5
+#define YYFINAL  6
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   189
+#define YYLAST   55
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  33
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  131
+#define YYNNTS  41
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  183
+#define YYNRULES  59
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  265
+#define YYNSTATES  84
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   287
@@ -784,25 +694,12 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    37,    37,    38,    41,    46,    46,    54,    54,    60,
-      61,    64,    64,    69,    69,    76,    76,    89,    96,    89,
-     103,   106,   111,   106,   116,   119,   120,   120,   131,   132,
-     135,   135,   140,   144,   144,   149,   153,   153,   169,   169,
-     174,   178,   178,   185,   192,   185,   199,   200,   200,   211,
-     212,   215,   215,   220,   223,   235,   223,   244,   245,   246,
-     249,   250,   253,   256,   256,   271,   271,   278,   281,   286,
-     281,   291,   295,   295,   300,   305,   306,   311,   316,   311,
-     325,   325,   334,   334,   339,   343,   350,   339,   355,   359,
-     366,   355,   370,   370,   380,   380,   390,   394,   390,   405,
-     405,   409,   412,   412,   425,   425,   430,   430,   437,   438,
-     442,   442,   453,   454,   462,   473,   473,   480,   481,   484,
-     484,   491,   491,   498,   498,   503,   503,   508,   511,   511,
-     518,   518,   523,   526,   526,   531,   535,   531,   546,   546,
-     553,   554,   558,   559,   559,   567,   567,   576,   581,   576,
-     586,   589,   589,   594,   599,   594,   606,   606,   611,   616,
-     611,   623,   623,   628,   633,   628,   640,   640,   645,   650,
-     645,   657,   657,   662,   667,   662,   672,   677,   672,   684,
-     684,   689,   694,   689
+       0,    40,    40,    41,    44,   445,   445,   456,   457,   465,
+     476,   476,   494,   494,   501,   501,   506,   506,   511,   514,
+     514,   521,   521,   526,   529,   529,   534,   538,   534,   549,
+     549,   556,   557,   561,   562,   562,   570,   570,   579,   584,
+     579,   589,   643,   643,   648,   653,   648,   660,   660,   665,
+     670,   665,   675,   680,   675,   687,   687,   692,   697,   692
 };
 #endif
 
@@ -823,25 +720,12 @@ static const char *const yytname[] =
   "MUL", "UNARYOP", "CONST", "COMMA", "EQUAL", "OR", "AND", "WEIGHT", "IF",
   "ELSE", "WHILE", "BREAK", "CONTINUE", "RETURN", "LPARENT", "RPARENT",
   "LBRACKET", "RBRACKET", "LBRACE", "RBRACE", "END", "$accept",
-  "line_list", "line", "CompUnit", "$@1", "$@2", "CompUnitOpt", "Decl",
-  "$@3", "$@4", "ConstDecl", "$@5", "ConstDef", "$@6", "$@7", "ConstExp",
-  "ConstExpTail", "$@8", "$@9", "ConstInitVal", "$@10", "ConstInitValOpt",
-  "ConstInitValTail", "$@11", "ConstDefTail", "$@12", "VarDecl", "$@13",
-  "VarDeclTail", "$@14", "VarDef", "$@15", "$@16", "$@17", "InitVal",
-  "$@18", "InitValOpt", "InitValTail", "$@19", "FuncDef", "$@20", "$@21",
-  "FuncType", "BType", "FuncFParams", "FuncFParam", "$@22", "ExpOPT",
-  "$@23", "ExpTail", "$@24", "$@25", "FuncFParamTail", "$@26",
-  "FuncFParamsOpt", "Stmt", "$@27", "$@28", "$@29", "$@30", "$@31", "$@32",
-  "$@33", "$@34", "$@35", "$@36", "$@37", "$@38", "$@39", "$@40",
-  "StmtOpt", "$@41", "Block", "$@42", "BlockItem", "$@43", "$@44",
-  "BlockItemTail", "PrimaryExp", "$@45", "Exp", "$@46", "ExpOpt", "Cond",
-  "$@47", "AddExp", "$@48", "AddExpTail", "$@49", "$@50", "MulExp", "$@51",
-  "MulExpTail", "$@52", "UnaryExp", "$@53", "$@54", "$@55", "$@56",
-  "FuncRParamsOpt", "FuncRParams", "$@57", "LVal", "$@58", "LValTail",
-  "$@59", "$@60", "LOrExp", "$@61", "$@62", "$@63", "LAndExp", "$@64",
-  "$@65", "$@66", "EqExp", "$@67", "$@68", "$@69", "RelExp", "$@70",
-  "$@71", "$@72", "$@73", "$@74", "$@75", "$@76", "$@77", "$@78", "$@79",
-  "$@80", YY_NULLPTR
+  "line_list", "line", "PrimaryExp", "$@45", "Exp", "$@46", "AddExp",
+  "$@48", "AddExpTail", "$@49", "$@50", "MulExp", "$@51", "MulExpTail",
+  "$@52", "UnaryExp", "$@53", "$@54", "$@55", "$@56", "FuncRParamsOpt",
+  "FuncRParams", "$@57", "LVal", "$@58", "LValTail", "$@59", "$@60",
+  "RelExp", "$@70", "$@71", "$@72", "$@73", "$@74", "$@75", "$@76", "$@77",
+  "$@78", "$@79", "$@80", YY_NULLPTR
 };
 
 static const char *
@@ -851,249 +735,125 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-237)
+#define YYPACT_NINF (-54)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
 
-#define YYTABLE_NINF (-141)
+#define YYTABLE_NINF (-32)
 
 #define yytable_value_is_error(Yyn) \
   0
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-static const yytype_int16 yypact[] =
+static const yytype_int8 yypact[] =
 {
-    -237,    27,  -237,  -237,     4,  -237,  -237,    36,    22,  -237,
-    -237,  -237,  -237,    43,  -237,    39,    23,    32,  -237,  -237,
-    -237,  -237,  -237,  -237,  -237,    23,    51,    23,    52,    53,
-      47,    55,  -237,    54,    40,  -237,    57,    45,    45,  -237,
-      42,  -237,  -237,  -237,  -237,    45,  -237,    48,  -237,  -237,
-      66,    51,  -237,    56,    23,    58,    74,    52,  -237,  -237,
-    -237,    47,    60,  -237,    54,  -237,  -237,  -237,    57,    61,
-    -237,  -237,  -237,  -237,  -237,    62,  -237,  -237,  -237,     3,
-      63,  -237,  -237,    38,    78,    78,  -237,  -237,    59,    77,
-    -237,  -237,  -237,  -237,    67,     3,    22,    15,    65,  -237,
-    -237,  -237,    45,  -237,  -237,  -237,  -237,    82,    18,    89,
-    -237,    86,  -237,  -237,    19,  -237,  -237,  -237,  -237,  -237,
-    -237,    91,    68,    58,    81,    80,    83,    79,    84,  -237,
-      24,  -237,  -237,  -237,    78,  -237,  -237,  -237,  -237,  -237,
-    -237,  -237,  -237,    85,  -237,  -237,  -237,    90,    73,  -237,
-      97,  -237,    87,  -237,    88,    92,    93,    94,  -237,    95,
-      96,    38,    38,  -237,    78,   100,  -237,  -237,    78,  -237,
-    -237,  -237,  -237,  -237,   101,  -237,  -237,  -237,  -237,  -237,
-    -237,    68,  -237,  -237,  -237,  -237,  -237,    82,  -237,  -237,
-     102,   104,  -237,    62,  -237,  -237,  -237,  -237,   103,    63,
-    -237,  -237,  -237,    98,   105,  -237,    90,    67,   106,   107,
-    -237,   109,  -237,    95,   108,  -237,  -237,  -237,  -237,  -237,
-    -237,  -237,  -237,  -237,  -237,  -237,  -237,  -237,    15,  -237,
-    -237,  -237,    99,    15,   100,  -237,   112,  -237,  -237,  -237,
-     121,  -237,  -237,  -237,  -237,  -237,  -237,  -237,  -237,   124,
-    -237,  -237,    15,  -237,   122,  -237,  -237,  -237,  -237,  -237,
-    -237,  -237,  -237,  -237,  -237
+     -54,    13,   -54,   -54,   -54,   -54,   -54,   -54,   -54,   -54,
+     -54,   -54,   -54,    -5,    -4,     2,     2,   -54,   -54,     7,
+       8,   -54,   -54,   -54,   -54,   -54,     9,     4,    11,   -54,
+      12,   -54,   -54,   -54,   -54,   -54,     2,   -54,   -54,   -54,
+     -54,   -54,   -54,   -54,   -54,    -1,   -54,   -54,   -54,   -54,
+      -4,    -4,   -54,     2,    -8,   -54,   -54,     2,   -54,   -54,
+     -54,   -54,     9,   -54,   -54,     0,   -54,     5,   -54,   -54,
+     -54,   -54,   -54,    16,     6,   -54,    -3,   -54,   -54,   -54,
+     -54,    -8,   -54,   -54
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
    Performed when YYTABLE does not specify something else to do.  Zero
    means the default is an error.  */
-static const yytype_uint8 yydefact[] =
+static const yytype_int8 yydefact[] =
 {
-      10,    10,     2,     4,     5,     1,     3,     0,    13,    58,
-      57,    59,     6,     0,     8,     0,     0,     0,    15,    12,
-      60,    61,    14,    36,    54,     0,     0,    76,     0,    41,
-      40,     0,    75,    74,     0,    17,    35,    24,    24,    38,
-       0,    63,    72,    62,    55,    24,    33,     0,    21,    42,
-       0,     0,    37,    67,     0,     0,     0,     0,    16,   121,
-      44,    40,     0,    64,    74,   102,    56,    18,    35,     0,
-      20,   128,   128,   121,   121,   115,    39,    65,    73,   106,
-     121,    34,    22,   127,   133,   133,   128,   172,     0,     0,
-      47,    45,    46,   121,    71,   106,    13,    80,     0,    26,
-      25,    19,    24,   123,   125,   122,   138,   132,     0,     0,
-     180,     0,   174,   177,   115,   116,    68,    66,   108,   105,
-     107,     0,   115,     0,     0,     0,     0,     0,     0,   103,
-     121,    23,   128,   128,   133,   130,   129,   113,   114,   145,
-     110,   134,   112,     0,   182,   128,   128,    53,     0,   115,
-       0,   117,     0,    83,     0,     0,     0,     0,    97,    32,
-       0,   127,   127,   139,   133,   150,   115,   136,   133,   175,
-     178,    51,    49,    48,     0,    78,    81,    85,    89,    93,
-      95,   115,    30,    28,    27,   124,   126,   132,   147,   146,
-       0,   115,   183,   115,    69,   115,   119,   119,     0,   121,
-     131,   115,   111,   142,     0,   141,    53,    71,     0,     0,
-     151,     0,    98,    32,     0,   143,   137,    52,    70,    79,
-      86,   120,   156,   151,    90,    31,   148,   115,    80,   152,
-     161,   156,     0,    80,   150,   144,   101,   157,   166,   161,
-       0,   154,    91,   149,    99,    87,   162,   121,   166,     0,
-     159,   156,    80,   167,     0,   164,   161,   155,   100,   169,
-     166,   160,   121,   165,   170
+      42,    42,     2,     4,    12,    42,     1,     3,    43,    19,
+      19,    12,    12,     0,    18,    24,    24,    19,    48,     0,
+       0,    45,    14,    16,    13,    29,    23,     0,     0,    56,
+       0,    50,    53,    12,    19,    19,    24,    21,    20,     8,
+       9,    36,     5,    25,     7,     0,    58,    19,    19,    46,
+      18,    18,    30,    24,    41,    10,    27,    24,    51,    54,
+      15,    17,    23,    38,    37,     0,    12,    10,    59,    22,
+      10,     6,    11,    33,     0,    32,     0,    34,    28,    39,
+      10,    41,    35,    40
 };
 
 /* YYPGOTO[NTERM-NUM].  */
-static const yytype_int16 yypgoto[] =
+static const yytype_int8 yypgoto[] =
 {
-    -237,  -237,   111,  -237,  -237,  -237,  -237,    21,  -237,  -237,
-    -237,  -237,    64,  -237,  -237,   110,   -32,  -237,  -237,  -123,
-    -237,  -237,   -98,  -237,    75,  -237,  -237,  -237,   114,  -237,
-      69,  -237,  -237,  -237,  -110,  -237,  -237,   -84,  -237,  -237,
-    -237,  -237,  -237,     0,  -237,    70,  -237,  -237,  -237,   -65,
-    -237,  -237,   113,  -237,  -237,  -219,  -237,  -237,  -237,  -237,
-    -237,  -237,  -237,  -237,  -237,  -237,  -237,  -237,  -237,  -237,
-    -237,  -237,    25,  -237,  -237,  -237,  -237,    28,  -237,  -237,
-    -120,  -237,   -37,   -52,  -237,   -73,  -237,  -105,  -237,  -237,
-     -67,  -237,   -41,  -237,   -82,  -237,  -237,  -237,  -237,  -237,
-     -80,  -237,    29,  -237,   -85,  -237,  -237,   -72,  -237,  -237,
-    -237,  -220,  -237,  -237,  -237,  -224,  -237,  -237,  -237,  -236,
-    -237,  -237,  -237,  -237,  -237,  -237,  -237,  -237,  -237,  -237,
-    -237
+     -54,   -54,    33,   -54,   -54,   -53,   -54,   -11,   -54,   -41,
+     -54,   -54,    -6,   -54,   -27,   -54,   -13,   -54,   -54,   -54,
+     -54,   -54,   -44,   -54,   -54,   -54,   -43,   -54,   -54,    32,
+     -54,   -54,   -54,   -54,   -54,   -54,   -54,   -54,   -54,   -54,
+     -54
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
-static const yytype_int16 yydefgoto[] =
+static const yytype_int8 yydefgoto[] =
 {
-       0,     1,     2,     3,     7,     8,     4,    14,    15,    16,
-      19,    25,    36,    45,    80,   100,    49,    59,   102,   101,
-     130,   160,   183,   199,    47,    57,    22,    26,    40,    51,
-      30,    37,    38,    75,    91,   114,   148,   172,   193,    12,
-      27,    55,    13,    31,    32,    33,    53,    63,    94,   117,
-     149,   207,    43,    54,    34,   120,   121,   195,   122,   123,
-     124,   196,   228,   125,   197,   233,   126,   127,   128,   181,
-     245,   252,    66,    79,    95,    96,    97,    98,   141,   166,
-      92,    93,   152,   209,   210,    70,    71,   105,   132,   133,
-      83,    84,   136,   164,   107,   108,   109,   191,   134,   204,
-     205,   227,   142,   165,   189,   201,   234,   221,   222,   223,
-     251,   229,   230,   231,   256,   237,   238,   239,   260,   246,
-     247,   248,   262,    72,    73,   145,    74,   146,    85,    86,
-     168
+       0,     1,     2,    43,    55,    73,    66,     8,     9,    24,
+      34,    35,    14,    15,    38,    53,    26,    27,    28,    67,
+      36,    74,    75,    80,    44,    54,    64,    70,    81,     3,
+       4,     5,    33,    10,    11,    47,    12,    48,    16,    17,
+      57
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
    positive, shift that token.  If negative, reduce the rule whose
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
-static const yytype_int16 yytable[] =
+static const yytype_int8 yytable[] =
 {
-      88,    89,   151,   110,   147,    87,    50,   159,  -104,   236,
-    -104,   240,   254,    56,   242,   249,    23,  -104,    -7,   111,
-     115,   137,   138,   -77,   263,    28,   139,     5,    20,   174,
-      21,   257,   261,   258,  -109,   -84,   -11,   -88,   -92,   -94,
-     -96,     9,    10,    11,   140,   -82,   190,   103,   104,    90,
-     -50,    17,   163,    18,    99,   -29,   185,   186,    24,    29,
-      35,   151,    39,    41,   -43,   161,   162,    44,   112,    42,
-     131,   203,    46,    48,    52,   208,   213,    60,   169,   170,
-      58,   214,   187,   206,    62,    67,   192,   113,    65,    77,
-      82,   106,    90,    99,   135,   116,   129,   143,   144,   139,
-    -118,   154,   155,   157,   173,   171,   156,   203,   175,   158,
-     182,   167,     6,   215,   177,   225,   241,   119,   178,   176,
-      61,    68,   217,   118,    64,   179,   180,   184,   188,   202,
-     194,  -140,   216,   244,   220,   212,   224,   226,   219,   250,
-     255,   259,   218,    81,   198,   211,   200,   235,   153,   243,
-     150,   232,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,    69,
-       0,     0,     0,     0,   253,    76,     0,    78,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,   264
+      19,    20,    65,    29,    18,    22,    23,    39,    40,    60,
+      61,    30,    41,     6,    21,    25,    31,    76,    32,    45,
+      63,    37,    49,    52,    46,    56,    79,    71,    50,    51,
+      42,    77,   -31,    78,     7,    69,    82,    13,    83,     0,
+      62,    58,    59,     0,    68,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,    72
 };
 
-static const yytype_int16 yycheck[] =
+static const yytype_int8 yycheck[] =
 {
-      73,    74,   122,    85,   114,    72,    38,   130,     5,   228,
-       7,   231,   248,    45,   233,   239,    16,    14,    14,    86,
-      93,     3,     4,     8,   260,    25,     8,     0,     5,   149,
-       7,   251,   256,   252,    31,    20,    14,    22,    23,    24,
-      25,     5,     6,     7,    26,    30,   166,     9,    10,    30,
-      31,     8,   134,    14,    30,    31,   161,   162,    26,     8,
-       8,   181,    15,     8,    11,   132,   133,    27,     9,    15,
-     102,   191,    15,    28,    32,   195,   199,    11,   145,   146,
-      32,   201,   164,   193,    28,    11,   168,    10,    30,    29,
-      29,    13,    30,    30,    12,    28,    31,     8,    12,     8,
-      32,    20,    22,    24,    31,    15,    23,   227,    11,    25,
-      15,    26,     1,    15,    26,   213,    17,    96,    26,    32,
-      51,    57,   206,    95,    54,    32,    32,    31,    28,    27,
-      29,    27,    27,    21,    27,    32,    27,    29,    32,    18,
-      16,    19,   207,    68,   181,   197,   187,   227,   123,   234,
-     121,   223,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    59,
-      -1,    -1,    -1,    -1,   247,    61,    -1,    64,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,   262
+      11,    12,    55,    16,    10,     9,    10,     3,     4,    50,
+      51,    17,     8,     0,    19,    13,     9,    70,    10,     8,
+      28,    12,    33,    36,    12,    26,    29,    27,    34,    35,
+      26,    15,    27,    27,     1,    62,    80,     5,    81,    -1,
+      53,    47,    48,    -1,    57,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    66
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
-static const yytype_uint8 yystos[] =
+static const yytype_int8 yystos[] =
 {
-       0,    34,    35,    36,    39,     0,    35,    37,    38,     5,
-       6,     7,    72,    75,    40,    41,    42,     8,    14,    43,
-       5,     7,    59,    76,    26,    44,    60,    73,    76,     8,
-      63,    76,    77,    78,    87,     8,    45,    64,    65,    15,
-      61,     8,    15,    85,    27,    46,    15,    57,    28,    49,
-      49,    62,    32,    79,    86,    74,    49,    58,    32,    50,
-      11,    63,    28,    80,    78,    30,   105,    11,    45,    48,
-     118,   119,   156,   157,   159,    66,    61,    29,    85,   106,
-      47,    57,    29,   123,   124,   161,   162,   123,   118,   118,
-      30,    67,   113,   114,    81,   107,   108,   109,   110,    30,
-      48,    52,    51,     9,    10,   120,    13,   127,   128,   129,
-     127,   123,     9,    10,    68,   118,    28,    82,   110,    40,
-      88,    89,    91,    92,    93,    96,    99,   100,   101,    31,
-      53,    49,   121,   122,   131,    12,   125,     3,     4,     8,
-      26,   111,   135,     8,    12,   158,   160,    67,    69,    83,
-     135,   113,   115,   105,    20,    22,    23,    24,    25,    52,
-      54,   123,   123,   127,   126,   136,   112,    26,   163,   123,
-     123,    15,    70,    31,   113,    11,    32,    26,    26,    32,
-      32,   102,    15,    55,    31,   120,   120,   127,    28,   137,
-     113,   130,   127,    71,    29,    90,    94,    97,   115,    56,
-     125,   138,    27,   113,   132,   133,    67,    84,   113,   116,
-     117,   116,    32,    52,   113,    15,    27,    70,    82,    32,
-      27,   140,   141,   142,    27,    55,    29,   134,    95,   144,
-     145,   146,   140,    98,   139,   133,    88,   148,   149,   150,
-     144,    17,    88,   137,    21,   103,   152,   153,   154,   148,
-      18,   143,   104,   118,   152,    16,   147,   144,    88,    19,
-     151,   148,   155,   152,   118
+       0,    34,    35,    62,    63,    64,     0,    35,    40,    41,
+      66,    67,    69,    62,    45,    46,    71,    72,    45,    40,
+      40,    19,     9,    10,    42,    13,    49,    50,    51,    49,
+      45,     9,    10,    65,    43,    44,    53,    12,    47,     3,
+       4,     8,    26,    36,    57,     8,    12,    68,    70,    40,
+      45,    45,    49,    48,    58,    37,    26,    73,    45,    45,
+      42,    42,    49,    28,    59,    38,    39,    52,    49,    47,
+      60,    27,    40,    38,    54,    55,    38,    15,    27,    29,
+      56,    61,    55,    59
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
-static const yytype_uint8 yyr1[] =
+static const yytype_int8 yyr1[] =
 {
-       0,    33,    34,    34,    35,    37,    36,    38,    36,    39,
-      39,    41,    40,    42,    40,    44,    43,    46,    47,    45,
-      48,    50,    51,    49,    49,    52,    53,    52,    54,    54,
-      56,    55,    55,    58,    57,    57,    60,    59,    62,    61,
-      61,    64,    63,    65,    66,    63,    67,    68,    67,    69,
-      69,    71,    70,    70,    73,    74,    72,    75,    75,    75,
-      76,    76,    77,    79,    78,    81,    80,    80,    83,    84,
-      82,    82,    86,    85,    85,    87,    87,    89,    90,    88,
-      91,    88,    92,    88,    93,    94,    95,    88,    96,    97,
-      98,    88,    99,    88,   100,    88,   101,   102,    88,   104,
-     103,   103,   106,   105,   108,   107,   109,   107,   110,   110,
-     112,   111,   111,   111,   111,   114,   113,   115,   115,   117,
-     116,   119,   118,   121,   120,   122,   120,   120,   124,   123,
-     126,   125,   125,   128,   127,   129,   130,   127,   131,   127,
-     132,   132,   133,   134,   133,   136,   135,   138,   139,   137,
-     137,   141,   140,   142,   143,   140,   145,   144,   146,   147,
-     144,   149,   148,   150,   151,   148,   153,   152,   154,   155,
-     152,   156,   118,   157,   158,   118,   159,   160,   118,   161,
-     123,   162,   163,   123
+       0,    33,    34,    34,    35,    37,    36,    36,    36,    36,
+      39,    38,    41,    40,    43,    42,    44,    42,    42,    46,
+      45,    48,    47,    47,    50,    49,    51,    52,    49,    53,
+      49,    54,    54,    55,    56,    55,    58,    57,    60,    61,
+      59,    59,    63,    62,    64,    65,    62,    66,    40,    67,
+      68,    40,    69,    70,    40,    71,    45,    72,    73,    45
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     1,     2,     1,     0,     3,     0,     3,     1,
-       0,     0,     2,     0,     2,     0,     6,     0,     0,     6,
-       1,     0,     0,     6,     0,     1,     0,     4,     2,     0,
-       0,     4,     0,     0,     4,     0,     0,     5,     0,     4,
-       0,     0,     3,     0,     0,     6,     1,     0,     4,     2,
-       0,     0,     4,     0,     0,     0,     8,     1,     1,     1,
-       1,     1,     2,     0,     4,     0,     4,     0,     0,     0,
-       6,     0,     0,     4,     0,     1,     0,     0,     0,     6,
-       0,     3,     0,     2,     0,     0,     0,     9,     0,     0,
-       0,     8,     0,     3,     0,     3,     0,     0,     5,     0,
-       3,     0,     0,     4,     0,     2,     0,     2,     2,     0,
-       0,     4,     1,     1,     1,     0,     2,     1,     0,     0,
-       2,     0,     3,     0,     4,     0,     4,     0,     0,     3,
-       0,     4,     0,     0,     2,     0,     0,     6,     0,     3,
-       0,     1,     1,     0,     4,     0,     3,     0,     0,     6,
-       0,     0,     2,     0,     0,     5,     0,     2,     0,     0,
-       5,     0,     2,     0,     0,     5,     0,     2,     0,     0,
-       5,     0,     2,     0,     0,     5,     0,     0,     5,     0,
-       2,     0,     0,     5
+       0,     2,     1,     2,     1,     0,     4,     1,     1,     1,
+       0,     2,     0,     3,     0,     4,     0,     4,     0,     0,
+       3,     0,     4,     0,     0,     2,     0,     0,     6,     0,
+       3,     0,     1,     1,     0,     4,     0,     3,     0,     0,
+       6,     0,     0,     2,     0,     0,     5,     0,     2,     0,
+       0,     5,     0,     0,     5,     0,     2,     0,     0,     5
 };
 
 
@@ -1556,606 +1316,36 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-  case 4: /* line: CompUnit  */
-#line 41 "lexer.y"
-                                 {
+  case 4: /* line: RelExp  */
+#line 44 "lexer.y"
+                               {
                     indent_level++;
                 }
-#line 1565 "y.tab.c"
+#line 1325 "y.tab.c"
     break;
 
-  case 5: /* $@1: %empty  */
-#line 46 "lexer.y"
-                             {
-                    print_indent();
-                    indent_level++;
-                    printf("CompUnit (%d)\n", line_number);
-                }
-#line 1575 "y.tab.c"
-    break;
-
-  case 6: /* CompUnit: CompUnitOpt $@1 FuncDef  */
-#line 51 "lexer.y"
-                         {        /* 编译单元 */
-                    
-                }
-#line 1583 "y.tab.c"
-    break;
-
-  case 7: /* $@2: %empty  */
-#line 54 "lexer.y"
-                             {
-                    indent_level++; 
-                }
-#line 1591 "y.tab.c"
-    break;
-
-  case 11: /* $@3: %empty  */
-#line 64 "lexer.y"
-                  {
-                    print_indent();
-                    printf("Decl\n"); 
-                }
-#line 1600 "y.tab.c"
-    break;
-
-  case 13: /* $@4: %empty  */
-#line 69 "lexer.y"
-                  {
-                    print_indent();
-                    printf("Decl\n"); 
-                }
-#line 1609 "y.tab.c"
-    break;
-
-  case 15: /* $@5: %empty  */
-#line 76 "lexer.y"
-                       {
-                    print_indent(); 
-                    printf("ConstDecl (%d)\n", line_number);
-                }
-#line 1618 "y.tab.c"
-    break;
-
-  case 16: /* ConstDecl: CONST $@5 BType ConstDef ConstDefTail END  */
-#line 81 "lexer.y"
-                   {
-                    print_indent();
-                    printf("SEMICN\n");
-                }
-#line 1627 "y.tab.c"
-    break;
-
-  case 17: /* $@6: %empty  */
-#line 89 "lexer.y"
-                       {
-                    print_indent(); 
-                    printf("ConstDef (%d)\n", line_number);
-                    print_indent(); 
-                    printf("Ident: %s\n", (yyvsp[0].strval));
-                }
-#line 1638 "y.tab.c"
-    break;
-
-  case 18: /* $@7: %empty  */
-#line 96 "lexer.y"
-                      {
-                    print_indent(); 
-                    printf("ASSIGN\n");
-                }
-#line 1647 "y.tab.c"
-    break;
-
-  case 21: /* $@8: %empty  */
-#line 106 "lexer.y"
-                          {
-                    print_indent(); 
-                    printf("LBRACKET\n");
-                }
-#line 1656 "y.tab.c"
-    break;
-
-  case 22: /* $@9: %empty  */
-#line 111 "lexer.y"
-                        {
-                    print_indent(); 
-                    printf("RBRACKET\n");
-                }
-#line 1665 "y.tab.c"
-    break;
-
-  case 26: /* $@10: %empty  */
-#line 120 "lexer.y"
-                        {
-                    print_indent(); 
-                    printf("LBRACE\n");
-                }
-#line 1674 "y.tab.c"
-    break;
-
-  case 27: /* ConstInitVal: LBRACE $@10 ConstInitValOpt RBRACE  */
-#line 125 "lexer.y"
-                      {
-                    print_indent(); 
-                    printf("RBRACE\n");
-                }
-#line 1683 "y.tab.c"
-    break;
-
-  case 30: /* $@11: %empty  */
-#line 135 "lexer.y"
-                       {
-                    print_indent(); 
-                    printf("COMMA\n");
-                }
-#line 1692 "y.tab.c"
-    break;
-
-  case 33: /* $@12: %empty  */
-#line 144 "lexer.y"
-                       {
-                    print_indent(); 
-                    printf("COMMA\n");
-                }
-#line 1701 "y.tab.c"
-    break;
-
-  case 36: /* $@13: %empty  */
-#line 153 "lexer.y"
-                       {
-                    print_indent(); 
-                    printf("VarDecl (%d)\n", line_number);
-                    print_indent(); 
-                    printf("BType (%d)\n", line_number);
-                    print_indent(); 
-                    printf("Type: %s\n", (yyvsp[0].strval));
-                }
-#line 1714 "y.tab.c"
-    break;
-
-  case 37: /* VarDecl: BType $@13 VarDef VarDeclTail END  */
-#line 163 "lexer.y"
-                   {
-                    print_indent();
-                    printf("SEMICN\n");
-                }
-#line 1723 "y.tab.c"
-    break;
-
-  case 38: /* $@14: %empty  */
-#line 169 "lexer.y"
-                       {
-                    print_indent(); 
-                    printf("COMMA\n");
-                }
-#line 1732 "y.tab.c"
-    break;
-
-  case 41: /* $@15: %empty  */
-#line 178 "lexer.y"
-                       {
-                    print_indent(); 
-                    printf("VarDef (%d)\n", line_number);
-                    print_indent();
-                    printf("Ident: %s\n", (yyvsp[0].strval));
-                }
-#line 1743 "y.tab.c"
-    break;
-
-  case 43: /* $@16: %empty  */
-#line 185 "lexer.y"
-                       {
-                    print_indent(); 
-                    printf("VarDef (%d)\n", line_number);
-                    print_indent();
-                    printf("Ident: %s\n", (yyvsp[0].strval));
-                }
-#line 1754 "y.tab.c"
-    break;
-
-  case 44: /* $@17: %empty  */
-#line 192 "lexer.y"
-                      {
-                    print_indent(); 
-                    printf("ASSIGN\n");
-                }
-#line 1763 "y.tab.c"
-    break;
-
-  case 47: /* $@18: %empty  */
-#line 200 "lexer.y"
-                        {
-                    print_indent(); 
-                    printf("LBRACE\n");
-                }
-#line 1772 "y.tab.c"
-    break;
-
-  case 48: /* InitVal: LBRACE $@18 InitValOpt RBRACE  */
-#line 205 "lexer.y"
-                      {
-                    print_indent(); 
-                    printf("RBRACE\n");
-                }
-#line 1781 "y.tab.c"
-    break;
-
-  case 51: /* $@19: %empty  */
-#line 215 "lexer.y"
-                       {
-                    print_indent(); 
-                    printf("COMMA\n");
-                }
-#line 1790 "y.tab.c"
-    break;
-
-  case 54: /* $@20: %empty  */
-#line 223 "lexer.y"
-                                        {
-                    print_indent(); 
-                    printf("FuncDef (%d)\n", line_number); 
-                    print_indent();
-                    printf("FuncType (%d)\n", line_number);
-                    print_indent();
-                    printf("Type: %s\n", (yyvsp[-2].strval));
-                    print_indent();
-                    printf("Ident: %s\n", (yyvsp[-1].strval));
-                    print_indent();
-                    printf("LPARENT\n");
-                }
-#line 1807 "y.tab.c"
-    break;
-
-  case 55: /* $@21: %empty  */
-#line 235 "lexer.y"
-                                      {
-                    print_indent();
-                    printf("RPARENT\n");
-                }
-#line 1816 "y.tab.c"
-    break;
-
-  case 56: /* FuncDef: FuncType IDENT LPARENT $@20 FuncFParamsOpt RPARENT $@21 Block  */
-#line 239 "lexer.y"
-                      {  /* 函数定义  */
-                    
-                }
-#line 1824 "y.tab.c"
-    break;
-
-  case 57: /* FuncType: VOID  */
-#line 244 "lexer.y"
-                            { (yyval.strval) = (yyvsp[0].strval); }
-#line 1830 "y.tab.c"
-    break;
-
-  case 58: /* FuncType: INT  */
-#line 245 "lexer.y"
-                            { (yyval.strval) = (yyvsp[0].strval); }
-#line 1836 "y.tab.c"
-    break;
-
-  case 59: /* FuncType: FLOAT  */
-#line 246 "lexer.y"
-                            { (yyval.strval) = (yyvsp[0].strval); }
-#line 1842 "y.tab.c"
-    break;
-
-  case 60: /* BType: INT  */
-#line 249 "lexer.y"
-                            { (yyval.strval) = (yyvsp[0].strval); }
-#line 1848 "y.tab.c"
-    break;
-
-  case 61: /* BType: FLOAT  */
-#line 250 "lexer.y"
-                            { (yyval.strval) = (yyvsp[0].strval); }
-#line 1854 "y.tab.c"
-    break;
-
-  case 63: /* $@22: %empty  */
-#line 256 "lexer.y"
-                             {
-                    print_indent(); 
-                    printf("FuncFParams (%d)\n", line_number);
-                    print_indent(); 
-                    printf("FuncFParam (%d)\n", line_number);
-                    print_indent(); 
-                    printf("BType (%d)\n", line_number);
-                    print_indent(); 
-                    printf("Type: %s\n", (yyvsp[-1].strval));
-                    print_indent();
-                    printf("Ident: %s\n", (yyvsp[0].strval));
-                }
-#line 1871 "y.tab.c"
-    break;
-
-  case 65: /* $@23: %empty  */
-#line 271 "lexer.y"
-                                   {
-                    print_indent(); 
-                    printf("LBRACKET\n");
-                    print_indent(); 
-                    printf("RBRACKET\n");
-                }
-#line 1882 "y.tab.c"
-    break;
-
-  case 68: /* $@24: %empty  */
-#line 281 "lexer.y"
-                          {
-                    print_indent(); 
-                    printf("LBRACKET\n");
-                }
-#line 1891 "y.tab.c"
-    break;
-
-  case 69: /* $@25: %empty  */
-#line 286 "lexer.y"
-                        {
-                    print_indent(); 
-                    printf("RBRACKET\n");
-                }
-#line 1900 "y.tab.c"
-    break;
-
-  case 72: /* $@26: %empty  */
-#line 295 "lexer.y"
-                       {
-                    print_indent();
-                    printf("COMMA (%d)\n", line_number);
-                }
-#line 1909 "y.tab.c"
-    break;
-
-  case 77: /* $@27: %empty  */
-#line 311 "lexer.y"
-                  {
-                    print_indent();
-                    printf("Stmt (%d)\n", line_number);
-                }
-#line 1918 "y.tab.c"
-    break;
-
-  case 78: /* $@28: %empty  */
-#line 316 "lexer.y"
-                      {
-                    print_indent(); 
-                    printf("ASSIGN\n");
-                }
-#line 1927 "y.tab.c"
-    break;
-
-  case 79: /* Stmt: $@27 LVal ASSIGN $@28 Exp END  */
-#line 321 "lexer.y"
-                   {
-                    print_indent(); 
-                    printf("SEMICN\n");
-                }
-#line 1936 "y.tab.c"
-    break;
-
-  case 80: /* $@29: %empty  */
-#line 325 "lexer.y"
-                  {
-                    print_indent();
-                    printf("Stmt (%d)\n", line_number);
-                }
-#line 1945 "y.tab.c"
-    break;
-
-  case 81: /* Stmt: $@29 ExpOpt END  */
-#line 330 "lexer.y"
-                   {
-                    print_indent(); 
-                    printf("SEMICN\n");
-                }
-#line 1954 "y.tab.c"
-    break;
-
-  case 82: /* $@30: %empty  */
-#line 334 "lexer.y"
-                  {
-                    print_indent();
-                    printf("Stmt (%d)\n", line_number);
-                }
-#line 1963 "y.tab.c"
-    break;
-
-  case 84: /* $@31: %empty  */
-#line 339 "lexer.y"
-                  {
-                    print_indent();
-                    printf("Stmt (%d)\n", line_number);
-                }
-#line 1972 "y.tab.c"
-    break;
-
-  case 85: /* $@32: %empty  */
-#line 343 "lexer.y"
-                          {
-                    print_indent();
-                    printf("IF\n");
-                    print_indent();
-                    printf("LPARENT\n");
-                }
-#line 1983 "y.tab.c"
-    break;
-
-  case 86: /* $@33: %empty  */
-#line 350 "lexer.y"
-                       {
-                    print_indent();
-                    printf("RPARENT\n");
-                }
-#line 1992 "y.tab.c"
-    break;
-
-  case 88: /* $@34: %empty  */
-#line 355 "lexer.y"
-                  {
-                    print_indent();
-                    printf("Stmt (%d)\n", line_number);
-                }
-#line 2001 "y.tab.c"
-    break;
-
-  case 89: /* $@35: %empty  */
-#line 359 "lexer.y"
-                             {
-                    print_indent();
-                    printf("WHILE\n");
-                    print_indent();
-                    printf("LPARENT\n");
-                }
-#line 2012 "y.tab.c"
-    break;
-
-  case 90: /* $@36: %empty  */
-#line 366 "lexer.y"
-                       {
-                    print_indent();
-                    printf("RPARENT\n");
-                }
-#line 2021 "y.tab.c"
-    break;
-
-  case 92: /* $@37: %empty  */
-#line 370 "lexer.y"
-                  {
-                    print_indent();
-                    printf("Stmt (%d)\n", line_number);
-                }
-#line 2030 "y.tab.c"
-    break;
-
-  case 93: /* Stmt: $@37 BREAK END  */
-#line 374 "lexer.y"
-                         {
-                    print_indent();
-                    printf("BREAK\n");
-                    print_indent();
-                    printf("SEMICN\n");
-                }
-#line 2041 "y.tab.c"
-    break;
-
-  case 94: /* $@38: %empty  */
-#line 380 "lexer.y"
-                  {
-                    print_indent();
-                    printf("Stmt (%d)\n", line_number);
-                }
-#line 2050 "y.tab.c"
-    break;
-
-  case 95: /* Stmt: $@38 CONTINUE END  */
-#line 384 "lexer.y"
-                            {
-                    print_indent();
-                    printf("CONTINUE\n");
-                    print_indent();
-                    printf("SEMICN\n");
-                }
-#line 2061 "y.tab.c"
-    break;
-
-  case 96: /* $@39: %empty  */
-#line 390 "lexer.y"
-                  {
-                    print_indent();
-                    printf("Stmt (%d)\n", line_number);
-                }
-#line 2070 "y.tab.c"
-    break;
-
-  case 97: /* $@40: %empty  */
-#line 394 "lexer.y"
-                      {
-                    print_indent();
-                    printf("RETURN\n");
-                }
-#line 2079 "y.tab.c"
-    break;
-
-  case 98: /* Stmt: $@39 RETURN $@40 ExpOpt END  */
-#line 399 "lexer.y"
-                   {
-                    print_indent();
-                    printf("SEMICN\n");
-                }
-#line 2088 "y.tab.c"
-    break;
-
-  case 99: /* $@41: %empty  */
-#line 405 "lexer.y"
-                      {
-                    print_indent();
-                    printf("ELSE\n");
-                }
-#line 2097 "y.tab.c"
-    break;
-
-  case 102: /* $@42: %empty  */
-#line 412 "lexer.y"
-                        {
-                    print_indent();
-                    printf("Block (%d)\n", line_number);
-                    print_indent();
-                    printf("LBRACE\n");
-                }
-#line 2108 "y.tab.c"
-    break;
-
-  case 103: /* Block: LBRACE $@42 BlockItemTail RBRACE  */
-#line 419 "lexer.y"
-                      {
-                    print_indent();
-                    printf("RBRACE\n");
-                }
-#line 2117 "y.tab.c"
-    break;
-
-  case 104: /* $@43: %empty  */
-#line 425 "lexer.y"
-                  {
-                    print_indent();
-                    printf("BlockItem (%d)\n", line_number);
-                }
-#line 2126 "y.tab.c"
-    break;
-
-  case 106: /* $@44: %empty  */
-#line 430 "lexer.y"
-                  {
-                    print_indent();
-                    printf("BlockItem (%d)\n", line_number);
-                }
-#line 2135 "y.tab.c"
-    break;
-
-  case 110: /* $@45: %empty  */
-#line 442 "lexer.y"
+  case 5: /* $@45: %empty  */
+#line 445 "lexer.y"
                          {
                     print_indent();
                     printf("PrimaryExp (%d)\n", line_number);
                     print_indent();
                     printf("LPARENT\n");
                 }
-#line 2146 "y.tab.c"
+#line 1336 "y.tab.c"
     break;
 
-  case 111: /* PrimaryExp: LPARENT $@45 Exp RPARENT  */
-#line 449 "lexer.y"
+  case 6: /* PrimaryExp: LPARENT $@45 Exp RPARENT  */
+#line 452 "lexer.y"
                        {
                     print_indent();
                     printf("RPARENT\n");
                 }
-#line 2155 "y.tab.c"
+#line 1345 "y.tab.c"
     break;
 
-  case 113: /* PrimaryExp: INTCONST  */
-#line 454 "lexer.y"
+  case 8: /* PrimaryExp: INTCONST  */
+#line 457 "lexer.y"
                           {
                     print_indent();
                     printf("PrimaryExp (%d)\n", line_number);
@@ -2164,11 +1354,11 @@ yyreduce:
                     print_indent();
                     printf("INTCON: %d\n", (yyvsp[0].ival));
                 }
-#line 2168 "y.tab.c"
+#line 1358 "y.tab.c"
     break;
 
-  case 114: /* PrimaryExp: FLOATCONST  */
-#line 462 "lexer.y"
+  case 9: /* PrimaryExp: FLOATCONST  */
+#line 465 "lexer.y"
                             {
                     print_indent();
                     printf("PrimaryExp (%d)\n", line_number);
@@ -2177,339 +1367,249 @@ yyreduce:
                     print_indent();
                     printf("FLOATCON: %s\n", (yyvsp[0].strval));
                 }
-#line 2181 "y.tab.c"
+#line 1371 "y.tab.c"
     break;
 
-  case 115: /* $@46: %empty  */
-#line 473 "lexer.y"
+  case 10: /* $@46: %empty  */
+#line 476 "lexer.y"
                   {
                     print_indent();
                     printf("Exp (%d)\n", line_number);
                 }
-#line 2190 "y.tab.c"
+#line 1380 "y.tab.c"
     break;
 
-  case 119: /* $@47: %empty  */
-#line 484 "lexer.y"
-                  {
-                    print_indent();
-                    printf("Cond (%d)\n", line_number);
-                }
-#line 2199 "y.tab.c"
-    break;
-
-  case 121: /* $@48: %empty  */
-#line 491 "lexer.y"
+  case 12: /* $@48: %empty  */
+#line 494 "lexer.y"
                   {
                     print_indent();
                     printf("AddExp (%d)\n", line_number);
                 }
-#line 2208 "y.tab.c"
+#line 1389 "y.tab.c"
     break;
 
-  case 123: /* $@49: %empty  */
-#line 498 "lexer.y"
+  case 14: /* $@49: %empty  */
+#line 501 "lexer.y"
                       {
                     print_indent();
                     printf("PLUS: %s\n", (yyvsp[0].strval));
                 }
-#line 2217 "y.tab.c"
+#line 1398 "y.tab.c"
     break;
 
-  case 125: /* $@50: %empty  */
-#line 503 "lexer.y"
+  case 16: /* $@50: %empty  */
+#line 506 "lexer.y"
                        {
                     print_indent();
                     printf("MINUS: %s\n", (yyvsp[0].strval));
                 }
-#line 2226 "y.tab.c"
+#line 1407 "y.tab.c"
     break;
 
-  case 128: /* $@51: %empty  */
-#line 511 "lexer.y"
+  case 19: /* $@51: %empty  */
+#line 514 "lexer.y"
                   {
                     print_indent();
                     printf(" MulExp (%d)\n", line_number);
                 }
-#line 2235 "y.tab.c"
+#line 1416 "y.tab.c"
     break;
 
-  case 130: /* $@52: %empty  */
-#line 518 "lexer.y"
+  case 21: /* $@52: %empty  */
+#line 521 "lexer.y"
                      {
                     print_indent();
                     printf("MUL: %s\n", (yyvsp[0].strval));
                 }
-#line 2244 "y.tab.c"
+#line 1425 "y.tab.c"
     break;
 
-  case 133: /* $@53: %empty  */
-#line 526 "lexer.y"
+  case 24: /* $@53: %empty  */
+#line 529 "lexer.y"
                   {
                     print_indent();
                     printf("UnaryExp (%d)\n", line_number);
                 }
-#line 2253 "y.tab.c"
+#line 1434 "y.tab.c"
     break;
 
-  case 135: /* $@54: %empty  */
-#line 531 "lexer.y"
+  case 26: /* $@54: %empty  */
+#line 534 "lexer.y"
                   {
                     print_indent();
                     printf("UnaryExp (%d)\n", line_number);
                 }
-#line 2262 "y.tab.c"
+#line 1443 "y.tab.c"
     break;
 
-  case 136: /* $@55: %empty  */
-#line 535 "lexer.y"
+  case 27: /* $@55: %empty  */
+#line 538 "lexer.y"
                              {
                     print_indent();
                     printf("Ident: %s\n", (yyvsp[-1].strval));
                     print_indent();
                     printf("LPARENT\n");
                 }
-#line 2273 "y.tab.c"
+#line 1454 "y.tab.c"
     break;
 
-  case 137: /* UnaryExp: $@54 IDENT LPARENT $@55 FuncRParamsOpt RPARENT  */
-#line 542 "lexer.y"
+  case 28: /* UnaryExp: $@54 IDENT LPARENT $@55 FuncRParamsOpt RPARENT  */
+#line 545 "lexer.y"
                        {
                     print_indent();
                     printf("RPARENT\n");
                 }
-#line 2282 "y.tab.c"
+#line 1463 "y.tab.c"
     break;
 
-  case 138: /* $@56: %empty  */
-#line 546 "lexer.y"
+  case 29: /* $@56: %empty  */
+#line 549 "lexer.y"
                          {
                     print_indent();
                     printf("UNARYOP: %s\n", (yyvsp[0].strval));
                 }
-#line 2291 "y.tab.c"
+#line 1472 "y.tab.c"
     break;
 
-  case 143: /* $@57: %empty  */
-#line 559 "lexer.y"
+  case 34: /* $@57: %empty  */
+#line 562 "lexer.y"
                            {
                     print_indent();
                     printf("COMMA\n");
                 }
-#line 2300 "y.tab.c"
+#line 1481 "y.tab.c"
     break;
 
-  case 145: /* $@58: %empty  */
-#line 567 "lexer.y"
+  case 36: /* $@58: %empty  */
+#line 570 "lexer.y"
                        {
                     print_indent();
                     printf("Lavl (%d)\n", line_number);
                     print_indent();
                     printf("Ident: %s\n", (yyvsp[0].strval));
                 }
-#line 2311 "y.tab.c"
+#line 1492 "y.tab.c"
     break;
 
-  case 147: /* $@59: %empty  */
-#line 576 "lexer.y"
+  case 38: /* $@59: %empty  */
+#line 579 "lexer.y"
                           {
                     print_indent();
                     printf("LBRACKET\n");
                 }
-#line 2320 "y.tab.c"
+#line 1501 "y.tab.c"
     break;
 
-  case 148: /* $@60: %empty  */
-#line 581 "lexer.y"
+  case 39: /* $@60: %empty  */
+#line 584 "lexer.y"
                         {
                     print_indent();
                     printf("RBRACKET\n");
                 }
-#line 2329 "y.tab.c"
+#line 1510 "y.tab.c"
     break;
 
-  case 151: /* $@61: %empty  */
-#line 589 "lexer.y"
+  case 42: /* $@70: %empty  */
+#line 643 "lexer.y"
                   {
                     print_indent();
-                    printf("LOrExp (%d)\n", line_number);
+                    printf("RelExp1 (%d)\n", line_number);
                 }
-#line 2338 "y.tab.c"
+#line 1519 "y.tab.c"
     break;
 
-  case 153: /* $@62: %empty  */
-#line 594 "lexer.y"
+  case 44: /* $@71: %empty  */
+#line 648 "lexer.y"
                   {
                     print_indent();
-                    printf("LOrExp (%d)\n", line_number);
+                    printf("RelExp2 (%d)\n", line_number);
                 }
-#line 2347 "y.tab.c"
+#line 1528 "y.tab.c"
     break;
 
-  case 154: /* $@63: %empty  */
-#line 599 "lexer.y"
-                  {
-                    print_indent();
-                    printf("OR\n");
-                }
-#line 2356 "y.tab.c"
-    break;
-
-  case 156: /* $@64: %empty  */
-#line 606 "lexer.y"
-                  {
-                    print_indent();
-                    printf("LAndExp (%d)\n", line_number);
-                }
-#line 2365 "y.tab.c"
-    break;
-
-  case 158: /* $@65: %empty  */
-#line 611 "lexer.y"
-                  {
-                    print_indent();
-                    printf("LAndExp (%d)\n", line_number);
-                }
-#line 2374 "y.tab.c"
-    break;
-
-  case 159: /* $@66: %empty  */
-#line 616 "lexer.y"
-                   {
-                    print_indent();
-                    printf("AND\n");
-                }
-#line 2383 "y.tab.c"
-    break;
-
-  case 161: /* $@67: %empty  */
-#line 623 "lexer.y"
-                  {
-                    print_indent();
-                    printf("EqExp (%d)\n", line_number);
-                }
-#line 2392 "y.tab.c"
-    break;
-
-  case 163: /* $@68: %empty  */
-#line 628 "lexer.y"
-                  {
-                    print_indent();
-                    printf("EqExp (%d)\n", line_number);
-                }
-#line 2401 "y.tab.c"
-    break;
-
-  case 164: /* $@69: %empty  */
-#line 633 "lexer.y"
-                     {
-                    print_indent();
-                    printf("EQUAL\n");
-                }
-#line 2410 "y.tab.c"
-    break;
-
-  case 166: /* $@70: %empty  */
-#line 640 "lexer.y"
-                  {
-                    print_indent();
-                    printf("RelExp (%d)\n", line_number);
-                }
-#line 2419 "y.tab.c"
-    break;
-
-  case 168: /* $@71: %empty  */
-#line 645 "lexer.y"
-                  {
-                    print_indent();
-                    printf("RelExp (%d)\n", line_number);
-                }
-#line 2428 "y.tab.c"
-    break;
-
-  case 169: /* $@72: %empty  */
-#line 650 "lexer.y"
+  case 45: /* $@72: %empty  */
+#line 653 "lexer.y"
                       {
                     print_indent();
-                    printf("WEIGHT\n");
+                    printf("WEIGHT %s\n",(yyvsp[0].strval));
                 }
-#line 2437 "y.tab.c"
+#line 1537 "y.tab.c"
     break;
 
-  case 171: /* $@73: %empty  */
-#line 657 "lexer.y"
+  case 47: /* $@73: %empty  */
+#line 660 "lexer.y"
                   {
                     print_indent();
                     printf("AddExp (%d)\n", line_number);
                 }
-#line 2446 "y.tab.c"
+#line 1546 "y.tab.c"
     break;
 
-  case 173: /* $@74: %empty  */
-#line 662 "lexer.y"
+  case 49: /* $@74: %empty  */
+#line 665 "lexer.y"
                   {
                     print_indent();
                     printf("AddExp (%d)\n", line_number);
                 }
-#line 2455 "y.tab.c"
+#line 1555 "y.tab.c"
     break;
 
-  case 174: /* $@75: %empty  */
-#line 667 "lexer.y"
+  case 50: /* $@75: %empty  */
+#line 670 "lexer.y"
                     {
                     print_indent();
                     printf("PLUS: %s\n", (yyvsp[0].strval));
                 }
-#line 2464 "y.tab.c"
+#line 1564 "y.tab.c"
     break;
 
-  case 176: /* $@76: %empty  */
-#line 672 "lexer.y"
+  case 52: /* $@76: %empty  */
+#line 675 "lexer.y"
                   {
                     print_indent();
                     printf("AddExp (%d)\n", line_number);
                 }
-#line 2473 "y.tab.c"
+#line 1573 "y.tab.c"
     break;
 
-  case 177: /* $@77: %empty  */
-#line 677 "lexer.y"
+  case 53: /* $@77: %empty  */
+#line 680 "lexer.y"
                      {
                     print_indent();
                     printf("MINUS: %s\n", (yyvsp[0].strval));
                 }
-#line 2482 "y.tab.c"
+#line 1582 "y.tab.c"
     break;
 
-  case 179: /* $@78: %empty  */
-#line 684 "lexer.y"
+  case 55: /* $@78: %empty  */
+#line 687 "lexer.y"
                   {
                     print_indent();
                     printf("MulExp (%d)\n", line_number);
                 }
-#line 2491 "y.tab.c"
+#line 1591 "y.tab.c"
     break;
 
-  case 181: /* $@79: %empty  */
-#line 689 "lexer.y"
+  case 57: /* $@79: %empty  */
+#line 692 "lexer.y"
                   {
                     print_indent();
                     printf("MulExp (%d)\n", line_number);
                 }
-#line 2500 "y.tab.c"
+#line 1600 "y.tab.c"
     break;
 
-  case 182: /* $@80: %empty  */
-#line 694 "lexer.y"
+  case 58: /* $@80: %empty  */
+#line 697 "lexer.y"
                    {
                     print_indent();
                     printf("MUL");
                 }
-#line 2509 "y.tab.c"
+#line 1609 "y.tab.c"
     break;
 
 
-#line 2513 "y.tab.c"
+#line 1613 "y.tab.c"
 
       default: break;
     }
@@ -2702,7 +1802,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 709 "lexer.y"
+#line 712 "lexer.y"
 
 
 void yyerror(char *str){
