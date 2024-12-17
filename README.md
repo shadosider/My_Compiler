@@ -7,20 +7,31 @@
 ```
 .
 ├── README.md
-├── Sy_Test   #存放任务一中的测试用例
-│   ├── test1.sy
-│   └── test2.sy
+├── Sy_Test #存放任务一中的测试用例
+│   ├── note.txt    #记录测试用例是否通过
+│   ├── test1.sy    #int型的加减乘除和取余
+│   ├── test2.sy    #条件语句
+│   ├── test3.sy    #while循环语句  ✔
+│   ├── test4.sy    #函数调用
+│   ├── test5.sy    #int型数组
+│   ├── test6.sy    #int型二维数组和循环嵌套
+│   ├── test7.sy    #常量和全局变量
+│   ├── test8.sy    #逻辑与和逻辑或
+│   └── test9.sy    #float型的加减乘除  ✔
 ├── bison_test  #联合使用flex和bison的测试用例
-│   ├── lex.yy.c
-│   ├── test
+│   ├── Makefile
 │   ├── test.l
-│   ├── test.y
+│   └── test.y
+├── first_try   #项目原文件
+│   ├── Makefile
+│   ├── lex.yy.c
+│   ├── lexer
+│   ├── lexer.l
+│   ├── lexer.y
+│   ├── test.sy
 │   ├── y.output
 │   ├── y.tab.c
 │   └── y.tab.h
-├── first_try   #自己的尝试
-│   ├── lex.yy.c
-│   └── lexer.l
 ├── flex_test   #使用flex的测试用例
 │   ├── image-1.png
 │   ├── image.png
@@ -28,9 +39,11 @@
 │   ├── lexer
 │   └── lexer.l
 ├── pattern.md
-└── template       #联合使用flex和bison的模板
+└── template    #模板定义
+    ├── SysY2022语言定义-V1.pdf
     ├── temp.l
     └── temp.y
+
 ```
 
 
