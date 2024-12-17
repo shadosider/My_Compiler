@@ -1,11 +1,6 @@
-const int MAX = 100;
-int global_var = 50;
-
 int main() {
-    int Student_ID1 = 22051024;
-    int Student_ID2 = 22051018;
-    int Student_ID3 = 22051011;
-    int Student_ID4 = 22051032;
-    int result = MAX + global_var;
+    int sum = 0;
+    int arr[5] ={0};
+    
     return 0;
 }

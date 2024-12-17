@@ -53,14 +53,14 @@ void print_indent() {
                     indent_level++;
                     printf("CompUnit (%d)\n", line_number);
                 }
-                FuncDef
+                Decl
                 | 
                 CompUnitOpt{
                     print_indent();
                     indent_level++;
                     printf("CompUnit (%d)\n", line_number);
                 }
-                Decl
+                FuncDef
                 ;
 
 
@@ -95,6 +95,30 @@ void print_indent() {
                     printf("SEMICN\n");
                 }
                 ;     /* 常量声明  */  
+
+
+        /* 基本类型  */
+           BType: {
+                    print_indent();
+                    indent_level++;
+                    printf("BType (%d)\n", line_number);
+                }
+                INT{
+                    print_indent();
+                    indent_level--;
+                    printf("Type: %s\n", $2);
+                } 
+                | {
+                    print_indent();
+                    indent_level++;
+                    printf("BType (%d)\n", line_number);
+                }
+                FLOAT{
+                    print_indent();
+                    indent_level--;
+                    printf("Type: %s\n", $2);
+                }
+                ;
 
            
 
@@ -191,7 +215,7 @@ ConstInitValTail: COMMA{
           VarDef: IDENT{
                     print_indent();
                     indent_level++;
-                    printf("VarDef (%d)\n", line_number);
+                    printf("VarDef1 (%d)\n", line_number);
                     print_indent();
                     indent_level--;
                     printf("Ident: %s\n", $1);
@@ -200,7 +224,7 @@ ConstInitValTail: COMMA{
                 | IDENT{
                     print_indent();
                     indent_level++;
-                    printf("VarDef (%d)\n", line_number);
+                    printf("VarDef2 (%d)\n", line_number);
                     print_indent();
                     indent_level--;
                     printf("Ident: %s\n", $1);
@@ -291,28 +315,6 @@ ConstInitValTail: COMMA{
                 }   
                 ;
 
-        /* 基本类型  */
-           BType: {
-                    print_indent();
-                    indent_level++;
-                    printf("BType (%d)\n", line_number);
-                }
-                INT{
-                    print_indent();
-                    indent_level--;
-                    printf("Type: %s\n", $2);
-                } 
-                | {
-                    print_indent();
-                    indent_level++;
-                    printf("BType (%d)\n", line_number);
-                }
-                FLOAT{
-                    print_indent();
-                    indent_level--;
-                    printf("Type: %s\n", $2);
-                }
-                ;
 
      FuncFParams: {
                     print_indent(); 
