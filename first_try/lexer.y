@@ -591,12 +591,12 @@ ConstInitValTail: COMMA{
                 LOrExp        /* 条件表达式  */  
                 ;
 
-          AddExp: {
+          AddExp: {         /* 加减表达式  */
                     print_indent();
                     indent_level++;
                     printf("AddExp (%d)\n", line_number);
                 }
-                MulExp AddExpTail  /* 加减表达式  */
+                MulExp AddExpTail  
                 ;
 
       AddExpTail: PLUS{
@@ -700,142 +700,74 @@ ConstInitValTail: COMMA{
                 | /* empty */   
                 ;
 
-          LOrExp: {
+
+    /* 关系表达式  */
+          RelExp: {
                     print_indent();
                     indent_level++;
-                    printf("LOrExp (%d)\n", line_number);
-                }
-                LAndExp              /* 逻辑或表达式  */  
-                | {
-                    print_indent();
-                    indent_level++;
-                    printf("LOrExp (%d)\n", line_number);
-                }
-                LOrExp
-                OR{
-                    print_indent();
-                    printf("OR\n");
-                }
-                LAndExp
+                    printf("RelExp (%d)\n", line_number);
+                }AddExp RelExpTail
                 ;
 
+      RelExpTail: WEIGHT{
+                    print_indent();
+                    indent_level--;
+                    printf("WEIGHT: %s\n",$1);
+                }
+                AddExp RelExpTail
+                | /* empty */
+                ;
+
+
+    /* 相等性表达式  */  
+           EqExp: {
+                    print_indent();
+                    indent_level++;
+                    printf("EqExp (%d)\n", line_number);
+                }RelExp EqExpTail
+                ;
+
+       EqExpTail: EQUAL{
+                    print_indent();
+                    printf("EQUAL\n");
+                } RelExp EqExpTail
+                | /* empty */
+                ;
+
+    /* 逻辑与表达式  */  
          LAndExp: {
                     print_indent();
                     indent_level++;
                     printf("LAndExp (%d)\n", line_number);
                 }
-                EqExp                 /* 逻辑与表达式  */  
-                | {
-                    print_indent();
-                    indent_level++;
-                    printf("LAndExp (%d)\n", line_number);
-                }
-                LAndExp
-                AND{
+                EqExp LAndExpTail
+                ;
+
+     LAndExpTail: AND{
                     print_indent();
                     printf("AND\n");
                 }
-                EqExp
-                ;
-            
-           EqExp: {
-                    print_indent();
-                    indent_level++;
-                    printf("EqExp (%d)\n", line_number);
-                }
-                RelExp                /* 相等性表达式  */  
-                | {
-                    print_indent();
-                    indent_level++;
-                    printf("EqExp (%d)\n", line_number);
-                }
-                EqExp
-                EQUAL{
-                    print_indent();
-                    printf("EQUAL\n");
-                }
-                RelExp
-                ;
-                
-          /* 关系表达式  */
-          RelExp: {
-                    print_indent();
-                    indent_level++;
-                    printf("RelExp (%d)\n", line_number);
-                }
-                AddExp                  
-                | {
-                    print_indent();
-                    indent_level++;
-                    printf("RelExp (%d)\n", line_number);
-                }
-                RelExp
-                WEIGHT{
-                    print_indent();
-                    indent_level--;
-                    printf("WEIGHT: %s\n",$3);
-                }
-                AddExp
+                EqExp LAndExpTail
+                | /* empty */
                 ;
 
-          AddExp: {
+    /* 逻辑或表达式  */  
+          LOrExp: {
                     print_indent();
                     indent_level++;
-                    printf("AddExp (%d)\n", line_number);
+                    printf("LOrExp (%d)\n", line_number);
                 }
-                MulExp                /* 加减表达式  */  
-                | {
-                    print_indent();
-                    indent_level++;
-                    printf("AddExp (%d)\n", line_number);
-                }
-                AddExp
-                PLUS{
-                    print_indent();
-                    indent_level--;
-                    printf("PLUS: %s\n", $3);
-                }
-                MulExp
-                | {
-                    print_indent();
-                    indent_level++;
-                    printf("AddExp (%d)\n", line_number);
-                }
-                AddExp
-                MINUS{
-                    print_indent();
-                    indent_level--;
-                    printf("MINUS: %s\n", $3);
-                }
-                MulExp
+                LAndExp LOrExpTail
                 ;
 
-          MulExp: {
+      LOrExpTail: OR{
                     print_indent();
-                    indent_level++;
-                    printf("MulExp (%d)\n", line_number);
+                    printf("OR\n");
                 }
-                UnaryExp              /* 乘除模表达式  */  
-                | {
-                    print_indent();
-                    indent_level++;
-                    printf("MulExp (%d)\n", line_number);
-                }
-                MulExp
-                MUL{
-                    print_indent();
-                    printf("MUL");
-                }
-                UnaryExp
+                LAndExp LOrExpTail
+                | /* empty */
                 ;
 
-
-
-
-
-
-
-                 
 
 %%
 
