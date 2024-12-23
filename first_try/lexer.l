@@ -8,10 +8,7 @@ int line_number = 1;
 
 bool error_flag = false;
 
-void error(const char *str, const char *yytext) {
-    fprintf(stderr, "Error type A at Line %d: %s '%s'\n", line_number, str, yytext);
-    exit(1);  // 立即退出
-}
+
 
 
 
@@ -81,6 +78,7 @@ Equal    "!="|"=="
 
 {Ident}              {yylval.strval = strdup(yytext);}return IDENT; {printf("ID %s\n", yytext);}
 {IntConst}           {yylval.ival = (int)strtol(yytext, NULL, 0);}return INTCONST;{printf("INTCON %d\n", (int)strtol(yytext, NULL, 0));}
+
 {floatConst}         {yylval.fval = atof(yytext); }return FLOATCONST;
 
 "+"                  {yylval.strval = strdup(yytext);}return PLUS;{printf("PLUS +\n");}
@@ -114,13 +112,27 @@ Equal    "!="|"=="
 \n                  line_number++;
 
 
-0[89]              {fprintf(stderr, "Error type A at Line %d: Illegal octal number %s\n",line_number, yytext); exit(1);}    /* 错误：非法八进制数字 */
+0[89]           {
+                int value;
+                fprintf(stderr, "\033[1;31mError type A at Line %d: Invalid octal number: %s\033[0m\n", yylineno, yytext);
+                error_flag = true;
+                sscanf(yytext, "%o", &value);
+                yylval.ival = value;
+                return INTCONST;
+                }    /* 错误：非法八进制数字 */
 
 
-0[xX][0-9A-Fa-f]*[^0-9A-Fa-f]  {fprintf(stderr, "Error type A at Line %d: Illegal hexadecimal number %s\n",line_number, yytext); exit(1);}   /* 错误：非法十六进制数字 */
+0[xX][0-9A-Fa-f]*[^0-9A-Fa-f]  {
+                                int value;
+                                fprintf(stderr, "\033[1;31mError type A at Line %d: Invalid hexadecimal number: %s\033[0m\n", yylineno, yytext);
+                                error_flag = true;
+                                sscanf(yytext, "%x", &value);
+                                yylval.ival = value;
+                                return INTCONST;
+                                }   /* 错误：非法十六进制数字 */
 
 
-.                     {error("Invalid character", yytext);}
+.                     { printf("\033[1;31mError type A at Line %d: Invalid characters \'%s\'\033[0m\n", yylineno, yytext); error_flag = true; }
 
 
 %%

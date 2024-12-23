@@ -589,19 +589,16 @@ int line_number = 1;
 
 bool error_flag = false;
 
-void error(const char *str, const char *yytext) {
-    fprintf(stderr, "Error type A at Line %d: %s '%s'\n", line_number, str, yytext);
-    exit(1);  // 立即退出
-}
 
 
 
-#line 600 "lex.yy.c"
+
+#line 597 "lex.yy.c"
 /* 标识符Ident的声明  */
 /* 有关Number的声明  */
 /* IntConst的声明  */
 /* floatConst的声明  */
-#line 605 "lex.yy.c"
+#line 602 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -818,11 +815,11 @@ YY_DECL
 		}
 
 	{
-#line 63 "lexer.l"
+#line 60 "lexer.l"
 
 
 
-#line 826 "lex.yy.c"
+#line 823 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -892,227 +889,241 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 66 "lexer.l"
+#line 63 "lexer.l"
 ;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 67 "lexer.l"
+#line 64 "lexer.l"
 ;
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 70 "lexer.l"
+#line 67 "lexer.l"
 {yylval.strval = strdup(yytext);}return VOID;{printf("VOIDTK \n");}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 71 "lexer.l"
+#line 68 "lexer.l"
 {yylval.strval = strdup(yytext);}return INT;{printf("INTTK int\n");}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 72 "lexer.l"
+#line 69 "lexer.l"
 return CONST;{printf("CONST \n");}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 73 "lexer.l"
+#line 70 "lexer.l"
 {yylval.strval = strdup(yytext);}return FLOAT;{printf("FLOATTK \n");}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 75 "lexer.l"
+#line 72 "lexer.l"
 return IF;{printf("IF \n");}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 76 "lexer.l"
+#line 73 "lexer.l"
 return ELSE;{printf("ELSE \n");}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 77 "lexer.l"
+#line 74 "lexer.l"
 return WHILE;{printf("WHILE \n");}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 78 "lexer.l"
+#line 75 "lexer.l"
 return BREAK;{printf("BREAK \n");}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 79 "lexer.l"
+#line 76 "lexer.l"
 return CONTINUE;{printf("CONTINUE \n");}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 80 "lexer.l"
+#line 77 "lexer.l"
 return RETURN;{printf("RETURN \n");}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 82 "lexer.l"
+#line 79 "lexer.l"
 {yylval.strval = strdup(yytext);}return IDENT; {printf("ID %s\n", yytext);}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 83 "lexer.l"
+#line 80 "lexer.l"
 {yylval.ival = (int)strtol(yytext, NULL, 0);}return INTCONST;{printf("INTCON %d\n", (int)strtol(yytext, NULL, 0));}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 84 "lexer.l"
+#line 82 "lexer.l"
 {yylval.fval = atof(yytext); }return FLOATCONST;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 86 "lexer.l"
+#line 84 "lexer.l"
 {yylval.strval = strdup(yytext);}return PLUS;{printf("PLUS +\n");}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 87 "lexer.l"
+#line 85 "lexer.l"
 {yylval.strval = strdup(yytext);}return MINUS;{printf("MINUS -\n");}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 89 "lexer.l"
+#line 87 "lexer.l"
 {yylval.strval = strdup(yytext);}return MUL; 
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 90 "lexer.l"
+#line 88 "lexer.l"
 {yylval.strval = strdup(yytext);}return DIV; 
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 91 "lexer.l"
+#line 89 "lexer.l"
 {yylval.strval = strdup(yytext);}return MOD; 
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 92 "lexer.l"
+#line 90 "lexer.l"
 {yylval.strval = strdup(yytext);}return EQUAL;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 93 "lexer.l"
+#line 91 "lexer.l"
 {yylval.strval = strdup(yytext);}return NEQUAL;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 94 "lexer.l"
+#line 92 "lexer.l"
 {yylval.strval = strdup(yytext);}return LT;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 95 "lexer.l"
+#line 93 "lexer.l"
 {yylval.strval = strdup(yytext);}return GT;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 96 "lexer.l"
+#line 94 "lexer.l"
 {yylval.strval = strdup(yytext);}return LE;
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 97 "lexer.l"
+#line 95 "lexer.l"
 {yylval.strval = strdup(yytext);}return GE;
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 98 "lexer.l"
+#line 96 "lexer.l"
 {yylval.strval = strdup(yytext);}return NOT;
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 100 "lexer.l"
+#line 98 "lexer.l"
 {yylval.strval = strdup(yytext);}return COMMA;{printf("COMMA ,\n");}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 101 "lexer.l"
+#line 99 "lexer.l"
 {yylval.strval = strdup(yytext);}return ASSIGN;{printf("ASSIGN =\n");}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 102 "lexer.l"
+#line 100 "lexer.l"
 {yylval.strval = strdup(yytext);}return OR;{printf("OR ||\n");}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 103 "lexer.l"
+#line 101 "lexer.l"
 {yylval.strval = strdup(yytext);}return AND;{printf("AND &&\n");}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 105 "lexer.l"
+#line 103 "lexer.l"
 {yylval.strval = strdup(yytext);}return LPARENT; 
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 106 "lexer.l"
+#line 104 "lexer.l"
 {yylval.strval = strdup(yytext);}return RPARENT; 
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 107 "lexer.l"
+#line 105 "lexer.l"
 {yylval.strval = strdup(yytext);}return LBRACKET; 
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 108 "lexer.l"
+#line 106 "lexer.l"
 {yylval.strval = strdup(yytext);}return RBRACKET; 
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 109 "lexer.l"
+#line 107 "lexer.l"
 {yylval.strval = strdup(yytext);}return LBRACE; 
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 110 "lexer.l"
+#line 108 "lexer.l"
 {yylval.strval = strdup(yytext);}return RBRACE; 
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 112 "lexer.l"
+#line 110 "lexer.l"
 ; // 忽略空格、制表符和换行符
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 113 "lexer.l"
+#line 111 "lexer.l"
 {yylval.strval = strdup(yytext);}return END;{printf("SEMICN\n");}
 	YY_BREAK
 case 40:
 /* rule 40 can match eol */
 YY_RULE_SETUP
-#line 114 "lexer.l"
+#line 112 "lexer.l"
 line_number++;
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 117 "lexer.l"
-{fprintf(stderr, "Error type A at Line %d: Illegal octal number %s\n",line_number, yytext); exit(1);}    /* 错误：非法八进制数字 */
+#line 115 "lexer.l"
+{
+                int value;
+                fprintf(stderr, "\033[1;31mError type A at Line %d: Invalid octal number: %s\033[0m\n", yylineno, yytext);
+                error_flag = true;
+                sscanf(yytext, "%o", &value);
+                yylval.ival = value;
+                return INTCONST;
+                }    /* 错误：非法八进制数字 */
 	YY_BREAK
 case 42:
 /* rule 42 can match eol */
 YY_RULE_SETUP
-#line 120 "lexer.l"
-{fprintf(stderr, "Error type A at Line %d: Illegal hexadecimal number %s\n",line_number, yytext); exit(1);}   /* 错误：非法十六进制数字 */
+#line 125 "lexer.l"
+{
+                                int value;
+                                fprintf(stderr, "\033[1;31mError type A at Line %d: Invalid hexadecimal number: %s\033[0m\n", yylineno, yytext);
+                                error_flag = true;
+                                sscanf(yytext, "%x", &value);
+                                yylval.ival = value;
+                                return INTCONST;
+                                }   /* 错误：非法十六进制数字 */
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 123 "lexer.l"
-{error("Invalid character", yytext);}
+#line 135 "lexer.l"
+{ printf("\033[1;31mError type A at Line %d: Invalid characters \'%s\'\033[0m\n", yylineno, yytext); error_flag = true; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 126 "lexer.l"
+#line 138 "lexer.l"
 ECHO;
 	YY_BREAK
-#line 1116 "lex.yy.c"
+#line 1127 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2129,6 +2140,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 126 "lexer.l"
+#line 138 "lexer.l"
 
 
