@@ -1019,7 +1019,7 @@ YY_RULE_SETUP
             for (int i = 2; yytext[i] != '\0'; i++) {
                 if (yytext[i] < '0' || (yytext[i] > '9' && yytext[i] < 'A') || (yytext[i] > 'F' && yytext[i] < 'a') || yytext[i] > 'f') 
                 {
-                    fprintf(stderr, "Error type A at Line %d: Invalid hexadecimal number: %s\n", yylineno, yytext);
+                    fprintf(stderr, "\033[1;31mError type A at Line %d: Invalid hexadecimal number: %s\033[0m\n", yylineno, yytext);
                     error_flag = true;
                 }
             }
@@ -1030,7 +1030,7 @@ YY_RULE_SETUP
             for (int i = 1; yytext[i] != '\0'; i++) {
                 if (yytext[i] < '0' || yytext[i] > '7')
                 {
-                    fprintf(stderr, "Error type A at Line %d: Invalid octal number: %s\n", yylineno, yytext);
+                    fprintf(stderr, "\033[1;31mError type A at Line %d: Invalid octal number: %s\033[0m\n", yylineno, yytext);
                     error_flag = true;    
                 }
             }

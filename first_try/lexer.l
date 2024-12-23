@@ -1,10 +1,12 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "y.tab.h"
 // 定义一个全局变量来跟踪行号
 int line_number = 1;
 
+bool error_flag = false;
 
 void error(const char *str, const char *yytext) {
     fprintf(stderr, "Error type A at Line %d: %s '%s'\n", line_number, str, yytext);
@@ -14,6 +16,9 @@ void error(const char *str, const char *yytext) {
 
 
 %}
+
+%option yylineno
+%option header-file="lex.yy.h"
 
 
 
@@ -53,8 +58,6 @@ Equal    "!="|"=="
 
 
 
-UnaryOP  ["!""+""-"]
-
 
 
 %%
@@ -78,29 +81,33 @@ UnaryOP  ["!""+""-"]
 
 {Ident}              {yylval.strval = strdup(yytext);}return IDENT; {printf("ID %s\n", yytext);}
 {IntConst}           {yylval.ival = (int)strtol(yytext, NULL, 0);}return INTCONST;{printf("INTCON %d\n", (int)strtol(yytext, NULL, 0));}
-{floatConst}         {yylval.strval = strdup(yytext);}return FLOATCONST;
+{floatConst}         {yylval.fval = atof(yytext); }return FLOATCONST;
 
 "+"                  {yylval.strval = strdup(yytext);}return PLUS;{printf("PLUS +\n");}
 "-"                  {yylval.strval = strdup(yytext);}return MINUS;{printf("MINUS -\n");}
-{mul}                {yylval.strval = strdup(yytext);}return MUL; 
-{Equal}              {yylval.strval = strdup(yytext);}return EQUAL;
-"<"                  {yylval.strval = strdup(yytext);}return WEIGHT;
-">"                  {yylval.strval = strdup(yytext);}return WEIGHT;
-"<="                 {yylval.strval = strdup(yytext);}return WEIGHT;
-">="                 {yylval.strval = strdup(yytext);}return WEIGHT;
-{UnaryOP}            {yylval.strval = strdup(yytext);}return UNARYOP;
+
+"*"                {yylval.strval = strdup(yytext);}return MUL; 
+"/"                {yylval.strval = strdup(yytext);}return DIV; 
+"%"                {yylval.strval = strdup(yytext);}return MOD; 
+"=="              {yylval.strval = strdup(yytext);}return EQUAL;
+"!="              {yylval.strval = strdup(yytext);}return NEQUAL;
+"<"                  {yylval.strval = strdup(yytext);}return LT;
+">"                  {yylval.strval = strdup(yytext);}return GT;
+"<="                 {yylval.strval = strdup(yytext);}return LE;
+">="                 {yylval.strval = strdup(yytext);}return GE;
+"!"            {yylval.strval = strdup(yytext);}return NOT;
 
 ","                  {yylval.strval = strdup(yytext);}return COMMA;{printf("COMMA ,\n");}
 "="                  {yylval.strval = strdup(yytext);}return ASSIGN;{printf("ASSIGN =\n");}
 "||"                 {yylval.strval = strdup(yytext);}return OR;{printf("OR ||\n");}
 "&&"                 {yylval.strval = strdup(yytext);}return AND;{printf("AND &&\n");}
 
-"("                  {yylval.strval = strdup(yytext);}return LPARENT;{printf("LPARENT \( \n");}
-")"                  {yylval.strval = strdup(yytext);}return RPARENT;{printf("RPARENT \) \n");}
-"["                  {yylval.strval = strdup(yytext);}return LBRACKET;{printf("LBRACKET [ \n");}
-"]"                  {yylval.strval = strdup(yytext);}return RBRACKET;{printf("RBRACKET ] \n");}
-"{"                  {yylval.strval = strdup(yytext);}return LBRACE;{printf("LBRACE \{ \n");}
-"}"                  {yylval.strval = strdup(yytext);}return RBRACE;{printf("RBRACE \} \n");}
+"("                  {yylval.strval = strdup(yytext);}return LPARENT; 
+")"                  {yylval.strval = strdup(yytext);}return RPARENT; 
+"["                  {yylval.strval = strdup(yytext);}return LBRACKET; 
+"]"                  {yylval.strval = strdup(yytext);}return RBRACKET; 
+"{"                  {yylval.strval = strdup(yytext);}return LBRACE; 
+"}"                  {yylval.strval = strdup(yytext);}return RBRACE; 
 
 [ \t]+              ; // 忽略空格、制表符和换行符
 ;                    {yylval.strval = strdup(yytext);}return END;{printf("SEMICN\n");}

@@ -38,6 +38,7 @@
 │   ├── lex.yy.c
 │   ├── lexer
 │   └── lexer.l
+├── lab4        #陌生人的项目
 ├── pattern.md
 └── template    #模板定义
     ├── SysY2022语言定义-V1.pdf
@@ -103,3 +104,4 @@ make NAME=a
 
 参考flex相关的[pattern](./pattern.md)文档
 
+### PS: 借鉴了LAB4中AST的构建

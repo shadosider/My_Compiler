@@ -69,28 +69,39 @@
 /* First part of user prologue.  */
 #line 1 "lexer.y"
 
+
 #include <stdio.h>
 #include <string.h>
-
-extern FILE *yyin;  // 声明 yyin，指向输入文件
-extern char* yytext;     // 引入 Flex 的当前词法单元文本
+#include <stdbool.h>
+#include <stdarg.h>
+#include "cst.h"
+#include "lex.yy.h"
 
 int yylex(void);
-void yyerror(char *);
 
-int count = 10000;
-int indent_level = 0; // 用于控制缩进
-extern int line_number;
+typedef const enum Error_type{
+    Undefined,
+    VarUndecleared,
+    VarRedecleared,
+    FuncUndecleared,
+    FuncRedecleared,
+    UseVarAsFunc,
+    UseFuncAsVar,
+    Stmt_Error
+} Error_type;
 
-void print_indent() {
-    for (int i = 0; i < indent_level; i++) {
-        printf(" ");
-    }
-}
+void yyerror(const char *, ...);
+
+extern bool error_flag;
+
+node *root;
+
+int error_cur_line = -1;
+
+extern Symbol *symbol_table;
 
 
-
-#line 94 "y.tab.c"
+#line 105 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -119,7 +130,7 @@ void print_indent() {
 # define YY_YY_Y_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+# define YYDEBUG 1
 #endif
 #if YYDEBUG
 extern int yydebug;
@@ -134,36 +145,42 @@ extern int yydebug;
     YYEOF = 0,                     /* "end of file"  */
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
-    INTCONST = 258,                /* INTCONST  */
-    FLOATCONST = 259,              /* FLOATCONST  */
-    INT = 260,                     /* INT  */
-    VOID = 261,                    /* VOID  */
+    IDENT = 258,                   /* IDENT  */
+    INTCONST = 259,                /* INTCONST  */
+    FLOATCONST = 260,              /* FLOATCONST  */
+    INT = 261,                     /* INT  */
     FLOAT = 262,                   /* FLOAT  */
-    IDENT = 263,                   /* IDENT  */
-    PLUS = 264,                    /* PLUS  */
-    MINUS = 265,                   /* MINUS  */
-    ASSIGN = 266,                  /* ASSIGN  */
-    MUL = 267,                     /* MUL  */
-    UNARYOP = 268,                 /* UNARYOP  */
-    CONST = 269,                   /* CONST  */
-    COMMA = 270,                   /* COMMA  */
-    EQUAL = 271,                   /* EQUAL  */
-    OR = 272,                      /* OR  */
-    AND = 273,                     /* AND  */
-    WEIGHT = 274,                  /* WEIGHT  */
-    IF = 275,                      /* IF  */
-    ELSE = 276,                    /* ELSE  */
-    WHILE = 277,                   /* WHILE  */
-    BREAK = 278,                   /* BREAK  */
-    CONTINUE = 279,                /* CONTINUE  */
-    RETURN = 280,                  /* RETURN  */
-    LPARENT = 281,                 /* LPARENT  */
-    RPARENT = 282,                 /* RPARENT  */
-    LBRACKET = 283,                /* LBRACKET  */
-    RBRACKET = 284,                /* RBRACKET  */
-    LBRACE = 285,                  /* LBRACE  */
-    RBRACE = 286,                  /* RBRACE  */
-    END = 287                      /* END  */
+    VOID = 263,                    /* VOID  */
+    CONST = 264,                   /* CONST  */
+    RETURN = 265,                  /* RETURN  */
+    IF = 266,                      /* IF  */
+    ELSE = 267,                    /* ELSE  */
+    WHILE = 268,                   /* WHILE  */
+    BREAK = 269,                   /* BREAK  */
+    CONTINUE = 270,                /* CONTINUE  */
+    LPARENT = 271,                 /* LPARENT  */
+    RPARENT = 272,                 /* RPARENT  */
+    LBRACKET = 273,                /* LBRACKET  */
+    RBRACKET = 274,                /* RBRACKET  */
+    LBRACE = 275,                  /* LBRACE  */
+    RBRACE = 276,                  /* RBRACE  */
+    COMMA = 277,                   /* COMMA  */
+    END = 278,                     /* END  */
+    MINUS = 279,                   /* MINUS  */
+    ASSIGN = 280,                  /* ASSIGN  */
+    PLUS = 281,                    /* PLUS  */
+    NOT = 282,                     /* NOT  */
+    AND = 283,                     /* AND  */
+    OR = 284,                      /* OR  */
+    LT = 285,                      /* LT  */
+    LE = 286,                      /* LE  */
+    GT = 287,                      /* GT  */
+    GE = 288,                      /* GE  */
+    NEQUAL = 289,                  /* NEQUAL  */
+    EQUAL = 290,                   /* EQUAL  */
+    MUL = 291,                     /* MUL  */
+    MOD = 292,                     /* MOD  */
+    DIV = 293                      /* DIV  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -172,48 +189,55 @@ extern int yydebug;
 #define YYEOF 0
 #define YYerror 256
 #define YYUNDEF 257
-#define INTCONST 258
-#define FLOATCONST 259
-#define INT 260
-#define VOID 261
+#define IDENT 258
+#define INTCONST 259
+#define FLOATCONST 260
+#define INT 261
 #define FLOAT 262
-#define IDENT 263
-#define PLUS 264
-#define MINUS 265
-#define ASSIGN 266
-#define MUL 267
-#define UNARYOP 268
-#define CONST 269
-#define COMMA 270
-#define EQUAL 271
-#define OR 272
-#define AND 273
-#define WEIGHT 274
-#define IF 275
-#define ELSE 276
-#define WHILE 277
-#define BREAK 278
-#define CONTINUE 279
-#define RETURN 280
-#define LPARENT 281
-#define RPARENT 282
-#define LBRACKET 283
-#define RBRACKET 284
-#define LBRACE 285
-#define RBRACE 286
-#define END 287
+#define VOID 263
+#define CONST 264
+#define RETURN 265
+#define IF 266
+#define ELSE 267
+#define WHILE 268
+#define BREAK 269
+#define CONTINUE 270
+#define LPARENT 271
+#define RPARENT 272
+#define LBRACKET 273
+#define RBRACKET 274
+#define LBRACE 275
+#define RBRACE 276
+#define COMMA 277
+#define END 278
+#define MINUS 279
+#define ASSIGN 280
+#define PLUS 281
+#define NOT 282
+#define AND 283
+#define OR 284
+#define LT 285
+#define LE 286
+#define GT 287
+#define GE 288
+#define NEQUAL 289
+#define EQUAL 290
+#define MUL 291
+#define MOD 292
+#define DIV 293
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 24 "lexer.y"
+#line 35 "lexer.y"
 
     int ival;      // 用于存储整数
     float fval;    // 用于存储浮点数
     char *strval;  // 用于存储字符串
+    struct Node *node_val;  //用于构建AST树
 
-#line 217 "y.tab.c"
+#line 241 "y.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -236,167 +260,72 @@ enum yysymbol_kind_t
   YYSYMBOL_YYEOF = 0,                      /* "end of file"  */
   YYSYMBOL_YYerror = 1,                    /* error  */
   YYSYMBOL_YYUNDEF = 2,                    /* "invalid token"  */
-  YYSYMBOL_INTCONST = 3,                   /* INTCONST  */
-  YYSYMBOL_FLOATCONST = 4,                 /* FLOATCONST  */
-  YYSYMBOL_INT = 5,                        /* INT  */
-  YYSYMBOL_VOID = 6,                       /* VOID  */
+  YYSYMBOL_IDENT = 3,                      /* IDENT  */
+  YYSYMBOL_INTCONST = 4,                   /* INTCONST  */
+  YYSYMBOL_FLOATCONST = 5,                 /* FLOATCONST  */
+  YYSYMBOL_INT = 6,                        /* INT  */
   YYSYMBOL_FLOAT = 7,                      /* FLOAT  */
-  YYSYMBOL_IDENT = 8,                      /* IDENT  */
-  YYSYMBOL_PLUS = 9,                       /* PLUS  */
-  YYSYMBOL_MINUS = 10,                     /* MINUS  */
-  YYSYMBOL_ASSIGN = 11,                    /* ASSIGN  */
-  YYSYMBOL_MUL = 12,                       /* MUL  */
-  YYSYMBOL_UNARYOP = 13,                   /* UNARYOP  */
-  YYSYMBOL_CONST = 14,                     /* CONST  */
-  YYSYMBOL_COMMA = 15,                     /* COMMA  */
-  YYSYMBOL_EQUAL = 16,                     /* EQUAL  */
-  YYSYMBOL_OR = 17,                        /* OR  */
-  YYSYMBOL_AND = 18,                       /* AND  */
-  YYSYMBOL_WEIGHT = 19,                    /* WEIGHT  */
-  YYSYMBOL_IF = 20,                        /* IF  */
-  YYSYMBOL_ELSE = 21,                      /* ELSE  */
-  YYSYMBOL_WHILE = 22,                     /* WHILE  */
-  YYSYMBOL_BREAK = 23,                     /* BREAK  */
-  YYSYMBOL_CONTINUE = 24,                  /* CONTINUE  */
-  YYSYMBOL_RETURN = 25,                    /* RETURN  */
-  YYSYMBOL_LPARENT = 26,                   /* LPARENT  */
-  YYSYMBOL_RPARENT = 27,                   /* RPARENT  */
-  YYSYMBOL_LBRACKET = 28,                  /* LBRACKET  */
-  YYSYMBOL_RBRACKET = 29,                  /* RBRACKET  */
-  YYSYMBOL_LBRACE = 30,                    /* LBRACE  */
-  YYSYMBOL_RBRACE = 31,                    /* RBRACE  */
-  YYSYMBOL_END = 32,                       /* END  */
-  YYSYMBOL_YYACCEPT = 33,                  /* $accept  */
-  YYSYMBOL_line_list = 34,                 /* line_list  */
-  YYSYMBOL_line = 35,                      /* line  */
-  YYSYMBOL_Decl = 36,                      /* Decl  */
-  YYSYMBOL_37_3 = 37,                      /* $@3  */
-  YYSYMBOL_38_4 = 38,                      /* $@4  */
-  YYSYMBOL_ConstDecl = 39,                 /* ConstDecl  */
-  YYSYMBOL_40_5 = 40,                      /* $@5  */
-  YYSYMBOL_BType = 41,                     /* BType  */
-  YYSYMBOL_42_6 = 42,                      /* $@6  */
-  YYSYMBOL_43_7 = 43,                      /* $@7  */
-  YYSYMBOL_ConstDef = 44,                  /* ConstDef  */
-  YYSYMBOL_45_8 = 45,                      /* $@8  */
-  YYSYMBOL_46_9 = 46,                      /* $@9  */
-  YYSYMBOL_ConstExp = 47,                  /* ConstExp  */
-  YYSYMBOL_ConstExpTail = 48,              /* ConstExpTail  */
-  YYSYMBOL_49_10 = 49,                     /* $@10  */
-  YYSYMBOL_50_11 = 50,                     /* $@11  */
-  YYSYMBOL_ConstInitVal = 51,              /* ConstInitVal  */
-  YYSYMBOL_52_12 = 52,                     /* $@12  */
-  YYSYMBOL_ConstInitValOpt = 53,           /* ConstInitValOpt  */
-  YYSYMBOL_ConstInitValTail = 54,          /* ConstInitValTail  */
-  YYSYMBOL_55_13 = 55,                     /* $@13  */
-  YYSYMBOL_ConstDefTail = 56,              /* ConstDefTail  */
-  YYSYMBOL_57_14 = 57,                     /* $@14  */
-  YYSYMBOL_VarDecl = 58,                   /* VarDecl  */
-  YYSYMBOL_59_15 = 59,                     /* $@15  */
-  YYSYMBOL_VarDeclTail = 60,               /* VarDeclTail  */
-  YYSYMBOL_61_16 = 61,                     /* $@16  */
-  YYSYMBOL_VarDef = 62,                    /* VarDef  */
-  YYSYMBOL_63_17 = 63,                     /* $@17  */
-  YYSYMBOL_64_18 = 64,                     /* $@18  */
-  YYSYMBOL_65_19 = 65,                     /* $@19  */
-  YYSYMBOL_InitVal = 66,                   /* InitVal  */
-  YYSYMBOL_67_20 = 67,                     /* $@20  */
-  YYSYMBOL_InitValOpt = 68,                /* InitValOpt  */
-  YYSYMBOL_InitValTail = 69,               /* InitValTail  */
-  YYSYMBOL_70_21 = 70,                     /* $@21  */
-  YYSYMBOL_FuncDef = 71,                   /* FuncDef  */
-  YYSYMBOL_72_22 = 72,                     /* $@22  */
-  YYSYMBOL_73_23 = 73,                     /* $@23  */
-  YYSYMBOL_74_24 = 74,                     /* $@24  */
-  YYSYMBOL_FuncType = 75,                  /* FuncType  */
-  YYSYMBOL_76_25 = 76,                     /* $@25  */
-  YYSYMBOL_77_26 = 77,                     /* $@26  */
-  YYSYMBOL_78_27 = 78,                     /* $@27  */
-  YYSYMBOL_FuncFParams = 79,               /* FuncFParams  */
-  YYSYMBOL_80_28 = 80,                     /* $@28  */
-  YYSYMBOL_FuncFParam = 81,                /* FuncFParam  */
-  YYSYMBOL_82_29 = 82,                     /* $@29  */
-  YYSYMBOL_83_30 = 83,                     /* $@30  */
-  YYSYMBOL_ExpOPT = 84,                    /* ExpOPT  */
-  YYSYMBOL_85_31 = 85,                     /* $@31  */
-  YYSYMBOL_ExpTail = 86,                   /* ExpTail  */
-  YYSYMBOL_87_32 = 87,                     /* $@32  */
-  YYSYMBOL_88_33 = 88,                     /* $@33  */
-  YYSYMBOL_FuncFParamTail = 89,            /* FuncFParamTail  */
-  YYSYMBOL_90_34 = 90,                     /* $@34  */
-  YYSYMBOL_FuncFParamsOpt = 91,            /* FuncFParamsOpt  */
-  YYSYMBOL_Stmt = 92,                      /* Stmt  */
-  YYSYMBOL_93_35 = 93,                     /* $@35  */
-  YYSYMBOL_94_36 = 94,                     /* $@36  */
-  YYSYMBOL_95_37 = 95,                     /* $@37  */
-  YYSYMBOL_96_38 = 96,                     /* $@38  */
-  YYSYMBOL_97_39 = 97,                     /* $@39  */
-  YYSYMBOL_98_40 = 98,                     /* $@40  */
-  YYSYMBOL_99_41 = 99,                     /* $@41  */
-  YYSYMBOL_100_42 = 100,                   /* $@42  */
-  YYSYMBOL_101_43 = 101,                   /* $@43  */
-  YYSYMBOL_102_44 = 102,                   /* $@44  */
-  YYSYMBOL_103_45 = 103,                   /* $@45  */
-  YYSYMBOL_104_46 = 104,                   /* $@46  */
-  YYSYMBOL_105_47 = 105,                   /* $@47  */
-  YYSYMBOL_106_48 = 106,                   /* $@48  */
-  YYSYMBOL_StmtOpt = 107,                  /* StmtOpt  */
-  YYSYMBOL_108_49 = 108,                   /* $@49  */
-  YYSYMBOL_Block = 109,                    /* Block  */
-  YYSYMBOL_110_50 = 110,                   /* $@50  */
-  YYSYMBOL_111_51 = 111,                   /* $@51  */
-  YYSYMBOL_BlockItem = 112,                /* BlockItem  */
-  YYSYMBOL_113_52 = 113,                   /* $@52  */
-  YYSYMBOL_114_53 = 114,                   /* $@53  */
-  YYSYMBOL_BlockItemTail = 115,            /* BlockItemTail  */
-  YYSYMBOL_PrimaryExp = 116,               /* PrimaryExp  */
-  YYSYMBOL_117_54 = 117,                   /* $@54  */
-  YYSYMBOL_118_55 = 118,                   /* $@55  */
-  YYSYMBOL_119_56 = 119,                   /* $@56  */
-  YYSYMBOL_120_57 = 120,                   /* $@57  */
-  YYSYMBOL_Exp = 121,                      /* Exp  */
-  YYSYMBOL_122_58 = 122,                   /* $@58  */
-  YYSYMBOL_ExpOpt = 123,                   /* ExpOpt  */
-  YYSYMBOL_Cond = 124,                     /* Cond  */
-  YYSYMBOL_125_59 = 125,                   /* $@59  */
-  YYSYMBOL_AddExp = 126,                   /* AddExp  */
-  YYSYMBOL_127_60 = 127,                   /* $@60  */
-  YYSYMBOL_AddExpTail = 128,               /* AddExpTail  */
-  YYSYMBOL_129_61 = 129,                   /* $@61  */
-  YYSYMBOL_130_62 = 130,                   /* $@62  */
-  YYSYMBOL_MulExp = 131,                   /* MulExp  */
-  YYSYMBOL_132_63 = 132,                   /* $@63  */
-  YYSYMBOL_MulExpTail = 133,               /* MulExpTail  */
-  YYSYMBOL_134_64 = 134,                   /* $@64  */
-  YYSYMBOL_UnaryExp = 135,                 /* UnaryExp  */
-  YYSYMBOL_136_65 = 136,                   /* $@65  */
-  YYSYMBOL_137_66 = 137,                   /* $@66  */
-  YYSYMBOL_138_67 = 138,                   /* $@67  */
-  YYSYMBOL_139_68 = 139,                   /* $@68  */
-  YYSYMBOL_FuncRParamsOpt = 140,           /* FuncRParamsOpt  */
-  YYSYMBOL_FuncRParams = 141,              /* FuncRParams  */
-  YYSYMBOL_142_69 = 142,                   /* $@69  */
-  YYSYMBOL_LVal = 143,                     /* LVal  */
-  YYSYMBOL_144_70 = 144,                   /* $@70  */
-  YYSYMBOL_LValTail = 145,                 /* LValTail  */
-  YYSYMBOL_146_71 = 146,                   /* $@71  */
-  YYSYMBOL_147_72 = 147,                   /* $@72  */
-  YYSYMBOL_RelExp = 148,                   /* RelExp  */
-  YYSYMBOL_149_73 = 149,                   /* $@73  */
-  YYSYMBOL_RelExpTail = 150,               /* RelExpTail  */
-  YYSYMBOL_151_74 = 151,                   /* $@74  */
-  YYSYMBOL_EqExp = 152,                    /* EqExp  */
-  YYSYMBOL_153_75 = 153,                   /* $@75  */
-  YYSYMBOL_EqExpTail = 154,                /* EqExpTail  */
-  YYSYMBOL_155_76 = 155,                   /* $@76  */
-  YYSYMBOL_LAndExp = 156,                  /* LAndExp  */
-  YYSYMBOL_157_77 = 157,                   /* $@77  */
-  YYSYMBOL_LAndExpTail = 158,              /* LAndExpTail  */
-  YYSYMBOL_159_78 = 159,                   /* $@78  */
-  YYSYMBOL_LOrExp = 160,                   /* LOrExp  */
-  YYSYMBOL_161_79 = 161,                   /* $@79  */
-  YYSYMBOL_LOrExpTail = 162,               /* LOrExpTail  */
-  YYSYMBOL_163_80 = 163                    /* $@80  */
+  YYSYMBOL_VOID = 8,                       /* VOID  */
+  YYSYMBOL_CONST = 9,                      /* CONST  */
+  YYSYMBOL_RETURN = 10,                    /* RETURN  */
+  YYSYMBOL_IF = 11,                        /* IF  */
+  YYSYMBOL_ELSE = 12,                      /* ELSE  */
+  YYSYMBOL_WHILE = 13,                     /* WHILE  */
+  YYSYMBOL_BREAK = 14,                     /* BREAK  */
+  YYSYMBOL_CONTINUE = 15,                  /* CONTINUE  */
+  YYSYMBOL_LPARENT = 16,                   /* LPARENT  */
+  YYSYMBOL_RPARENT = 17,                   /* RPARENT  */
+  YYSYMBOL_LBRACKET = 18,                  /* LBRACKET  */
+  YYSYMBOL_RBRACKET = 19,                  /* RBRACKET  */
+  YYSYMBOL_LBRACE = 20,                    /* LBRACE  */
+  YYSYMBOL_RBRACE = 21,                    /* RBRACE  */
+  YYSYMBOL_COMMA = 22,                     /* COMMA  */
+  YYSYMBOL_END = 23,                       /* END  */
+  YYSYMBOL_MINUS = 24,                     /* MINUS  */
+  YYSYMBOL_ASSIGN = 25,                    /* ASSIGN  */
+  YYSYMBOL_PLUS = 26,                      /* PLUS  */
+  YYSYMBOL_NOT = 27,                       /* NOT  */
+  YYSYMBOL_AND = 28,                       /* AND  */
+  YYSYMBOL_OR = 29,                        /* OR  */
+  YYSYMBOL_LT = 30,                        /* LT  */
+  YYSYMBOL_LE = 31,                        /* LE  */
+  YYSYMBOL_GT = 32,                        /* GT  */
+  YYSYMBOL_GE = 33,                        /* GE  */
+  YYSYMBOL_NEQUAL = 34,                    /* NEQUAL  */
+  YYSYMBOL_EQUAL = 35,                     /* EQUAL  */
+  YYSYMBOL_MUL = 36,                       /* MUL  */
+  YYSYMBOL_MOD = 37,                       /* MOD  */
+  YYSYMBOL_DIV = 38,                       /* DIV  */
+  YYSYMBOL_YYACCEPT = 39,                  /* $accept  */
+  YYSYMBOL_Root = 40,                      /* Root  */
+  YYSYMBOL_CompUnit = 41,                  /* CompUnit  */
+  YYSYMBOL_ConstDecl = 42,                 /* ConstDecl  */
+  YYSYMBOL_ConstDef = 43,                  /* ConstDef  */
+  YYSYMBOL_ConstExpArray = 44,             /* ConstExpArray  */
+  YYSYMBOL_ConstInitVal = 45,              /* ConstInitVal  */
+  YYSYMBOL_ConstExp = 46,                  /* ConstExp  */
+  YYSYMBOL_VarDecl = 47,                   /* VarDecl  */
+  YYSYMBOL_VarDef = 48,                    /* VarDef  */
+  YYSYMBOL_InitVal = 49,                   /* InitVal  */
+  YYSYMBOL_InitVals = 50,                  /* InitVals  */
+  YYSYMBOL_FuncDef = 51,                   /* FuncDef  */
+  YYSYMBOL_FuncFParam = 52,                /* FuncFParam  */
+  YYSYMBOL_Block = 53,                     /* Block  */
+  YYSYMBOL_BlockItem = 54,                 /* BlockItem  */
+  YYSYMBOL_Stmt = 55,                      /* Stmt  */
+  YYSYMBOL_Exp = 56,                       /* Exp  */
+  YYSYMBOL_AddExp = 57,                    /* AddExp  */
+  YYSYMBOL_MulExp = 58,                    /* MulExp  */
+  YYSYMBOL_UnaryExp = 59,                  /* UnaryExp  */
+  YYSYMBOL_FuncRParams = 60,               /* FuncRParams  */
+  YYSYMBOL_PrimaryExp = 61,                /* PrimaryExp  */
+  YYSYMBOL_LVal = 62,                      /* LVal  */
+  YYSYMBOL_Cond = 63,                      /* Cond  */
+  YYSYMBOL_LOrExp = 64,                    /* LOrExp  */
+  YYSYMBOL_LAndExp = 65,                   /* LAndExp  */
+  YYSYMBOL_EqExp = 66,                     /* EqExp  */
+  YYSYMBOL_RelExp = 67,                    /* RelExp  */
+  YYSYMBOL_ExpArray = 68                   /* ExpArray  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -722,21 +651,21 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  5
+#define YYFINAL  17
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   171
+#define YYLAST   275
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  33
+#define YYNTOKENS  39
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  131
+#define YYNNTS  30
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  176
+#define YYNRULES  98
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  253
+#define YYNSTATES  201
 
 /* YYMAXUTOK -- Last valid token kind.  */
-#define YYMAXUTOK   287
+#define YYMAXUTOK   293
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -778,31 +707,24 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
       15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
-      25,    26,    27,    28,    29,    30,    31,    32
+      25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
+      35,    36,    37,    38
 };
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    39,    39,    40,    43,    72,    72,    78,    78,    86,
-      86,   101,   101,   111,   111,   125,   134,   125,   142,   145,
-     150,   145,   155,   158,   159,   159,   170,   171,   174,   174,
-     179,   183,   183,   188,   192,   192,   206,   206,   211,   215,
-     215,   224,   233,   224,   240,   241,   241,   252,   253,   256,
-     256,   261,   265,   271,   277,   265,   286,   286,   296,   296,
-     306,   306,   319,   319,   327,   333,   327,   341,   341,   348,
-     351,   356,   351,   361,   365,   365,   370,   375,   376,   381,
-     387,   381,   396,   396,   407,   407,   413,   418,   425,   413,
-     430,   435,   442,   430,   447,   447,   458,   458,   469,   474,
-     469,   485,   485,   489,   493,   498,   493,   509,   509,   517,
-     517,   527,   528,   532,   537,   532,   546,   547,   547,   560,
-     560,   576,   576,   584,   585,   588,   588,   596,   596,   604,
-     604,   610,   610,   616,   619,   619,   627,   627,   633,   636,
-     636,   642,   647,   642,   659,   659,   667,   668,   672,   673,
-     673,   681,   681,   692,   697,   692,   702,   707,   707,   714,
-     714,   720,   725,   725,   732,   732,   736,   740,   740,   748,
-     748,   753,   757,   757,   765,   765,   770
+       0,    59,    59,    61,    62,    63,    64,    65,    66,    69,
+      70,    73,    80,    89,    90,    93,    94,    95,    96,    99,
+     100,   101,   104,   105,   108,   115,   122,   129,   138,   139,
+     140,   143,   144,   147,   154,   161,   168,   175,   182,   191,
+     196,   201,   206,   211,   216,   221,   226,   233,   235,   236,
+     237,   238,   241,   242,   243,   244,   245,   246,   247,   248,
+     249,   250,   251,   262,   264,   265,   266,   269,   270,   271,
+     272,   275,   276,   283,   290,   291,   292,   295,   296,   299,
+     300,   301,   302,   305,   313,   315,   316,   319,   320,   323,
+     324,   325,   328,   329,   330,   331,   332,   335,   336
 };
 #endif
 
@@ -818,30 +740,17 @@ static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "\"end of file\"", "error", "\"invalid token\"", "INTCONST",
-  "FLOATCONST", "INT", "VOID", "FLOAT", "IDENT", "PLUS", "MINUS", "ASSIGN",
-  "MUL", "UNARYOP", "CONST", "COMMA", "EQUAL", "OR", "AND", "WEIGHT", "IF",
-  "ELSE", "WHILE", "BREAK", "CONTINUE", "RETURN", "LPARENT", "RPARENT",
-  "LBRACKET", "RBRACKET", "LBRACE", "RBRACE", "END", "$accept",
-  "line_list", "line", "Decl", "$@3", "$@4", "ConstDecl", "$@5", "BType",
-  "$@6", "$@7", "ConstDef", "$@8", "$@9", "ConstExp", "ConstExpTail",
-  "$@10", "$@11", "ConstInitVal", "$@12", "ConstInitValOpt",
-  "ConstInitValTail", "$@13", "ConstDefTail", "$@14", "VarDecl", "$@15",
-  "VarDeclTail", "$@16", "VarDef", "$@17", "$@18", "$@19", "InitVal",
-  "$@20", "InitValOpt", "InitValTail", "$@21", "FuncDef", "$@22", "$@23",
-  "$@24", "FuncType", "$@25", "$@26", "$@27", "FuncFParams", "$@28",
-  "FuncFParam", "$@29", "$@30", "ExpOPT", "$@31", "ExpTail", "$@32",
-  "$@33", "FuncFParamTail", "$@34", "FuncFParamsOpt", "Stmt", "$@35",
-  "$@36", "$@37", "$@38", "$@39", "$@40", "$@41", "$@42", "$@43", "$@44",
-  "$@45", "$@46", "$@47", "$@48", "StmtOpt", "$@49", "Block", "$@50",
-  "$@51", "BlockItem", "$@52", "$@53", "BlockItemTail", "PrimaryExp",
-  "$@54", "$@55", "$@56", "$@57", "Exp", "$@58", "ExpOpt", "Cond", "$@59",
-  "AddExp", "$@60", "AddExpTail", "$@61", "$@62", "MulExp", "$@63",
-  "MulExpTail", "$@64", "UnaryExp", "$@65", "$@66", "$@67", "$@68",
-  "FuncRParamsOpt", "FuncRParams", "$@69", "LVal", "$@70", "LValTail",
-  "$@71", "$@72", "RelExp", "$@73", "RelExpTail", "$@74", "EqExp", "$@75",
-  "EqExpTail", "$@76", "LAndExp", "$@77", "LAndExpTail", "$@78", "LOrExp",
-  "$@79", "LOrExpTail", "$@80", YY_NULLPTR
+  "\"end of file\"", "error", "\"invalid token\"", "IDENT", "INTCONST",
+  "FLOATCONST", "INT", "FLOAT", "VOID", "CONST", "RETURN", "IF", "ELSE",
+  "WHILE", "BREAK", "CONTINUE", "LPARENT", "RPARENT", "LBRACKET",
+  "RBRACKET", "LBRACE", "RBRACE", "COMMA", "END", "MINUS", "ASSIGN",
+  "PLUS", "NOT", "AND", "OR", "LT", "LE", "GT", "GE", "NEQUAL", "EQUAL",
+  "MUL", "MOD", "DIV", "$accept", "Root", "CompUnit", "ConstDecl",
+  "ConstDef", "ConstExpArray", "ConstInitVal", "ConstExp", "VarDecl",
+  "VarDef", "InitVal", "InitVals", "FuncDef", "FuncFParam", "Block",
+  "BlockItem", "Stmt", "Exp", "AddExp", "MulExp", "UnaryExp",
+  "FuncRParams", "PrimaryExp", "LVal", "Cond", "LOrExp", "LAndExp",
+  "EqExp", "RelExp", "ExpArray", YY_NULLPTR
 };
 
 static const char *
@@ -851,12 +760,12 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-218)
+#define YYPACT_NINF (-165)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
 
-#define YYTABLE_NINF (-147)
+#define YYTABLE_NINF (-49)
 
 #define yytable_value_is_error(Yyn) \
   0
@@ -865,103 +774,71 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
-    -218,    17,  -218,  -218,    15,  -218,  -218,     3,    25,    16,
-       8,    23,  -218,  -218,  -218,  -218,    24,  -218,  -218,    27,
-      28,    43,  -218,  -218,  -218,    45,    50,    49,  -218,  -218,
-    -218,  -218,  -218,  -218,    29,    28,    30,  -218,  -218,    31,
-    -218,     2,  -218,     2,    47,     4,    32,    34,  -218,  -218,
-      51,  -218,  -218,    56,    35,  -218,    46,    48,    52,    44,
-      53,  -218,  -218,  -218,  -218,  -218,  -218,    43,  -218,    58,
-    -218,  -218,    39,  -218,    54,    55,    40,    41,  -218,  -218,
-      43,    66,    57,  -218,  -218,  -218,  -218,  -218,  -218,  -218,
-    -218,    35,    59,    68,    71,    62,  -218,  -218,  -218,    26,
-      70,  -218,  -218,    60,  -218,  -218,    64,    61,    61,  -218,
-      63,  -218,    65,  -218,  -218,  -218,  -218,    72,    10,    78,
-      67,  -218,    69,  -218,    34,    61,  -218,    73,  -218,  -218,
-      76,    66,  -218,    74,  -218,  -218,  -218,    70,  -218,  -218,
-    -218,    75,    87,    89,  -218,    80,  -218,  -218,  -218,  -218,
-    -218,    88,    68,  -218,  -218,  -218,    62,  -218,    26,    26,
-    -218,    70,  -218,  -218,  -218,  -218,     4,    81,  -218,     4,
-    -218,    64,    79,  -218,    77,  -218,    57,  -218,  -218,    72,
-    -218,    82,    90,  -218,  -218,    84,  -218,  -218,    83,  -218,
-    -218,  -218,  -218,  -218,  -218,  -218,    85,    95,    91,  -218,
-    -218,  -218,  -218,  -218,  -218,    98,  -218,  -218,  -218,  -218,
-      61,     9,  -218,  -218,  -218,     4,    81,  -218,  -218,  -218,
-      96,    11,  -218,   101,    86,  -218,  -218,  -218,    84,  -218,
-    -218,  -218,   104,    92,  -218,  -218,  -218,  -218,  -218,    98,
-    -218,  -218,  -218,  -218,    77,  -218,    96,    83,   101,  -218,
-     104,  -218,  -218
+      98,    59,    65,    72,   112,    94,  -165,    98,    98,    98,
+      -5,   108,    49,   114,    86,   137,   137,  -165,  -165,  -165,
+    -165,    63,    33,    22,  -165,    79,  -165,    84,   126,   124,
+     129,   155,   159,   152,   169,   120,  -165,  -165,    33,    33,
+      33,    33,   181,   149,    62,  -165,  -165,   198,   192,   152,
+     186,   152,   189,   182,  -165,  -165,     0,    75,   150,  -165,
+     152,   206,    33,  -165,   196,  -165,   163,  -165,  -165,  -165,
+     126,    33,    33,    33,    33,    33,   126,  -165,   164,   193,
+    -165,  -165,   152,  -165,   152,   221,   195,   121,   201,   121,
+    -165,   198,   198,   235,   205,   211,   194,   208,   150,   150,
+    -165,   207,   150,   212,   204,  -165,  -165,   214,   217,   223,
+    -165,    33,    33,  -165,  -165,  -165,  -165,  -165,  -165,  -165,
+     222,   225,   198,  -165,  -165,   178,   227,  -165,   232,  -165,
+     232,  -165,  -165,   220,    33,    33,  -165,  -165,  -165,  -165,
+    -165,  -165,  -165,    33,    33,  -165,   232,  -165,  -165,   192,
+    -165,  -165,  -165,    60,   137,   234,   238,  -165,    83,   240,
+    -165,   236,   239,   144,   246,   241,  -165,  -165,  -165,  -165,
+     221,  -165,   121,   121,    33,    33,    33,    33,   119,    33,
+      33,    33,    33,   119,  -165,   245,  -165,  -165,  -165,  -165,
+    -165,  -165,   256,  -165,  -165,  -165,  -165,  -165,  -165,   119,
+    -165
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
    Performed when YYTABLE does not specify something else to do.  Zero
    means the default is an error.  */
-static const yytype_uint8 yydefact[] =
+static const yytype_int8 yydefact[] =
 {
-      52,    52,     2,     4,    56,     1,     3,     0,     0,     0,
-       0,     0,    57,    59,    61,    53,    62,    77,    64,     0,
-      76,    11,    54,    74,    63,     0,     0,     0,   104,    64,
-      65,    12,    14,    55,     0,    76,    69,   105,    75,     0,
-      66,   109,    67,   109,     7,    82,     0,    73,   111,   108,
-       0,    34,   110,     0,   121,   104,     0,     0,     0,     0,
-       0,   106,    70,    68,     9,     6,     8,    11,   151,     0,
-     123,   127,     0,    85,     0,     0,     0,     0,    99,   121,
-      11,     0,   156,    80,   122,   134,    83,    87,    91,    95,
-      97,   121,     0,     0,    39,    38,   153,   152,   121,   133,
-     139,   125,   125,     0,    71,    15,    33,    22,    22,    36,
-       0,   121,     0,   129,   131,   128,   144,   138,   113,     0,
-       0,   172,     0,   100,    73,    22,    31,     0,    19,    40,
-       0,     0,    35,     0,    81,   134,   134,   139,   136,   135,
-     140,     0,     0,     0,   116,     0,    88,   126,   167,    92,
-      72,     0,     0,    10,   127,    42,    38,   154,   133,   133,
-     145,   139,   114,   118,   120,   142,    82,   176,   162,    82,
-      16,    33,     0,    18,   121,    37,   156,   130,   132,   138,
-     121,   121,   103,   174,   173,   171,   157,    93,   127,    32,
-      20,    45,    43,    44,   155,   137,     0,   148,     0,   147,
-     101,    89,   167,   169,   168,   166,   127,    24,    23,    17,
-      22,   121,   115,   149,   143,    82,   176,   162,   164,   163,
-     161,   127,    21,    51,     0,   121,   102,   175,   171,   157,
-     159,   158,    30,     0,    49,    47,    46,   150,   170,   166,
-     127,    28,    26,    25,   121,   165,   161,   127,    51,   160,
-      30,    50,    29
+       0,     0,     0,     0,     0,     0,     2,     3,     4,     5,
+      13,     0,    13,     0,     0,     0,     0,     1,     6,     7,
+       8,     0,     0,    24,    22,     0,    23,     0,    13,     0,
+       0,     0,     0,     0,     0,    97,    81,    82,     0,     0,
+       0,     0,     0,    19,    67,    71,    80,     0,     0,     0,
+       0,     0,     0,     0,     9,    10,    39,    40,     0,    33,
+       0,     0,     0,    83,     0,    63,    64,    75,    74,    76,
+      13,     0,     0,     0,     0,     0,    13,    26,     0,    25,
+      28,    34,     0,    35,     0,     0,     0,     0,     0,     0,
+      62,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+      54,     0,     0,     0,    80,    36,    72,    77,     0,     0,
+      79,     0,     0,    14,    21,    20,    68,    70,    69,    29,
+      31,     0,     0,    37,    38,     0,    11,    15,    97,    43,
+      97,    44,    61,     0,     0,     0,    58,    59,    49,    50,
+      47,    51,    53,     0,     0,    73,    97,    66,    65,     0,
+      30,    27,    16,     0,     0,    41,    42,    60,    92,     0,
+      84,    85,    87,    89,     0,     0,    78,    98,    32,    17,
+       0,    12,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,    52,     0,    45,    46,    93,    95,
+      94,    96,    55,    86,    88,    91,    90,    57,    18,     0,
+      56
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int16 yypgoto[] =
 {
-    -218,  -218,    99,  -218,  -218,  -218,  -218,  -218,   -57,  -218,
-    -218,   -61,  -218,  -218,   -34,  -106,  -218,  -218,  -217,  -218,
-    -218,  -128,  -218,   -50,  -218,  -218,  -218,   -32,  -218,    -6,
-    -218,  -218,  -218,  -206,  -218,  -218,  -120,  -218,  -218,  -218,
-    -218,  -218,  -218,  -218,  -218,  -218,  -218,  -218,   100,  -218,
-    -218,  -218,  -218,     6,  -218,  -218,    97,  -218,  -218,  -163,
-    -218,  -218,  -218,  -218,  -218,  -218,  -218,  -218,  -218,  -218,
-    -218,  -218,  -218,  -218,  -218,  -218,    93,  -218,  -218,  -218,
-    -218,  -218,    94,  -218,  -218,  -218,  -218,  -218,   -54,  -218,
-      42,    33,  -218,   -70,  -218,  -113,  -218,  -218,   -88,  -218,
-     -48,  -218,  -129,  -218,  -218,  -218,  -218,  -218,   -91,  -218,
-      20,  -218,   -37,  -218,  -218,   -89,  -218,  -105,  -218,   -75,
-    -218,   -96,  -218,   -58,  -218,   -83,  -218,  -218,  -218,   -69,
-    -218
+    -165,  -165,    19,   -15,   -13,   -16,  -115,   247,   -10,     3,
+     224,   122,  -165,   -23,   -26,   -78,  -164,   -32,  -103,   -22,
+      69,   130,  -165,   -57,   135,    96,    93,    11,    78,  -113
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_uint8 yydefgoto[] =
 {
-       0,     1,     2,    49,    50,    51,    65,    80,    25,    26,
-      27,   106,   125,   188,   208,   129,   154,   210,   209,   221,
-     233,   242,   247,   127,   152,    66,    67,   110,   131,    95,
-     107,   108,   174,   192,   211,   224,   235,   244,     3,     4,
-      16,    28,     7,     8,     9,    10,    17,    18,    20,    21,
-      36,    40,    47,    63,    79,   124,    24,    29,    19,    52,
-      53,    98,    54,    55,    56,   101,   166,    57,   102,   169,
-      58,    59,    60,    91,   201,   215,    33,    34,    41,    43,
-      44,    45,    46,   140,   141,   180,   142,   143,   193,    71,
-      72,   120,   121,   173,    85,   115,   135,   136,    99,   100,
-     139,   161,   117,   118,   119,   181,   137,   198,   199,   225,
-      69,    82,    97,   111,   176,   205,   206,   231,   240,   185,
-     186,   219,   229,   167,   168,   204,   217,   147,   148,   184,
-     202
+       0,     5,     6,     7,    29,    23,   126,   127,     8,    11,
+     120,   121,     9,    34,   100,   101,   102,   103,    65,    66,
+      44,   108,    45,    46,   159,   160,   161,   162,   163,    63
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -969,124 +846,123 @@ static const yytype_uint8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int16 yytable[] =
 {
-      70,    84,   130,   182,   232,   223,   187,  -107,   160,  -107,
-      81,    11,   -79,  -117,  -119,    14,  -107,     5,    68,   151,
-     -58,    13,   -60,    93,   -86,    92,   -90,   -94,   -96,   -98,
-     250,    12,   179,  -112,   -84,   113,   114,    70,   248,   191,
-     -48,   207,   -27,    23,   112,   177,   178,   158,   159,    15,
-     -13,   -78,   226,    30,    22,    31,    32,   133,    39,    37,
-      42,    -5,    62,    61,    68,    64,    74,  -124,    77,    83,
-      75,    86,    89,    90,    94,    76,   105,   109,    78,   126,
-      87,    88,   -41,   116,   138,    96,   145,   155,   104,   128,
-     163,   171,   123,   164,   146,   132,   149,   134,   183,   170,
-       6,   162,   203,   157,   222,   153,   165,   191,   190,  -146,
-     213,   200,   212,   207,   218,   230,   234,   236,   214,   241,
-     172,   189,   252,   243,   175,   156,   196,   197,   251,    35,
-     150,   195,    38,   103,   237,   122,   220,    48,   144,   194,
-     239,   249,   228,   245,   216,   238,     0,   227,    73,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-     246,   197
+      43,   104,    50,    30,    52,    13,    64,    59,   147,   148,
+     153,    21,    53,    22,   192,   155,    80,   156,    86,   197,
+     138,   139,    87,    81,   141,    83,    18,    19,    20,   107,
+     109,   158,   158,   167,   105,   200,    35,    36,    37,   114,
+     115,   104,   104,    98,    47,   104,    80,    48,    99,    38,
+      77,   116,   117,   118,   113,   185,   123,    39,   124,    40,
+      41,   133,    10,    43,   129,    25,   131,    22,    12,    31,
+      32,   158,   158,   158,   158,    14,   158,   158,   158,   158,
+      33,   169,   170,    98,    98,    31,    32,    98,    99,    99,
+      31,    32,    99,    88,    17,    13,    49,    89,    73,    74,
+      75,    51,    27,    43,     1,     2,     3,     4,    67,    68,
+      69,   165,   107,   174,   175,   176,   177,    80,    15,    16,
+      90,   104,    35,    36,    37,   151,   104,    31,    32,    93,
+      94,    24,    95,    96,    97,    38,    61,    26,    62,    58,
+      28,   171,   104,    39,    22,    40,    41,    54,    43,   186,
+     187,    90,    55,    35,    36,    37,    91,    92,    56,     4,
+      93,    94,    57,    95,    96,    97,    38,    35,    36,    37,
+      58,   -48,    58,    71,    39,    72,    40,    41,   181,   182,
+      38,    35,    36,    37,    78,   119,    60,   111,    39,   112,
+      40,    41,   195,   196,    38,    35,    36,    37,   125,   152,
+      70,    76,    39,    82,    40,    41,    84,    85,    38,    35,
+      36,    37,    78,   110,   128,   122,    39,   136,    40,    41,
+     130,   134,    38,   106,    35,    36,    37,   135,   140,   143,
+      39,   137,    40,    41,   145,   142,   144,    38,    35,    36,
+      37,   125,   146,   157,   149,    39,   150,    40,    41,   154,
+      62,    38,   188,   189,   190,   191,   172,   178,   132,    39,
+     173,    40,    41,   183,   184,   179,   198,   180,   199,    42,
+     164,   168,    79,   194,   166,   193
 };
 
-static const yytype_int16 yycheck[] =
+static const yytype_uint8 yycheck[] =
 {
-      54,    71,   108,   166,   221,   211,   169,     5,   137,     7,
-      67,     8,     8,     3,     4,     7,    14,     0,     8,   125,
-       5,     5,     7,    80,    20,    79,    22,    23,    24,    25,
-     247,     6,   161,    31,    30,     9,    10,    91,   244,    30,
-      31,    30,    31,    15,    98,   158,   159,   135,   136,    26,
-       7,    27,   215,     8,    27,     5,     7,   111,    28,    30,
-      29,    14,    28,    31,     8,    14,    20,    32,    24,    11,
-      22,    32,    32,    32,     8,    23,     8,    15,    25,    15,
-      26,    26,    11,    13,    12,    28,     8,    11,    29,    28,
-       3,   152,    32,     4,    27,    32,    27,    32,    17,    11,
-       1,    26,    18,    29,   210,    32,    26,    30,    29,    27,
-      15,    21,    27,    30,    16,    19,    15,    31,    27,    15,
-     154,   171,   250,    31,   156,   131,   180,   181,   248,    29,
-     124,   179,    35,    91,   225,   102,   206,    43,   118,   176,
-     229,   246,   217,   239,   202,   228,    -1,   216,    55,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-     240,   225
+      22,    58,    25,    16,    27,     2,    38,    33,   111,   112,
+     125,    16,    28,    18,   178,   128,    48,   130,    18,   183,
+      98,    99,    22,    49,   102,    51,     7,     8,     9,    61,
+      62,   134,   135,   146,    60,   199,     3,     4,     5,    71,
+      72,    98,    99,    58,    22,   102,    78,    25,    58,    16,
+      47,    73,    74,    75,    70,   170,    82,    24,    84,    26,
+      27,    93,     3,    85,    87,    16,    89,    18,     3,     6,
+       7,   174,   175,   176,   177,     3,   179,   180,   181,   182,
+      17,    21,    22,    98,    99,     6,     7,   102,    98,    99,
+       6,     7,   102,    18,     0,    92,    17,    22,    36,    37,
+      38,    17,    16,   125,     6,     7,     8,     9,    39,    40,
+      41,   143,   144,    30,    31,    32,    33,   149,     6,     7,
+       1,   178,     3,     4,     5,   122,   183,     6,     7,    10,
+      11,    23,    13,    14,    15,    16,    16,    23,    18,    20,
+       3,   154,   199,    24,    18,    26,    27,    23,   170,   172,
+     173,     1,    23,     3,     4,     5,     6,     7,     3,     9,
+      10,    11,     3,    13,    14,    15,    16,     3,     4,     5,
+      20,    21,    20,    24,    24,    26,    26,    27,    34,    35,
+      16,     3,     4,     5,    20,    21,    17,    24,    24,    26,
+      26,    27,   181,   182,    16,     3,     4,     5,    20,    21,
+      19,     3,    24,    17,    26,    27,    17,    25,    16,     3,
+       4,     5,    20,    17,    19,    22,    24,    23,    26,    27,
+      19,    16,    16,    17,     3,     4,     5,    16,    21,    25,
+      24,    23,    26,    27,    17,    23,    22,    16,     3,     4,
+       5,    20,    19,    23,    22,    24,    21,    26,    27,    22,
+      18,    16,   174,   175,   176,   177,    22,    17,    23,    24,
+      22,    26,    27,    17,    23,    29,    21,    28,    12,    22,
+     135,   149,    48,   180,   144,   179
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
-static const yytype_uint8 yystos[] =
+static const yytype_int8 yystos[] =
 {
-       0,    34,    35,    71,    72,     0,    35,    75,    76,    77,
-      78,     8,     6,     5,     7,    26,    73,    79,    80,    91,
-      81,    82,    27,    15,    89,    41,    42,    43,    74,    90,
-       8,     5,     7,   109,   110,    81,    83,    30,    89,    28,
-      84,   111,    29,   112,   113,   114,   115,    85,   115,    36,
-      37,    38,    92,    93,    95,    96,    97,   100,   103,   104,
-     105,    31,    28,    86,    14,    39,    58,    59,     8,   143,
-     121,   122,   123,   109,    20,    22,    23,    24,    25,    87,
-      40,    41,   144,    11,   126,   127,    32,    26,    26,    32,
-      32,   106,   121,    41,     8,    62,    28,   145,    94,   131,
-     132,    98,   101,   123,    29,     8,    44,    63,    64,    15,
-      60,   146,   121,     9,    10,   128,    13,   135,   136,   137,
-     124,   125,   124,    32,    88,    45,    15,    56,    28,    48,
-      48,    61,    32,   121,    32,   129,   130,   139,    12,   133,
-     116,   117,   119,   120,   143,     8,    27,   160,   161,    27,
-      86,    48,    57,    32,    49,    11,    62,    29,   131,   131,
-     135,   134,    26,     3,     4,    26,    99,   156,   157,   102,
-      11,    44,    47,   126,    65,    60,   147,   128,   128,   135,
-     118,   138,    92,    17,   162,   152,   153,    92,    46,    56,
-      29,    30,    66,   121,   145,   133,   121,   121,   140,   141,
-      21,   107,   163,    18,   158,   148,   149,    30,    47,    51,
-      50,    67,    27,    15,    27,   108,   156,   159,    16,   154,
-     126,    52,    48,    66,    68,   142,    92,   162,   152,   155,
-      19,   150,    51,    53,    15,    69,    31,   141,   158,   148,
-     151,    15,    54,    31,    70,   154,   126,    55,    66,   150,
-      51,    69,    54
+       0,     6,     7,     8,     9,    40,    41,    42,    47,    51,
+       3,    48,     3,    48,     3,     6,     7,     0,    41,    41,
+      41,    16,    18,    44,    23,    16,    23,    16,     3,    43,
+      43,     6,     7,    17,    52,     3,     4,     5,    16,    24,
+      26,    27,    46,    58,    59,    61,    62,    22,    25,    17,
+      52,    17,    52,    44,    23,    23,     3,     3,    20,    53,
+      17,    16,    18,    68,    56,    57,    58,    59,    59,    59,
+      19,    24,    26,    36,    37,    38,     3,    48,    20,    49,
+      56,    53,    17,    53,    17,    25,    18,    22,    18,    22,
+       1,     6,     7,    10,    11,    13,    14,    15,    42,    47,
+      53,    54,    55,    56,    62,    53,    17,    56,    60,    56,
+      17,    24,    26,    44,    56,    56,    58,    58,    58,    21,
+      49,    50,    22,    53,    53,    20,    45,    46,    19,    52,
+      19,    52,    23,    56,    16,    16,    23,    23,    54,    54,
+      21,    54,    23,    25,    22,    17,    19,    57,    57,    22,
+      21,    48,    21,    45,    22,    68,    68,    23,    57,    63,
+      64,    65,    66,    67,    63,    56,    60,    68,    50,    21,
+      22,    43,    22,    22,    30,    31,    32,    33,    17,    29,
+      28,    34,    35,    17,    23,    45,    52,    52,    67,    67,
+      67,    67,    55,    64,    65,    66,    66,    55,    21,    12,
+      55
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
-static const yytype_uint8 yyr1[] =
+static const yytype_int8 yyr1[] =
 {
-       0,    33,    34,    34,    35,    37,    36,    38,    36,    40,
-      39,    42,    41,    43,    41,    45,    46,    44,    47,    49,
-      50,    48,    48,    51,    52,    51,    53,    53,    55,    54,
-      54,    57,    56,    56,    59,    58,    61,    60,    60,    63,
-      62,    64,    65,    62,    66,    67,    66,    68,    68,    70,
-      69,    69,    72,    73,    74,    71,    76,    75,    77,    75,
-      78,    75,    80,    79,    82,    83,    81,    85,    84,    84,
-      87,    88,    86,    86,    90,    89,    89,    91,    91,    93,
-      94,    92,    95,    92,    96,    92,    97,    98,    99,    92,
-     100,   101,   102,    92,   103,    92,   104,    92,   105,   106,
-      92,   108,   107,   107,   110,   111,   109,   113,   112,   114,
-     112,   115,   115,   117,   118,   116,   116,   119,   116,   120,
-     116,   122,   121,   123,   123,   125,   124,   127,   126,   129,
-     128,   130,   128,   128,   132,   131,   134,   133,   133,   136,
-     135,   137,   138,   135,   139,   135,   140,   140,   141,   142,
-     141,   144,   143,   146,   147,   145,   145,   149,   148,   151,
-     150,   150,   153,   152,   155,   154,   154,   157,   156,   159,
-     158,   158,   161,   160,   163,   162,   162
+       0,    39,    40,    41,    41,    41,    41,    41,    41,    42,
+      42,    43,    43,    44,    44,    45,    45,    45,    45,    46,
+      46,    46,    47,    47,    48,    48,    48,    48,    49,    49,
+      49,    50,    50,    51,    51,    51,    51,    51,    51,    52,
+      52,    52,    52,    52,    52,    52,    52,    53,    54,    54,
+      54,    54,    55,    55,    55,    55,    55,    55,    55,    55,
+      55,    55,    55,    56,    57,    57,    57,    58,    58,    58,
+      58,    59,    59,    59,    59,    59,    59,    60,    60,    61,
+      61,    61,    61,    62,    63,    64,    64,    65,    65,    66,
+      66,    66,    67,    67,    67,    67,    67,    68,    68
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     1,     2,     1,     0,     2,     0,     2,     0,
-       6,     0,     2,     0,     2,     0,     0,     6,     1,     0,
-       0,     6,     0,     1,     0,     4,     2,     0,     0,     4,
-       0,     0,     4,     0,     0,     5,     0,     4,     0,     0,
-       3,     0,     0,     6,     1,     0,     4,     2,     0,     0,
-       4,     0,     0,     0,     0,     9,     0,     2,     0,     2,
-       0,     2,     0,     3,     0,     0,     5,     0,     4,     0,
-       0,     0,     6,     0,     0,     4,     0,     1,     0,     0,
-       0,     6,     0,     3,     0,     2,     0,     0,     0,     9,
-       0,     0,     0,     8,     0,     3,     0,     3,     0,     0,
-       5,     0,     3,     0,     0,     0,     5,     0,     2,     0,
-       2,     2,     0,     0,     0,     5,     1,     0,     2,     0,
-       2,     0,     2,     1,     0,     0,     2,     0,     3,     0,
-       4,     0,     4,     0,     0,     3,     0,     4,     0,     0,
-       2,     0,     0,     6,     0,     3,     0,     1,     1,     0,
-       4,     0,     3,     0,     0,     6,     0,     0,     3,     0,
-       4,     0,     0,     3,     0,     4,     0,     0,     3,     0,
-       4,     0,     0,     3,     0,     4,     0
+       0,     2,     1,     1,     1,     1,     2,     2,     2,     4,
+       4,     4,     6,     0,     4,     1,     2,     3,     5,     1,
+       3,     3,     3,     3,     2,     4,     4,     6,     1,     2,
+       3,     1,     3,     5,     5,     5,     6,     6,     6,     2,
+       2,     5,     5,     4,     4,     7,     7,     3,     0,     2,
+       2,     2,     4,     2,     1,     5,     7,     5,     2,     2,
+       3,     2,     1,     1,     1,     3,     3,     1,     3,     3,
+       3,     1,     3,     4,     2,     2,     2,     1,     3,     3,
+       1,     1,     1,     2,     1,     1,     3,     1,     3,     1,
+       3,     3,     1,     3,     3,     3,     3,     0,     4
 };
 
 
@@ -1549,990 +1425,720 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-  case 4: /* line: FuncDef  */
-#line 43 "lexer.y"
-                          {
-                    indent_level++;
-                }
+  case 2: /* Root: CompUnit  */
+#line 59 "lexer.y"
+               { root = append(Root, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
+#line 1432 "y.tab.c"
+    break;
+
+  case 3: /* CompUnit: ConstDecl  */
+#line 61 "lexer.y"
+                                { (yyval.node_val) = append(CompUnit, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
+#line 1438 "y.tab.c"
+    break;
+
+  case 4: /* CompUnit: VarDecl  */
+#line 62 "lexer.y"
+                                { (yyval.node_val) = append(CompUnit, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
+#line 1444 "y.tab.c"
+    break;
+
+  case 5: /* CompUnit: FuncDef  */
+#line 63 "lexer.y"
+                                { (yyval.node_val) = append(CompUnit, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
+#line 1450 "y.tab.c"
+    break;
+
+  case 6: /* CompUnit: ConstDecl CompUnit  */
+#line 64 "lexer.y"
+                                { (yyval.node_val) = append(CompUnit, (yyvsp[0].node_val), NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType); }
+#line 1456 "y.tab.c"
+    break;
+
+  case 7: /* CompUnit: VarDecl CompUnit  */
+#line 65 "lexer.y"
+                                { (yyval.node_val) = append(CompUnit, (yyvsp[0].node_val), NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType); }
+#line 1462 "y.tab.c"
+    break;
+
+  case 8: /* CompUnit: FuncDef CompUnit  */
+#line 66 "lexer.y"
+                                { (yyval.node_val) = append(CompUnit, (yyvsp[0].node_val), NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType); }
+#line 1468 "y.tab.c"
+    break;
+
+  case 9: /* ConstDecl: CONST INT ConstDef END  */
+#line 69 "lexer.y"
+                                     { (yyval.node_val) = append(ConstDecl, NULL, NULL, (yyvsp[-1].node_val), 0, 0, NULL, Int); }
+#line 1474 "y.tab.c"
+    break;
+
+  case 10: /* ConstDecl: CONST FLOAT ConstDef END  */
+#line 70 "lexer.y"
+                                     {  (yyval.node_val) = append(ConstDecl, NULL, NULL, (yyvsp[-1].node_val), 0, 0, NULL, Float); }
+#line 1480 "y.tab.c"
+    break;
+
+  case 11: /* ConstDef: IDENT ConstExpArray ASSIGN ConstInitVal  */
+#line 73 "lexer.y"
+                                                                   { 
+                                                                    if(!check_symbol((yyvsp[-3].strval), Var)) 
+                                                                        add_symbol((yyvsp[-3].strval), Var);
+                                                                    else
+                                                                        yyerror((yyvsp[-3].strval), VarRedecleared);
+                                                                    (yyval.node_val) = append(ConstDef, NULL, (yyvsp[-2].node_val), (yyvsp[0].node_val), 0, 0, (yyvsp[-3].strval), NonType); 
+                                                                }
+#line 1492 "y.tab.c"
+    break;
+
+  case 12: /* ConstDef: IDENT ConstExpArray ASSIGN ConstInitVal COMMA ConstDef  */
+#line 80 "lexer.y"
+                                                                   { 
+                                                                    if(!check_symbol((yyvsp[-5].strval), Var)) 
+                                                                        add_symbol((yyvsp[-5].strval), Var);
+                                                                    else
+                                                                        yyerror((yyvsp[-5].strval), VarRedecleared);
+                                                                    (yyval.node_val) = append(ConstDef, (yyvsp[0].node_val), (yyvsp[-4].node_val), (yyvsp[-2].node_val), 0, 0, (yyvsp[-5].strval), NonType); 
+                                                                }
+#line 1504 "y.tab.c"
+    break;
+
+  case 13: /* ConstExpArray: %empty  */
+#line 89 "lexer.y"
+                                                { (yyval.node_val) = NULL; }
+#line 1510 "y.tab.c"
+    break;
+
+  case 14: /* ConstExpArray: LBRACKET ConstExp RBRACKET ConstExpArray  */
+#line 90 "lexer.y"
+                                                            { (yyval.node_val) = append(ConstExpArray, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 0, 0, NULL, NonType); }
+#line 1516 "y.tab.c"
+    break;
+
+  case 15: /* ConstInitVal: ConstExp  */
+#line 93 "lexer.y"
+                                                        { (yyval.node_val) = append(ConstInitVal, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
+#line 1522 "y.tab.c"
+    break;
+
+  case 16: /* ConstInitVal: LBRACE RBRACE  */
+#line 94 "lexer.y"
+                                                                { (yyval.node_val) = append(ConstInitVal, NULL, NULL, NULL, 0, 0, NULL, NonType); }
+#line 1528 "y.tab.c"
+    break;
+
+  case 17: /* ConstInitVal: LBRACE ConstInitVal RBRACE  */
+#line 95 "lexer.y"
+                                                                { (yyval.node_val) = append(ConstInitVal, NULL, NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType); }
+#line 1534 "y.tab.c"
+    break;
+
+  case 18: /* ConstInitVal: LBRACE ConstInitVal COMMA ConstInitVal RBRACE  */
+#line 96 "lexer.y"
+                                                                { (yyval.node_val) = append(ConstInitVal, (yyvsp[-1].node_val), NULL, (yyvsp[-3].node_val), 0, 0, NULL, NonType); }
+#line 1540 "y.tab.c"
+    break;
+
+  case 19: /* ConstExp: MulExp  */
+#line 99 "lexer.y"
+                                { (yyval.node_val) = append(ConstExp, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
+#line 1546 "y.tab.c"
+    break;
+
+  case 20: /* ConstExp: MulExp PLUS Exp  */
+#line 100 "lexer.y"
+                                { (yyval.node_val) = append(ConstExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), PLUS, 0, NULL, NonType); }
+#line 1552 "y.tab.c"
+    break;
+
+  case 21: /* ConstExp: MulExp MINUS Exp  */
+#line 101 "lexer.y"
+                                { (yyval.node_val) = append(ConstExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), MINUS, 0, NULL, NonType); }
 #line 1558 "y.tab.c"
     break;
 
-  case 5: /* $@3: %empty  */
-#line 72 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf("Decl\n"); 
-                }
-#line 1568 "y.tab.c"
+  case 22: /* VarDecl: INT VarDef END  */
+#line 104 "lexer.y"
+                             { (yyval.node_val) = append(VarDecl, NULL, NULL, (yyvsp[-1].node_val), 0, 0, NULL, Int); }
+#line 1564 "y.tab.c"
     break;
 
-  case 7: /* $@4: %empty  */
-#line 78 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf("Decl\n"); 
-                }
-#line 1578 "y.tab.c"
+  case 23: /* VarDecl: FLOAT VarDef END  */
+#line 105 "lexer.y"
+                             { (yyval.node_val) = append(VarDecl, NULL, NULL, (yyvsp[-1].node_val), 0, 0, NULL, Float); }
+#line 1570 "y.tab.c"
     break;
 
-  case 9: /* $@5: %empty  */
-#line 86 "lexer.y"
-                       {
-                    print_indent(); 
-                    indent_level++;
-                    printf("ConstDecl (%d)\n", line_number);
-                }
-#line 1588 "y.tab.c"
+  case 24: /* VarDef: IDENT ConstExpArray  */
+#line 108 "lexer.y"
+                                                           { 
+                                                            if(!check_symbol((yyvsp[-1].strval), Var)) 
+                                                                add_symbol((yyvsp[-1].strval), Var);
+                                                            else
+                                                                yyerror((yyvsp[-1].strval), VarRedecleared);
+                                                            (yyval.node_val) = append(VarDef, NULL, (yyvsp[0].node_val), NULL, 0, 0, (yyvsp[-1].strval), NonType); 
+                                                        }
+#line 1582 "y.tab.c"
     break;
 
-  case 10: /* ConstDecl: CONST $@5 BType ConstDef ConstDefTail END  */
-#line 92 "lexer.y"
-                   {
-                    print_indent();
-                    indent_level++;
-                    printf("SEMICN\n");
-                }
-#line 1598 "y.tab.c"
+  case 25: /* VarDef: IDENT ConstExpArray ASSIGN InitVal  */
+#line 115 "lexer.y"
+                                                           { 
+                                                            if(!check_symbol((yyvsp[-3].strval), Var)) 
+                                                                add_symbol((yyvsp[-3].strval), Var);
+                                                            else
+                                                                yyerror((yyvsp[-3].strval), VarRedecleared);
+                                                            (yyval.node_val) = append(VarDef, NULL, (yyvsp[-2].node_val), (yyvsp[0].node_val), 0, 0, (yyvsp[-3].strval), NonType); 
+                                                        }
+#line 1594 "y.tab.c"
     break;
 
-  case 11: /* $@6: %empty  */
-#line 101 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf("BType (%d)\n", line_number);
-                }
-#line 1608 "y.tab.c"
+  case 26: /* VarDef: IDENT ConstExpArray COMMA VarDef  */
+#line 122 "lexer.y"
+                                                           { 
+                                                            if(!check_symbol((yyvsp[-3].strval), Var)) 
+                                                                add_symbol((yyvsp[-3].strval), Var);
+                                                            else
+                                                                yyerror((yyvsp[-3].strval), VarRedecleared);
+                                                            (yyval.node_val) = append(VarDef, (yyvsp[0].node_val), (yyvsp[-2].node_val), NULL, 0, 0, (yyvsp[-3].strval), NonType); 
+                                                        }
+#line 1606 "y.tab.c"
     break;
 
-  case 12: /* BType: $@6 INT  */
-#line 106 "lexer.y"
-                   {
-                    print_indent();
-                    indent_level--;
-                    printf("Type: %s\n", (yyvsp[0].strval));
-                }
+  case 27: /* VarDef: IDENT ConstExpArray ASSIGN InitVal COMMA VarDef  */
+#line 129 "lexer.y"
+                                                           { 
+                                                            if(!check_symbol((yyvsp[-5].strval), Var)) 
+                                                                add_symbol((yyvsp[-5].strval), Var);
+                                                            else
+                                                                yyerror((yyvsp[-5].strval), VarRedecleared);
+                                                            (yyval.node_val) = append(VarDef, (yyvsp[0].node_val), (yyvsp[-4].node_val), (yyvsp[-2].node_val), 0, 0, (yyvsp[-5].strval), NonType); 
+                                                        }
 #line 1618 "y.tab.c"
     break;
 
-  case 13: /* $@7: %empty  */
-#line 111 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf("BType (%d)\n", line_number);
-                }
-#line 1628 "y.tab.c"
+  case 28: /* InitVal: Exp  */
+#line 138 "lexer.y"
+                        { (yyval.node_val) = append(InitVal, NULL, NULL, (yyvsp[0].node_val), Exp, 0, NULL, NonType); }
+#line 1624 "y.tab.c"
     break;
 
-  case 14: /* BType: $@7 FLOAT  */
-#line 116 "lexer.y"
-                     {
-                    print_indent();
-                    indent_level--;
-                    printf("Type: %s\n", (yyvsp[0].strval));
-                }
-#line 1638 "y.tab.c"
+  case 29: /* InitVal: LBRACE RBRACE  */
+#line 139 "lexer.y"
+                                { (yyval.node_val) = append(InitVal, NULL, NULL, NULL, InitVals, 0, NULL, NonType); }
+#line 1630 "y.tab.c"
     break;
 
-  case 15: /* $@8: %empty  */
-#line 125 "lexer.y"
-                       {
-                    print_indent();
-                    indent_level++;
-                    printf("ConstDef (%d)\n", line_number);
-                    print_indent();
-                    indent_level--;
-                    printf("Ident: %s\n", (yyvsp[0].strval));
-                }
-#line 1651 "y.tab.c"
+  case 30: /* InitVal: LBRACE InitVals RBRACE  */
+#line 140 "lexer.y"
+                                { (yyval.node_val) = append(InitVal, NULL, NULL, (yyvsp[-1].node_val), InitVals, 0, NULL, NonType); }
+#line 1636 "y.tab.c"
     break;
 
-  case 16: /* $@9: %empty  */
-#line 134 "lexer.y"
-                      {
-                    print_indent();
-                    indent_level++;
-                    printf("ASSIGN\n");
-                }
-#line 1661 "y.tab.c"
+  case 31: /* InitVals: InitVal  */
+#line 143 "lexer.y"
+                                        { (yyval.node_val) = append(InitVals, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
+#line 1642 "y.tab.c"
     break;
 
-  case 19: /* $@10: %empty  */
-#line 145 "lexer.y"
-                          {
-                    print_indent(); 
-                    printf("LBRACKET\n");
-                }
-#line 1670 "y.tab.c"
+  case 32: /* InitVals: InitVal COMMA InitVals  */
+#line 144 "lexer.y"
+                                        { (yyval.node_val) = append(InitVals, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 0, 0, NULL, NonType); }
+#line 1648 "y.tab.c"
     break;
 
-  case 20: /* $@11: %empty  */
-#line 150 "lexer.y"
-                        {
-                    print_indent(); 
-                    printf("RBRACKET\n");
-                }
-#line 1679 "y.tab.c"
+  case 33: /* FuncDef: INT IDENT LPARENT RPARENT Block  */
+#line 147 "lexer.y"
+                                                             { 
+                                                    if(!check_symbol((yyvsp[-3].strval), Func)) 
+                                                        add_symbol((yyvsp[-3].strval), Func);
+                                                    else
+                                                        yyerror((yyvsp[-3].strval), FuncRedecleared);
+                                                    (yyval.node_val) = append(FuncDef, NULL, NULL, (yyvsp[0].node_val), 0, 0, (yyvsp[-3].strval), Int); 
+                                                }
+#line 1660 "y.tab.c"
     break;
 
-  case 24: /* $@12: %empty  */
-#line 159 "lexer.y"
-                        {
-                    print_indent(); 
-                    printf("LBRACE\n");
-                }
-#line 1688 "y.tab.c"
+  case 34: /* FuncDef: FLOAT IDENT LPARENT RPARENT Block  */
+#line 154 "lexer.y"
+                                                             { 
+                                                    if(!check_symbol((yyvsp[-3].strval), Func)) 
+                                                        add_symbol((yyvsp[-3].strval), Func);
+                                                    else
+                                                        yyerror((yyvsp[-3].strval), FuncRedecleared);
+                                                    (yyval.node_val) = append(FuncDef, NULL, NULL, (yyvsp[0].node_val), 0, 0, (yyvsp[-3].strval), Float); 
+                                                }
+#line 1672 "y.tab.c"
     break;
 
-  case 25: /* ConstInitVal: LBRACE $@12 ConstInitValOpt RBRACE  */
-#line 164 "lexer.y"
-                      {
-                    print_indent(); 
-                    printf("RBRACE\n");
-                }
-#line 1697 "y.tab.c"
+  case 35: /* FuncDef: VOID IDENT LPARENT RPARENT Block  */
+#line 161 "lexer.y"
+                                                             { 
+                                                    if(!check_symbol((yyvsp[-3].strval), Func)) 
+                                                        add_symbol((yyvsp[-3].strval), Func);
+                                                    else
+                                                        yyerror((yyvsp[-3].strval), FuncRedecleared);
+                                                    (yyval.node_val) = append(FuncDef, NULL, NULL, (yyvsp[0].node_val), 0, 0, (yyvsp[-3].strval), Void); 
+                                                }
+#line 1684 "y.tab.c"
     break;
 
-  case 28: /* $@13: %empty  */
-#line 174 "lexer.y"
-                       {
-                    print_indent(); 
-                    printf("COMMA\n");
-                }
-#line 1706 "y.tab.c"
+  case 36: /* FuncDef: INT IDENT LPARENT FuncFParam RPARENT Block  */
+#line 168 "lexer.y"
+                                                             { 
+                                                    if(!check_symbol((yyvsp[-4].strval), Func)) 
+                                                        add_symbol((yyvsp[-4].strval), Func);
+                                                    else
+                                                        yyerror((yyvsp[-4].strval), FuncRedecleared);
+                                                    (yyval.node_val) = append(FuncDef, NULL, (yyvsp[-2].node_val), (yyvsp[0].node_val), 0, 0, (yyvsp[-4].strval), Int); 
+                                                }
+#line 1696 "y.tab.c"
     break;
 
-  case 31: /* $@14: %empty  */
-#line 183 "lexer.y"
-                       {
-                    print_indent(); 
-                    printf("COMMA\n");
-                }
-#line 1715 "y.tab.c"
+  case 37: /* FuncDef: FLOAT IDENT LPARENT FuncFParam RPARENT Block  */
+#line 175 "lexer.y"
+                                                             { 
+                                                    if(!check_symbol((yyvsp[-4].strval), Func)) 
+                                                        add_symbol((yyvsp[-4].strval), Func);
+                                                    else
+                                                        yyerror((yyvsp[-4].strval), FuncRedecleared);
+                                                    (yyval.node_val) = append(FuncDef, NULL, (yyvsp[-2].node_val), (yyvsp[0].node_val), 0, 0, (yyvsp[-4].strval), Float); 
+                                                }
+#line 1708 "y.tab.c"
     break;
 
-  case 34: /* $@15: %empty  */
-#line 192 "lexer.y"
-                  {
-                    print_indent(); 
-                    indent_level++;
-                    printf("VarDecl (%d)\n", line_number);
-                }
-#line 1725 "y.tab.c"
+  case 38: /* FuncDef: VOID IDENT LPARENT FuncFParam RPARENT Block  */
+#line 182 "lexer.y"
+                                                             { 
+                                                    if(!check_symbol((yyvsp[-4].strval), Func)) 
+                                                        add_symbol((yyvsp[-4].strval), Func);
+                                                    else
+                                                        yyerror((yyvsp[-4].strval), FuncRedecleared);
+                                                    (yyval.node_val) = append(FuncDef, NULL, (yyvsp[-2].node_val), (yyvsp[0].node_val), 0, 0, (yyvsp[-4].strval), Void); 
+                                                }
+#line 1720 "y.tab.c"
     break;
 
-  case 35: /* VarDecl: $@15 BType VarDef VarDeclTail END  */
-#line 200 "lexer.y"
-                   {
-                    print_indent();
-                    printf("SEMICN\n");
-                }
-#line 1734 "y.tab.c"
+  case 39: /* FuncFParam: INT IDENT  */
+#line 191 "lexer.y"
+                                                           { 
+                                                            if(!check_symbol((yyvsp[0].strval),Param))
+                                                                add_symbol((yyvsp[0].strval),Param);
+                                                            (yyval.node_val) = append(FuncFParam, NULL, NULL, NULL, 0, 0, (yyvsp[0].strval), Int); 
+                                                        }
+#line 1730 "y.tab.c"
     break;
 
-  case 36: /* $@16: %empty  */
+  case 40: /* FuncFParam: FLOAT IDENT  */
+#line 196 "lexer.y"
+                                                           { 
+                                                            if(!check_symbol((yyvsp[0].strval),Param))
+                                                                add_symbol((yyvsp[0].strval),Param);
+                                                            (yyval.node_val) = append(FuncFParam, NULL, NULL, NULL, 0, 0, (yyvsp[0].strval), Float); 
+                                                        }
+#line 1740 "y.tab.c"
+    break;
+
+  case 41: /* FuncFParam: INT IDENT LBRACKET RBRACKET ExpArray  */
+#line 201 "lexer.y"
+                                                                       { 
+                                                            if(!check_symbol((yyvsp[-3].strval),Param))
+                                                                add_symbol((yyvsp[-3].strval),Param);
+                                                            (yyval.node_val) = append(FuncFParam, NULL, NULL, (yyvsp[0].node_val), 0, 0, (yyvsp[-3].strval), Int); 
+                                                        }
+#line 1750 "y.tab.c"
+    break;
+
+  case 42: /* FuncFParam: FLOAT IDENT LBRACKET RBRACKET ExpArray  */
 #line 206 "lexer.y"
-                       {
-                    print_indent(); 
-                    printf("COMMA\n");
-                }
-#line 1743 "y.tab.c"
+                                                                       { 
+                                                            if(!check_symbol((yyvsp[-3].strval),Param))
+                                                                add_symbol((yyvsp[-3].strval),Param);
+                                                            (yyval.node_val) = append(FuncFParam, NULL, NULL, (yyvsp[0].node_val), 0, 0, (yyvsp[-3].strval), Float); 
+                                                        }
+#line 1760 "y.tab.c"
     break;
 
-  case 39: /* $@17: %empty  */
-#line 215 "lexer.y"
-                       {
-                    print_indent();
-                    indent_level++;
-                    printf("VarDef1 (%d)\n", line_number);
-                    print_indent();
-                    indent_level--;
-                    printf("Ident: %s\n", (yyvsp[0].strval));
-                }
-#line 1756 "y.tab.c"
+  case 43: /* FuncFParam: INT IDENT COMMA FuncFParam  */
+#line 211 "lexer.y"
+                                                           {   
+                                                            if(!check_symbol((yyvsp[-2].strval),Param))
+                                                                add_symbol((yyvsp[-2].strval),Param);
+                                                            (yyval.node_val) = append(FuncFParam, (yyvsp[0].node_val), NULL, NULL, 0, 0, (yyvsp[-2].strval), Int); 
+                                                        }
+#line 1770 "y.tab.c"
     break;
 
-  case 41: /* $@18: %empty  */
-#line 224 "lexer.y"
-                       {
-                    print_indent();
-                    indent_level++;
-                    printf("VarDef2 (%d)\n", line_number);
-                    print_indent();
-                    indent_level--;
-                    printf("Ident: %s\n", (yyvsp[0].strval));
-                }
-#line 1769 "y.tab.c"
+  case 44: /* FuncFParam: FLOAT IDENT COMMA FuncFParam  */
+#line 216 "lexer.y"
+                                                           { 
+                                                            if(!check_symbol((yyvsp[-2].strval),Param))
+                                                                add_symbol((yyvsp[-2].strval),Param);
+                                                            (yyval.node_val) = append(FuncFParam, (yyvsp[0].node_val), NULL, NULL, 0, 0, (yyvsp[-2].strval), Float); 
+                                                        }
+#line 1780 "y.tab.c"
     break;
 
-  case 42: /* $@19: %empty  */
+  case 45: /* FuncFParam: INT IDENT LBRACKET RBRACKET ExpArray COMMA FuncFParam  */
+#line 221 "lexer.y"
+                                                                       {
+                                                            if(!check_symbol((yyvsp[-5].strval),Param))
+                                                                add_symbol((yyvsp[-5].strval),Param);
+                                                            (yyval.node_val) = append(FuncFParam, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 0, 0, (yyvsp[-5].strval), Int); 
+                                                        }
+#line 1790 "y.tab.c"
+    break;
+
+  case 46: /* FuncFParam: FLOAT IDENT LBRACKET RBRACKET ExpArray COMMA FuncFParam  */
+#line 226 "lexer.y"
+                                                                       { 
+                                                            if(!check_symbol((yyvsp[-5].strval),Param))
+                                                                add_symbol((yyvsp[-5].strval),Param);
+                                                            (yyval.node_val) = append(FuncFParam, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 0, 0, (yyvsp[-5].strval), Float); 
+                                                        }
+#line 1800 "y.tab.c"
+    break;
+
+  case 47: /* Block: LBRACE BlockItem RBRACE  */
 #line 233 "lexer.y"
-                      {
-                    print_indent(); 
-                    printf("ASSIGN\n");
-                }
-#line 1778 "y.tab.c"
+                               { (yyval.node_val) = append(Block, NULL, NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType); }
+#line 1806 "y.tab.c"
     break;
 
-  case 45: /* $@20: %empty  */
+  case 48: /* BlockItem: %empty  */
+#line 235 "lexer.y"
+                                { (yyval.node_val) = NULL; }
+#line 1812 "y.tab.c"
+    break;
+
+  case 49: /* BlockItem: ConstDecl BlockItem  */
+#line 236 "lexer.y"
+                                { (yyval.node_val) = append(BlockItem, (yyvsp[0].node_val), NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType); }
+#line 1818 "y.tab.c"
+    break;
+
+  case 50: /* BlockItem: VarDecl BlockItem  */
+#line 237 "lexer.y"
+                                { (yyval.node_val) = append(BlockItem, (yyvsp[0].node_val), NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType); }
+#line 1824 "y.tab.c"
+    break;
+
+  case 51: /* BlockItem: Stmt BlockItem  */
+#line 238 "lexer.y"
+                                { (yyval.node_val) = append(BlockItem, (yyvsp[0].node_val), NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType); }
+#line 1830 "y.tab.c"
+    break;
+
+  case 52: /* Stmt: LVal ASSIGN Exp END  */
 #line 241 "lexer.y"
-                        {
-                    print_indent(); 
-                    printf("LBRACE\n");
-                }
-#line 1787 "y.tab.c"
+                                  { (yyval.node_val) = append(AssignStmt, (yyvsp[-1].node_val), NULL, (yyvsp[-3].node_val), 0, 0, NULL, NonType); }
+#line 1836 "y.tab.c"
     break;
 
-  case 46: /* InitVal: LBRACE $@20 InitValOpt RBRACE  */
+  case 53: /* Stmt: Exp END  */
+#line 242 "lexer.y"
+                                  { (yyval.node_val) = append(ExpStmt, NULL, NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType); }
+#line 1842 "y.tab.c"
+    break;
+
+  case 54: /* Stmt: Block  */
+#line 243 "lexer.y"
+                                     { (yyval.node_val) = append(BlockStmt, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
+#line 1848 "y.tab.c"
+    break;
+
+  case 55: /* Stmt: IF LPARENT Cond RPARENT Stmt  */
+#line 244 "lexer.y"
+                                               { (yyval.node_val) = append(IfStmt, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 0, 0, NULL, NonType); }
+#line 1854 "y.tab.c"
+    break;
+
+  case 56: /* Stmt: IF LPARENT Cond RPARENT Stmt ELSE Stmt  */
+#line 245 "lexer.y"
+                                               { (yyval.node_val) = append(IfElseStmt, (yyvsp[0].node_val), (yyvsp[-2].node_val), (yyvsp[-4].node_val), 0, 0, NULL, NonType); }
+#line 1860 "y.tab.c"
+    break;
+
+  case 57: /* Stmt: WHILE LPARENT Cond RPARENT Stmt  */
 #line 246 "lexer.y"
-                      {
-                    print_indent(); 
-                    printf("RBRACE\n");
-                }
-#line 1796 "y.tab.c"
+                                               { (yyval.node_val) = append(WhileStmt, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 0, 0, NULL, NonType); }
+#line 1866 "y.tab.c"
     break;
 
-  case 49: /* $@21: %empty  */
-#line 256 "lexer.y"
-                       {
-                    print_indent(); 
-                    printf("COMMA\n");
-                }
-#line 1805 "y.tab.c"
+  case 58: /* Stmt: BREAK END  */
+#line 247 "lexer.y"
+                                  { (yyval.node_val) = append(BreakStmt, NULL, NULL, NULL, 0, 0, NULL, NonType); }
+#line 1872 "y.tab.c"
     break;
 
-  case 52: /* $@22: %empty  */
+  case 59: /* Stmt: CONTINUE END  */
+#line 248 "lexer.y"
+                                  { (yyval.node_val) = append(ContinueStmt, NULL, NULL, NULL, 0, 0, NULL, NonType); }
+#line 1878 "y.tab.c"
+    break;
+
+  case 60: /* Stmt: RETURN Exp END  */
+#line 249 "lexer.y"
+                                  { (yyval.node_val) = append(ReturnStmt, NULL, NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType); }
+#line 1884 "y.tab.c"
+    break;
+
+  case 61: /* Stmt: RETURN END  */
+#line 250 "lexer.y"
+                                  { (yyval.node_val) = append(BlankReturnStmt, NULL, NULL, NULL, 0, 0, NULL, NonType); }
+#line 1890 "y.tab.c"
+    break;
+
+  case 62: /* Stmt: error  */
+#line 251 "lexer.y"
+                                     { 
+                                        if(error_cur_line != yylineno) 
+                                        {
+                                            yyerror("", Stmt_Error);
+                                            error_cur_line = yylineno;
+                                        } 
+                                        yyclearin; 
+                                        yyerrok; 
+                                     }
+#line 1904 "y.tab.c"
+    break;
+
+  case 63: /* Exp: AddExp  */
+#line 262 "lexer.y"
+                { (yyval.node_val) = append(Exp, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
+#line 1910 "y.tab.c"
+    break;
+
+  case 64: /* AddExp: MulExp  */
+#line 264 "lexer.y"
+                                { (yyval.node_val) = append(AddExp, NULL, NULL, (yyvsp[0].node_val), Mul, 0, NULL, NonType); }
+#line 1916 "y.tab.c"
+    break;
+
+  case 65: /* AddExp: MulExp PLUS AddExp  */
 #line 265 "lexer.y"
-                  {
-                    print_indent(); 
-                    indent_level++;
-                    printf("FuncDef (%d)\n", line_number); 
-                }
-#line 1815 "y.tab.c"
+                                { (yyval.node_val) = append(AddExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), Plus, 0, NULL, NonType); }
+#line 1922 "y.tab.c"
     break;
 
-  case 53: /* $@23: %empty  */
+  case 66: /* AddExp: MulExp MINUS AddExp  */
+#line 266 "lexer.y"
+                                { (yyval.node_val) = append(AddExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), Minus, 0, NULL, NonType); }
+#line 1928 "y.tab.c"
+    break;
+
+  case 67: /* MulExp: UnaryExp  */
+#line 269 "lexer.y"
+                                { (yyval.node_val) = append(MulExp, NULL, NULL, (yyvsp[0].node_val), UnaryExp, 0, NULL, NonType); }
+#line 1934 "y.tab.c"
+    break;
+
+  case 68: /* MulExp: UnaryExp MUL MulExp  */
+#line 270 "lexer.y"
+                                { (yyval.node_val) = append(MulExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), Mul, 0, NULL, NonType); }
+#line 1940 "y.tab.c"
+    break;
+
+  case 69: /* MulExp: UnaryExp DIV MulExp  */
 #line 271 "lexer.y"
-                             {
-                    print_indent();
-                    printf("Ident: %s\n", (yyvsp[-1].strval));
-                    print_indent();
-                    printf("LPARENT\n");
-                }
-#line 1826 "y.tab.c"
+                                { (yyval.node_val) = append(MulExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), Div, 0, NULL, NonType); }
+#line 1946 "y.tab.c"
     break;
 
-  case 54: /* $@24: %empty  */
-#line 277 "lexer.y"
-                                      {
-                    print_indent();
-                    printf("RPARENT\n");
-                }
-#line 1835 "y.tab.c"
+  case 70: /* MulExp: UnaryExp MOD MulExp  */
+#line 272 "lexer.y"
+                                { (yyval.node_val) = append(MulExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), Mod, 0, NULL, NonType); }
+#line 1952 "y.tab.c"
     break;
 
-  case 55: /* FuncDef: $@22 FuncType IDENT LPARENT $@23 FuncFParamsOpt RPARENT $@24 Block  */
-#line 281 "lexer.y"
-                      {  
-                    indent_level++;
-                }
-#line 1843 "y.tab.c"
+  case 71: /* UnaryExp: PrimaryExp  */
+#line 275 "lexer.y"
+                                { (yyval.node_val) = append(UnaryExp, NULL, NULL, (yyvsp[0].node_val), PrimaryExp, 0, NULL, NonType); }
+#line 1958 "y.tab.c"
     break;
 
-  case 56: /* $@25: %empty  */
-#line 286 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf("FuncType (%d)\n", line_number);
-                }
-#line 1853 "y.tab.c"
+  case 72: /* UnaryExp: IDENT LPARENT RPARENT  */
+#line 276 "lexer.y"
+                                             { 
+                                    if(check_symbol((yyvsp[-2].strval), Var))
+                                        yyerror((yyvsp[-2].strval), UseVarAsFunc);
+                                    else if(!check_symbol((yyvsp[-2].strval), Func))
+                                        yyerror((yyvsp[-2].strval), FuncUndecleared);
+                                    (yyval.node_val) = append(UnaryExp, NULL, NULL, NULL, FuncRParams, 0, (yyvsp[-2].strval), NonType); 
+                                }
+#line 1970 "y.tab.c"
     break;
 
-  case 57: /* FuncType: $@25 VOID  */
+  case 73: /* UnaryExp: IDENT LPARENT FuncRParams RPARENT  */
+#line 283 "lexer.y"
+                                             { 
+                                    if(check_symbol((yyvsp[-3].strval), Var))
+                                        yyerror((yyvsp[-3].strval), UseVarAsFunc);
+                                    else if(!check_symbol((yyvsp[-3].strval), Func))
+                                        yyerror((yyvsp[-3].strval), FuncUndecleared);
+                                    (yyval.node_val) = append(UnaryExp, NULL, NULL, (yyvsp[-1].node_val), FuncRParams, 0, (yyvsp[-3].strval), NonType); 
+                                }
+#line 1982 "y.tab.c"
+    break;
+
+  case 74: /* UnaryExp: PLUS UnaryExp  */
+#line 290 "lexer.y"
+                                { (yyval.node_val) = append(UnaryExp, NULL, NULL, (yyvsp[0].node_val), PLUS, 0, NULL, NonType); }
+#line 1988 "y.tab.c"
+    break;
+
+  case 75: /* UnaryExp: MINUS UnaryExp  */
 #line 291 "lexer.y"
-                    {
-                    print_indent();
-                    indent_level--;
-                    printf("Type: %s\n", (yyvsp[0].strval));
-                }
-#line 1863 "y.tab.c"
+                                { (yyval.node_val) = append(UnaryExp, NULL, NULL, (yyvsp[0].node_val), MINUS, 0, NULL, NonType); }
+#line 1994 "y.tab.c"
     break;
 
-  case 58: /* $@26: %empty  */
+  case 76: /* UnaryExp: NOT UnaryExp  */
+#line 292 "lexer.y"
+                                { (yyval.node_val) = append(UnaryExp, NULL, NULL, (yyvsp[0].node_val), Not, 0, NULL, NonType); }
+#line 2000 "y.tab.c"
+    break;
+
+  case 77: /* FuncRParams: Exp  */
+#line 295 "lexer.y"
+                                        { (yyval.node_val) = append(FuncRParams, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
+#line 2006 "y.tab.c"
+    break;
+
+  case 78: /* FuncRParams: Exp COMMA FuncRParams  */
 #line 296 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf("FuncType (%d)\n", line_number);
-                }
-#line 1873 "y.tab.c"
+                                        { (yyval.node_val) = append(FuncRParams, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 0, 0, NULL, NonType); }
+#line 2012 "y.tab.c"
     break;
 
-  case 59: /* FuncType: $@26 INT  */
+  case 79: /* PrimaryExp: LPARENT Exp RPARENT  */
+#line 299 "lexer.y"
+                                  { (yyval.node_val) = append(PrimaryExp, NULL, NULL, (yyvsp[-1].node_val), Exp, 0, NULL, NonType); }
+#line 2018 "y.tab.c"
+    break;
+
+  case 80: /* PrimaryExp: LVal  */
+#line 300 "lexer.y"
+                        { (yyval.node_val) = append(PrimaryExp, NULL, NULL, (yyvsp[0].node_val), LVal, 0, NULL, NonType); }
+#line 2024 "y.tab.c"
+    break;
+
+  case 81: /* PrimaryExp: INTCONST  */
 #line 301 "lexer.y"
-                   {
-                    print_indent();
-                    indent_level--;
-                    printf("Type: %s\n", (yyvsp[0].strval));
-                }
-#line 1883 "y.tab.c"
+                         { (yyval.node_val) = append(PrimaryExp, NULL, NULL, NULL, (yyvsp[0].ival), 0, NULL, Int); }
+#line 2030 "y.tab.c"
     break;
 
-  case 60: /* $@27: %empty  */
-#line 306 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf("FuncType (%d)\n", line_number);
-                }
-#line 1893 "y.tab.c"
+  case 82: /* PrimaryExp: FLOATCONST  */
+#line 302 "lexer.y"
+                         { (yyval.node_val) = append(PrimaryExp, NULL, NULL, NULL, 0, (yyvsp[0].fval), NULL, Float); }
+#line 2036 "y.tab.c"
     break;
 
-  case 61: /* FuncType: $@27 FLOAT  */
-#line 311 "lexer.y"
-                     {
-                    print_indent();
-                    indent_level--;
-                    printf("Type: %s\n", (yyvsp[0].strval));
-                }
-#line 1903 "y.tab.c"
+  case 83: /* LVal: IDENT ExpArray  */
+#line 305 "lexer.y"
+                           { 
+                            if(check_symbol((yyvsp[-1].strval), Func))
+                                yyerror((yyvsp[-1].strval), UseFuncAsVar);
+                            else if(!check_symbol((yyvsp[-1].strval),Var) && !check_symbol((yyvsp[-1].strval),Param))
+                                yyerror((yyvsp[-1].strval), VarUndecleared); 
+                            (yyval.node_val) = append(LVal, NULL, NULL, (yyvsp[0].node_val), 0, 0, (yyvsp[-1].strval), NonType); 
+                        }
+#line 2048 "y.tab.c"
     break;
 
-  case 62: /* $@28: %empty  */
+  case 84: /* Cond: LOrExp  */
+#line 313 "lexer.y"
+                        { (yyval.node_val) = append(Cond, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
+#line 2054 "y.tab.c"
+    break;
+
+  case 85: /* LOrExp: LAndExp  */
+#line 315 "lexer.y"
+                                { (yyval.node_val) = append(Cond, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
+#line 2060 "y.tab.c"
+    break;
+
+  case 86: /* LOrExp: LAndExp OR LOrExp  */
+#line 316 "lexer.y"
+                                { (yyval.node_val) = append(Cond, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), OR, 0, 0, NonType); }
+#line 2066 "y.tab.c"
+    break;
+
+  case 87: /* LAndExp: EqExp  */
 #line 319 "lexer.y"
-                  {
-                    print_indent(); 
-                    indent_level++;
-                    printf("FuncFParams (%d)\n", line_number);
-                }
-#line 1913 "y.tab.c"
+                                { (yyval.node_val) = append(LAndExp, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
+#line 2072 "y.tab.c"
     break;
 
-  case 64: /* $@29: %empty  */
-#line 327 "lexer.y"
-                  {
-                    print_indent(); 
-                    indent_level++;
-                    printf("FuncFParam (%d)\n", line_number);
-                }
-#line 1923 "y.tab.c"
+  case 88: /* LAndExp: EqExp AND LAndExp  */
+#line 320 "lexer.y"
+                                { (yyval.node_val) = append(LAndExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), AND, 0, NULL, NonType); }
+#line 2078 "y.tab.c"
     break;
 
-  case 65: /* $@30: %empty  */
-#line 333 "lexer.y"
-                     {
-                    print_indent();
-                    indent_level--;
-                    printf("Ident: %s\n", (yyvsp[-1].strval));
-                }
-#line 1933 "y.tab.c"
+  case 89: /* EqExp: RelExp  */
+#line 323 "lexer.y"
+                        { (yyval.node_val) = append(EqExp, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
+#line 2084 "y.tab.c"
     break;
 
-  case 67: /* $@31: %empty  */
-#line 341 "lexer.y"
-                                   {
-                    print_indent(); 
-                    printf("LBRACKET\n");
-                    print_indent(); 
-                    printf("RBRACKET\n");
-                }
-#line 1944 "y.tab.c"
+  case 90: /* EqExp: RelExp EQUAL EqExp  */
+#line 324 "lexer.y"
+                           { (yyval.node_val) = append(EqExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), EQUAL, 0, NULL, NonType); }
+#line 2090 "y.tab.c"
     break;
 
-  case 70: /* $@32: %empty  */
-#line 351 "lexer.y"
-                          {
-                    print_indent(); 
-                    printf("LBRACKET\n");
-                }
-#line 1953 "y.tab.c"
+  case 91: /* EqExp: RelExp NEQUAL EqExp  */
+#line 325 "lexer.y"
+                            { (yyval.node_val) = append(EqExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), NEQUAL, 0, NULL, NonType); }
+#line 2096 "y.tab.c"
     break;
 
-  case 71: /* $@33: %empty  */
-#line 356 "lexer.y"
-                        {
-                    print_indent(); 
-                    printf("RBRACKET\n");
-                }
-#line 1962 "y.tab.c"
+  case 92: /* RelExp: AddExp  */
+#line 328 "lexer.y"
+                         { (yyval.node_val) = append(RelExp, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
+#line 2102 "y.tab.c"
     break;
 
-  case 74: /* $@34: %empty  */
-#line 365 "lexer.y"
-                       {
-                    print_indent();
-                    printf("COMMA (%d)\n", line_number);
-                }
-#line 1971 "y.tab.c"
+  case 93: /* RelExp: AddExp LT RelExp  */
+#line 329 "lexer.y"
+                         { (yyval.node_val) = append(RelExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), LT, 0, NULL, NonType); }
+#line 2108 "y.tab.c"
     break;
 
-  case 79: /* $@35: %empty  */
-#line 381 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf("Stmt (%d)\n", line_number);
-                }
-#line 1981 "y.tab.c"
+  case 94: /* RelExp: AddExp GT RelExp  */
+#line 330 "lexer.y"
+                         { (yyval.node_val) = append(RelExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), GT, 0, NULL, NonType); }
+#line 2114 "y.tab.c"
     break;
 
-  case 80: /* $@36: %empty  */
-#line 387 "lexer.y"
-                      {
-                    print_indent(); 
-                    printf("ASSIGN\n");
-                }
-#line 1990 "y.tab.c"
-    break;
-
-  case 81: /* Stmt: $@35 LVal ASSIGN $@36 Exp END  */
-#line 392 "lexer.y"
-                   {
-                    print_indent(); 
-                    printf("SEMICN\n");
-                }
-#line 1999 "y.tab.c"
-    break;
-
-  case 82: /* $@37: %empty  */
-#line 396 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf("Stmt (%d)\n", line_number);
-                }
-#line 2009 "y.tab.c"
-    break;
-
-  case 83: /* Stmt: $@37 ExpOpt END  */
-#line 402 "lexer.y"
-                   {
-                    print_indent(); 
-                    indent_level++;
-                    printf("SEMICN\n");
-                }
-#line 2019 "y.tab.c"
-    break;
-
-  case 84: /* $@38: %empty  */
-#line 407 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf("Stmt (%d)\n", line_number);
-                }
-#line 2029 "y.tab.c"
-    break;
-
-  case 86: /* $@39: %empty  */
-#line 413 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf("Stmt (%d)\n", line_number);
-                }
-#line 2039 "y.tab.c"
-    break;
-
-  case 87: /* $@40: %empty  */
-#line 418 "lexer.y"
-                          {
-                    print_indent();
-                    printf("IF\n");
-                    print_indent();
-                    printf("LPARENT\n");
-                }
-#line 2050 "y.tab.c"
-    break;
-
-  case 88: /* $@41: %empty  */
-#line 425 "lexer.y"
-                       {
-                    print_indent();
-                    printf("RPARENT\n");
-                }
-#line 2059 "y.tab.c"
-    break;
-
-  case 90: /* $@42: %empty  */
-#line 430 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf("Stmt (%d)\n", line_number);
-                }
-#line 2069 "y.tab.c"
-    break;
-
-  case 91: /* $@43: %empty  */
-#line 435 "lexer.y"
-                             {
-                    print_indent();
-                    printf("WHILE\n");
-                    print_indent();
-                    printf("LPARENT\n");
-                }
-#line 2080 "y.tab.c"
-    break;
-
-  case 92: /* $@44: %empty  */
-#line 442 "lexer.y"
-                       {
-                    print_indent();
-                    printf("RPARENT\n");
-                }
-#line 2089 "y.tab.c"
-    break;
-
-  case 94: /* $@45: %empty  */
-#line 447 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf("Stmt (%d)\n", line_number);
-                }
-#line 2099 "y.tab.c"
-    break;
-
-  case 95: /* Stmt: $@45 BREAK END  */
-#line 452 "lexer.y"
-                         {
-                    print_indent();
-                    printf("BREAK\n");
-                    print_indent();
-                    printf("SEMICN\n");
-                }
-#line 2110 "y.tab.c"
-    break;
-
-  case 96: /* $@46: %empty  */
-#line 458 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf("Stmt (%d)\n", line_number);
-                }
+  case 95: /* RelExp: AddExp LE RelExp  */
+#line 331 "lexer.y"
+                         { (yyval.node_val) = append(RelExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), LE, 0, NULL, NonType); }
 #line 2120 "y.tab.c"
     break;
 
-  case 97: /* Stmt: $@46 CONTINUE END  */
-#line 463 "lexer.y"
-                            {
-                    print_indent();
-                    printf("CONTINUE\n");
-                    print_indent();
-                    printf("SEMICN\n");
-                }
-#line 2131 "y.tab.c"
+  case 96: /* RelExp: AddExp GE RelExp  */
+#line 332 "lexer.y"
+                         { (yyval.node_val) = append(RelExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), GE, 0, NULL, NonType); }
+#line 2126 "y.tab.c"
     break;
 
-  case 98: /* $@47: %empty  */
-#line 469 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf("Stmt (%d)\n", line_number);
-                }
-#line 2141 "y.tab.c"
+  case 97: /* ExpArray: %empty  */
+#line 335 "lexer.y"
+                                { (yyval.node_val) = NULL; }
+#line 2132 "y.tab.c"
     break;
 
-  case 99: /* $@48: %empty  */
-#line 474 "lexer.y"
-                      {
-                    print_indent();
-                    printf("RETURN\n");
-                }
-#line 2150 "y.tab.c"
-    break;
-
-  case 100: /* Stmt: $@47 RETURN $@48 ExpOpt END  */
-#line 479 "lexer.y"
-                   {
-                    print_indent();
-                    printf("SEMICN\n");
-                }
-#line 2159 "y.tab.c"
-    break;
-
-  case 101: /* $@49: %empty  */
-#line 485 "lexer.y"
-                      {
-                    print_indent();
-                    printf("ELSE\n");
-                }
-#line 2168 "y.tab.c"
-    break;
-
-  case 104: /* $@50: %empty  */
-#line 493 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf("Block (%d)\n", line_number);
-                }
-#line 2178 "y.tab.c"
-    break;
-
-  case 105: /* $@51: %empty  */
-#line 498 "lexer.y"
-                      {
-                    print_indent();
-                    printf("LBRACE\n");
-                }
-#line 2187 "y.tab.c"
-    break;
-
-  case 106: /* Block: $@50 LBRACE $@51 BlockItemTail RBRACE  */
-#line 503 "lexer.y"
-                      {
-                    print_indent();
-                    printf("RBRACE\n");
-                }
-#line 2196 "y.tab.c"
-    break;
-
-  case 107: /* $@52: %empty  */
-#line 509 "lexer.y"
-                  {
-                    if(count < indent_level) indent_level = count;
-                    else count = indent_level;
-                    print_indent();
-                    indent_level++;
-                    printf("BlockItem (%d)\n", line_number);
-                }
-#line 2208 "y.tab.c"
-    break;
-
-  case 109: /* $@53: %empty  */
-#line 517 "lexer.y"
-                  {
-                    if(count < indent_level) indent_level = count;
-                    else count = indent_level;
-                    print_indent();
-                    indent_level++;
-                    printf("BlockItem (%d)\n", line_number);
-                }
-#line 2220 "y.tab.c"
-    break;
-
-  case 113: /* $@54: %empty  */
-#line 532 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf("PrimaryExp (%d)\n", line_number);
-                }
-#line 2230 "y.tab.c"
-    break;
-
-  case 114: /* $@55: %empty  */
-#line 537 "lexer.y"
-                       {
-                    print_indent();
-                    printf("LPARENT\n");
-                }
-#line 2239 "y.tab.c"
-    break;
-
-  case 115: /* PrimaryExp: $@54 LPARENT $@55 Exp RPARENT  */
-#line 542 "lexer.y"
-                       {
-                    print_indent();
-                    printf("RPARENT\n");
-                }
-#line 2248 "y.tab.c"
-    break;
-
-  case 117: /* $@56: %empty  */
-#line 547 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf("PrimaryExp (%d)\n", line_number);
-                }
-#line 2258 "y.tab.c"
-    break;
-
-  case 118: /* PrimaryExp: $@56 INTCONST  */
-#line 552 "lexer.y"
-                        {
-                    print_indent();
-                    indent_level++;
-                    printf("Number (%d)\n", line_number);
-                    print_indent();
-                    indent_level--;
-                    printf("INTCON: %d\n", (yyvsp[0].ival));
-                }
-#line 2271 "y.tab.c"
-    break;
-
-  case 119: /* $@57: %empty  */
-#line 560 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf("PrimaryExp (%d)\n", line_number);
-                }
-#line 2281 "y.tab.c"
-    break;
-
-  case 120: /* PrimaryExp: $@57 FLOATCONST  */
-#line 565 "lexer.y"
-                          {
-                    print_indent();
-                    indent_level++;
-                    printf("Number (%d)\n", line_number);
-                    print_indent();
-                    indent_level--;
-                    printf("FLOATCON: %s\n", (yyvsp[0].strval));
-                }
-#line 2294 "y.tab.c"
-    break;
-
-  case 121: /* $@58: %empty  */
-#line 576 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf("Exp (%d)\n", line_number);
-                }
-#line 2304 "y.tab.c"
-    break;
-
-  case 125: /* $@59: %empty  */
-#line 588 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf("Cond (%d)\n", line_number);
-                }
-#line 2314 "y.tab.c"
-    break;
-
-  case 127: /* $@60: %empty  */
-#line 596 "lexer.y"
-                  {         /* 加减表达式  */
-                    print_indent();
-                    indent_level++;
-                    printf("AddExp (%d)\n", line_number);
-                }
-#line 2324 "y.tab.c"
-    break;
-
-  case 129: /* $@61: %empty  */
-#line 604 "lexer.y"
-                      {
-                    print_indent();
-                    indent_level++;
-                    printf("PLUS: %s\n", (yyvsp[0].strval));
-                }
-#line 2334 "y.tab.c"
-    break;
-
-  case 131: /* $@62: %empty  */
-#line 610 "lexer.y"
-                       {
-                    print_indent();
-                    indent_level++;
-                    printf("MINUS: %s\n", (yyvsp[0].strval));
-                }
-#line 2344 "y.tab.c"
-    break;
-
-  case 134: /* $@63: %empty  */
-#line 619 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf(" MulExp (%d)\n", line_number);
-                }
-#line 2354 "y.tab.c"
-    break;
-
-  case 136: /* $@64: %empty  */
-#line 627 "lexer.y"
-                     {
-                    print_indent();
-                    indent_level++;
-                    printf("MUL: %s\n", (yyvsp[0].strval));
-                }
-#line 2364 "y.tab.c"
-    break;
-
-  case 139: /* $@65: %empty  */
-#line 636 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf("UnaryExp (%d)\n", line_number);
-                }
-#line 2374 "y.tab.c"
-    break;
-
-  case 141: /* $@66: %empty  */
-#line 642 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf("UnaryExp (%d)\n", line_number);
-                }
-#line 2384 "y.tab.c"
-    break;
-
-  case 142: /* $@67: %empty  */
-#line 647 "lexer.y"
-                             {
-                    print_indent();
-                    indent_level--;
-                    printf("Ident: %s\n", (yyvsp[-1].strval));
-                    print_indent();
-                    printf("LPARENT\n");
-                }
-#line 2396 "y.tab.c"
-    break;
-
-  case 143: /* UnaryExp: $@66 IDENT LPARENT $@67 FuncRParamsOpt RPARENT  */
-#line 655 "lexer.y"
-                       {
-                    print_indent();
-                    printf("RPARENT\n");
-                }
-#line 2405 "y.tab.c"
-    break;
-
-  case 144: /* $@68: %empty  */
-#line 659 "lexer.y"
-                         {
-                    print_indent();
-                    indent_level++;
-                    printf("UNARYOP: %s\n", (yyvsp[0].strval));
-                }
-#line 2415 "y.tab.c"
-    break;
-
-  case 149: /* $@69: %empty  */
-#line 673 "lexer.y"
-                           {
-                    print_indent();
-                    printf("COMMA\n");
-                }
-#line 2424 "y.tab.c"
-    break;
-
-  case 151: /* $@70: %empty  */
-#line 681 "lexer.y"
-                       {
-                    print_indent();
-                    indent_level++;
-                    printf("Lavl (%d)\n", line_number);
-                    print_indent();
-                    indent_level--;
-                    printf("Ident: %s\n", (yyvsp[0].strval));
-                }
-#line 2437 "y.tab.c"
-    break;
-
-  case 153: /* $@71: %empty  */
-#line 692 "lexer.y"
-                          {
-                    print_indent();
-                    printf("LBRACKET\n");
-                }
-#line 2446 "y.tab.c"
-    break;
-
-  case 154: /* $@72: %empty  */
-#line 697 "lexer.y"
-                        {
-                    print_indent();
-                    printf("RBRACKET\n");
-                }
-#line 2455 "y.tab.c"
-    break;
-
-  case 157: /* $@73: %empty  */
-#line 707 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf("RelExp (%d)\n", line_number);
-                }
-#line 2465 "y.tab.c"
-    break;
-
-  case 159: /* $@74: %empty  */
-#line 714 "lexer.y"
-                        {
-                    print_indent();
-                    indent_level--;
-                    printf("WEIGHT: %s\n",(yyvsp[0].strval));
-                }
-#line 2475 "y.tab.c"
-    break;
-
-  case 162: /* $@75: %empty  */
-#line 725 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf("EqExp (%d)\n", line_number);
-                }
-#line 2485 "y.tab.c"
-    break;
-
-  case 164: /* $@76: %empty  */
-#line 732 "lexer.y"
-                       {
-                    print_indent();
-                    printf("EQUAL\n");
-                }
-#line 2494 "y.tab.c"
-    break;
-
-  case 167: /* $@77: %empty  */
-#line 740 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf("LAndExp (%d)\n", line_number);
-                }
-#line 2504 "y.tab.c"
-    break;
-
-  case 169: /* $@78: %empty  */
-#line 748 "lexer.y"
-                     {
-                    print_indent();
-                    printf("AND\n");
-                }
-#line 2513 "y.tab.c"
-    break;
-
-  case 172: /* $@79: %empty  */
-#line 757 "lexer.y"
-                  {
-                    print_indent();
-                    indent_level++;
-                    printf("LOrExp (%d)\n", line_number);
-                }
-#line 2523 "y.tab.c"
-    break;
-
-  case 174: /* $@80: %empty  */
-#line 765 "lexer.y"
-                    {
-                    print_indent();
-                    printf("OR\n");
-                }
-#line 2532 "y.tab.c"
+  case 98: /* ExpArray: LBRACKET Exp RBRACKET ExpArray  */
+#line 336 "lexer.y"
+                                            { (yyval.node_val) = append(ExpArray, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 0, 0, NULL, NonType); }
+#line 2138 "y.tab.c"
     break;
 
 
-#line 2536 "y.tab.c"
+#line 2142 "y.tab.c"
 
       default: break;
     }
@@ -2725,36 +2331,77 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 774 "lexer.y"
+#line 339 "lexer.y"
 
 
-void yyerror(char *str){
-    fprintf(stderr,"Error :%s\n",str);
-}
-
-int yywrap(){
-    return 1;
-}
-int main(int argc, char *argv[])
+void yyerror(const char *fmt, ...)
 {
-    if (argc != 2) {  // 确保命令行参数正确
-        //fprintf(stderr, "Usage: ./lexer <filename>\n");
-        yyparse();
-        return 0;
-    }
+    extern int yylineno;
+    extern char *yytext;
+    extern int yychar;
 
-    // 打开输入文件
-    yyin = fopen(argv[1], "r");
-    if (yyin == NULL) {  // 如果文件打开失败
-        perror("Error opening file");
+    va_list args;
+    va_start(args, fmt);
+
+    if(fmt!="syntax error")
+        switch(va_arg(args, int))
+        {
+            case VarUndecleared:
+                fprintf(stderr, "Error type %d at line %d : var '%s' undeclared\n", VarUndecleared, yylineno, fmt);
+                break;
+            case VarRedecleared:
+                fprintf(stderr, "Error type %d at line %d : var '%s' redeclared\n", VarRedecleared, yylineno, fmt);
+                break;
+            case FuncUndecleared:
+                fprintf(stderr, "Error type %d at line %d : func '%s' undeclared\n", FuncUndecleared, yylineno, fmt);
+                break;
+            case FuncRedecleared:
+                fprintf(stderr, "Error type %d at line %d : func '%s' redeclared\n", FuncRedecleared, yylineno, fmt);
+                break;
+            case UseVarAsFunc:
+                fprintf(stderr, "Error type %d at line %d : var '%s' be used as func\n", UseVarAsFunc, yylineno, fmt);
+                break;
+            case UseFuncAsVar:
+                fprintf(stderr, "Error type %d at line %d : func '%s' be used as var\n", UseFuncAsVar, yylineno, fmt);
+                break;
+            case Stmt_Error:
+                fprintf(stderr, "Error type %d at line %d : semantic error\n", Stmt_Error, yylineno);
+                break;
+            default:
+                fprintf(stderr, "Undefined error at line %d : %s\n", yylineno, fmt);
+        }
+        /* fprintf(stderr, "Error type %d at line %d : '%s'\n", va_arg(args, int), yylineno, fmt); */
+
+    va_end(args);
+
+    error_flag = true;
+}
+
+int main(int argc, char **argv)
+{
+    if (argc < 2)
+    {
+        fprintf(stderr, "Usage: %s <filename>\n", argv[0]);
         return 1;
     }
 
-    // 调用解析器
+    FILE *f = fopen(argv[1], "r");
+    if (!f)
+    {
+        perror("fopen");
+        return 1;
+    }
+
+    YY_BUFFER_STATE bp = yy_create_buffer(f, YY_BUF_SIZE);
+    yy_switch_to_buffer(bp);
+
     yyparse();
 
-    // 关闭文件
-    fclose(yyin);
+    yy_delete_buffer(bp);
+
+    fclose(f);
+
+    if(!error_flag) 
+        print_tree(root,0);
     return 0;
 }
-

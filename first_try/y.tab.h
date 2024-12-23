@@ -39,7 +39,7 @@
 # define YY_YY_Y_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+# define YYDEBUG 1
 #endif
 #if YYDEBUG
 extern int yydebug;
@@ -54,36 +54,42 @@ extern int yydebug;
     YYEOF = 0,                     /* "end of file"  */
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
-    INTCONST = 258,                /* INTCONST  */
-    FLOATCONST = 259,              /* FLOATCONST  */
-    INT = 260,                     /* INT  */
-    VOID = 261,                    /* VOID  */
+    IDENT = 258,                   /* IDENT  */
+    INTCONST = 259,                /* INTCONST  */
+    FLOATCONST = 260,              /* FLOATCONST  */
+    INT = 261,                     /* INT  */
     FLOAT = 262,                   /* FLOAT  */
-    IDENT = 263,                   /* IDENT  */
-    PLUS = 264,                    /* PLUS  */
-    MINUS = 265,                   /* MINUS  */
-    ASSIGN = 266,                  /* ASSIGN  */
-    MUL = 267,                     /* MUL  */
-    UNARYOP = 268,                 /* UNARYOP  */
-    CONST = 269,                   /* CONST  */
-    COMMA = 270,                   /* COMMA  */
-    EQUAL = 271,                   /* EQUAL  */
-    OR = 272,                      /* OR  */
-    AND = 273,                     /* AND  */
-    WEIGHT = 274,                  /* WEIGHT  */
-    IF = 275,                      /* IF  */
-    ELSE = 276,                    /* ELSE  */
-    WHILE = 277,                   /* WHILE  */
-    BREAK = 278,                   /* BREAK  */
-    CONTINUE = 279,                /* CONTINUE  */
-    RETURN = 280,                  /* RETURN  */
-    LPARENT = 281,                 /* LPARENT  */
-    RPARENT = 282,                 /* RPARENT  */
-    LBRACKET = 283,                /* LBRACKET  */
-    RBRACKET = 284,                /* RBRACKET  */
-    LBRACE = 285,                  /* LBRACE  */
-    RBRACE = 286,                  /* RBRACE  */
-    END = 287                      /* END  */
+    VOID = 263,                    /* VOID  */
+    CONST = 264,                   /* CONST  */
+    RETURN = 265,                  /* RETURN  */
+    IF = 266,                      /* IF  */
+    ELSE = 267,                    /* ELSE  */
+    WHILE = 268,                   /* WHILE  */
+    BREAK = 269,                   /* BREAK  */
+    CONTINUE = 270,                /* CONTINUE  */
+    LPARENT = 271,                 /* LPARENT  */
+    RPARENT = 272,                 /* RPARENT  */
+    LBRACKET = 273,                /* LBRACKET  */
+    RBRACKET = 274,                /* RBRACKET  */
+    LBRACE = 275,                  /* LBRACE  */
+    RBRACE = 276,                  /* RBRACE  */
+    COMMA = 277,                   /* COMMA  */
+    END = 278,                     /* END  */
+    MINUS = 279,                   /* MINUS  */
+    ASSIGN = 280,                  /* ASSIGN  */
+    PLUS = 281,                    /* PLUS  */
+    NOT = 282,                     /* NOT  */
+    AND = 283,                     /* AND  */
+    OR = 284,                      /* OR  */
+    LT = 285,                      /* LT  */
+    LE = 286,                      /* LE  */
+    GT = 287,                      /* GT  */
+    GE = 288,                      /* GE  */
+    NEQUAL = 289,                  /* NEQUAL  */
+    EQUAL = 290,                   /* EQUAL  */
+    MUL = 291,                     /* MUL  */
+    MOD = 292,                     /* MOD  */
+    DIV = 293                      /* DIV  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -92,48 +98,55 @@ extern int yydebug;
 #define YYEOF 0
 #define YYerror 256
 #define YYUNDEF 257
-#define INTCONST 258
-#define FLOATCONST 259
-#define INT 260
-#define VOID 261
+#define IDENT 258
+#define INTCONST 259
+#define FLOATCONST 260
+#define INT 261
 #define FLOAT 262
-#define IDENT 263
-#define PLUS 264
-#define MINUS 265
-#define ASSIGN 266
-#define MUL 267
-#define UNARYOP 268
-#define CONST 269
-#define COMMA 270
-#define EQUAL 271
-#define OR 272
-#define AND 273
-#define WEIGHT 274
-#define IF 275
-#define ELSE 276
-#define WHILE 277
-#define BREAK 278
-#define CONTINUE 279
-#define RETURN 280
-#define LPARENT 281
-#define RPARENT 282
-#define LBRACKET 283
-#define RBRACKET 284
-#define LBRACE 285
-#define RBRACE 286
-#define END 287
+#define VOID 263
+#define CONST 264
+#define RETURN 265
+#define IF 266
+#define ELSE 267
+#define WHILE 268
+#define BREAK 269
+#define CONTINUE 270
+#define LPARENT 271
+#define RPARENT 272
+#define LBRACKET 273
+#define RBRACKET 274
+#define LBRACE 275
+#define RBRACE 276
+#define COMMA 277
+#define END 278
+#define MINUS 279
+#define ASSIGN 280
+#define PLUS 281
+#define NOT 282
+#define AND 283
+#define OR 284
+#define LT 285
+#define LE 286
+#define GT 287
+#define GE 288
+#define NEQUAL 289
+#define EQUAL 290
+#define MUL 291
+#define MOD 292
+#define DIV 293
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 24 "lexer.y"
+#line 35 "lexer.y"
 
     int ival;      // 用于存储整数
     float fval;    // 用于存储浮点数
     char *strval;  // 用于存储字符串
+    struct Node *node_val;  //用于构建AST树
 
-#line 137 "y.tab.h"
+#line 150 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

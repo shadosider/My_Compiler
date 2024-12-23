@@ -2346,30 +2346,30 @@ void yyerror(const char *fmt, ...)
         switch(va_arg(args, int))
         {
             case VarUndecleared:
-                fprintf(stderr, "\033[1;31mError type %d at line %d : var '%s' undeclared\033[0m\n", VarUndecleared, yylineno, fmt);
+                fprintf(stderr, "Error type %d at line %d : var '%s' undeclared\n", VarUndecleared, yylineno, fmt);
                 break;
             case VarRedecleared:
-                fprintf(stderr, "\033[1;31mError type %d at line %d : var '%s' redeclared\033[0m\n", VarRedecleared, yylineno, fmt);
+                fprintf(stderr, "Error type %d at line %d : var '%s' redeclared\n", VarRedecleared, yylineno, fmt);
                 break;
             case FuncUndecleared:
-                fprintf(stderr, "\033[1;31mError type %d at line %d : func '%s' undeclared\033[0m\n", FuncUndecleared, yylineno, fmt);
+                fprintf(stderr, "Error type %d at line %d : func '%s' undeclared\n", FuncUndecleared, yylineno, fmt);
                 break;
             case FuncRedecleared:
-                fprintf(stderr, "\033[1;31mError type %d at line %d : func '%s' redeclared\033[0m\n", FuncRedecleared, yylineno, fmt);
+                fprintf(stderr, "Error type %d at line %d : func '%s' redeclared\n", FuncRedecleared, yylineno, fmt);
                 break;
             case UseVarAsFunc:
-                fprintf(stderr, "\033[1;31mError type %d at line %d : var '%s' be used as func\033[0m\n", UseVarAsFunc, yylineno, fmt);
+                fprintf(stderr, "Error type %d at line %d : var '%s' be used as func\n", UseVarAsFunc, yylineno, fmt);
                 break;
             case UseFuncAsVar:
-                fprintf(stderr, "\033[1;31mError type %d at line %d : func '%s' be used as var\033[0m\n", UseFuncAsVar, yylineno, fmt);
+                fprintf(stderr, "Error type %d at line %d : func '%s' be used as var\n", UseFuncAsVar, yylineno, fmt);
                 break;
             case Stmt_Error:
-                fprintf(stderr, "\033[1;31mError type %d at line %d : invalid grammar\033[0m\n", Stmt_Error, yylineno);
+                fprintf(stderr, "Error type %d at line %d : semantic error\n", Stmt_Error, yylineno);
                 break;
             default:
-                fprintf(stderr, "\033[1;31mUndefined error at line %d : %s\033[0m\n", yylineno, fmt);
+                fprintf(stderr, "Undefined error at line %d : %s\n", yylineno, fmt);
         }
-        /* fprintf(stderr, "\033[1;31mError type %d at line %d : '%s'\n", va_arg(args, int), yylineno, fmt); */
+        /* fprintf(stderr, "Error type %d at line %d : '%s'\n", va_arg(args, int), yylineno, fmt); */
 
     va_end(args);
 

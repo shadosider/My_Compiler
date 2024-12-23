@@ -1,23 +1,34 @@
 %{
+
 #include <stdio.h>
 #include <string.h>
-
-extern FILE *yyin;  // 声明 yyin，指向输入文件
-extern char* yytext;     // 引入 Flex 的当前词法单元文本
+#include <stdbool.h>
+#include <stdarg.h>
+#include "cst.h"
+#include "lex.yy.h"
 
 int yylex(void);
-void yyerror(char *);
 
-int count = 10000;
-int indent_level = 0; // 用于控制缩进
-extern int line_number;
+typedef const enum Error_type{
+    Undefined,
+    VarUndecleared,
+    VarRedecleared,
+    FuncUndecleared,
+    FuncRedecleared,
+    UseVarAsFunc,
+    UseFuncAsVar,
+    Stmt_Error
+} Error_type;
 
-void print_indent() {
-    for (int i = 0; i < indent_level; i++) {
-        printf(" ");
-    }
-}
+void yyerror(const char *, ...);
 
+extern bool error_flag;
+
+node *root;
+
+int error_cur_line = -1;
+
+extern Symbol *symbol_table;
 
 %}
 
@@ -25,781 +36,376 @@ void print_indent() {
     int ival;      // 用于存储整数
     float fval;    // 用于存储浮点数
     char *strval;  // 用于存储字符串
+    struct Node *node_val;  //用于构建AST树
 }
 
-
-
+%token <strval> IDENT
 %token <ival> INTCONST
-%token <strval> FLOATCONST
-%token <strval> INT VOID FLOAT IDENT PLUS MINUS ASSIGN MUL UNARYOP CONST COMMA EQUAL OR AND WEIGHT IF ELSE WHILE BREAK CONTINUE RETURN LPARENT RPARENT LBRACKET RBRACKET LBRACE RBRACE END
-%type  <strval> FuncType BType
+%token <fval> FLOATCONST
+
+%token <int_val> INT FLOAT VOID CONST RETURN IF ELSE WHILE BREAK CONTINUE LPARENT RPARENT LBRACKET RBRACKET LBRACE RBRACE COMMA END
+%token <int_val> MINUS ASSIGN PLUS NOT AND OR LT LE GT GE NEQUAL EQUAL MUL MOD DIV
+
+%type <node_val> CompUnit ConstDecl VarDecl FuncDef ConstDef ConstInitVal VarDef InitVal FuncFParam ConstExpArray Block
+%type <node_val> Root BlockItem Stmt LVal PrimaryExp UnaryExp FuncRParams MulExp Exp RelExp EqExp LAndExp Cond ConstExp
+%type <node_val> ExpArray AddExp LOrExp InitVals
+
+%nonassoc ELSE 
+
+%start Root
 
 %%
 
-        line_list: line
-                | line_list line
-                ;
+Root: CompUnit { root = append(Root, NULL, NULL, $1, 0, 0, NULL, NonType); };
 
-	    line : CompUnit{
-                    indent_level++;
-                }
-                ;
+CompUnit: ConstDecl             { $$ = append(CompUnit, NULL, NULL, $1, 0, 0, NULL, NonType); }
+        | VarDecl               { $$ = append(CompUnit, NULL, NULL, $1, 0, 0, NULL, NonType); }
+        | FuncDef               { $$ = append(CompUnit, NULL, NULL, $1, 0, 0, NULL, NonType); }
+        | ConstDecl CompUnit    { $$ = append(CompUnit, $2, NULL, $1, 0, 0, NULL, NonType); }
+        | VarDecl CompUnit      { $$ = append(CompUnit, $2, NULL, $1, 0, 0, NULL, NonType); }
+        | FuncDef CompUnit      { $$ = append(CompUnit, $2, NULL, $1, 0, 0, NULL, NonType); }
+        ;
 
+ConstDecl: CONST INT ConstDef END    { $$ = append(ConstDecl, NULL, NULL, $3, 0, 0, NULL, Int); }
+         | CONST FLOAT ConstDef END  {  $$ = append(ConstDecl, NULL, NULL, $3, 0, 0, NULL, Float); }
+         ;
 
-        /* 编译单元 */
-        CompUnit: 
-                CompUnitOpt{
-                    print_indent();
-                    indent_level++;
-                    printf("CompUnit (%d)\n", line_number);
-                }
-                Decl
-                | 
-                CompUnitOpt{
-                    print_indent();
-                    indent_level++;
-                    printf("CompUnit (%d)\n", line_number);
-                }
-                FuncDef
-                ;
+ConstDef: IDENT ConstExpArray ASSIGN ConstInitVal                  { 
+                                                                    if(!check_symbol($1, Var)) 
+                                                                        add_symbol($1, Var);
+                                                                    else
+                                                                        yyerror($1, VarRedecleared);
+                                                                    $$ = append(ConstDef, NULL, $2, $4, 0, 0, $1, NonType); 
+                                                                }
+        | IDENT ConstExpArray ASSIGN ConstInitVal COMMA ConstDef   { 
+                                                                    if(!check_symbol($1, Var)) 
+                                                                        add_symbol($1, Var);
+                                                                    else
+                                                                        yyerror($1, VarRedecleared);
+                                                                    $$ = append(ConstDef, $6, $2, $4, 0, 0, $1, NonType); 
+                                                                }
+        ;
 
+ConstExpArray: /* empty */                      { $$ = NULL; }
+             | LBRACKET ConstExp RBRACKET ConstExpArray     { $$ = append(ConstExpArray, $4, NULL, $2, 0, 0, NULL, NonType); }
+             ;
 
-     CompUnitOpt: CompUnit
-                | /* empty */
-                ;
+ConstInitVal: ConstExp                                  { $$ = append(ConstInitVal, NULL, NULL, $1, 0, 0, NULL, NonType); }
+            | LBRACE RBRACE                                     { $$ = append(ConstInitVal, NULL, NULL, NULL, 0, 0, NULL, NonType); }
+            | LBRACE ConstInitVal RBRACE                        { $$ = append(ConstInitVal, NULL, NULL, $2, 0, 0, NULL, NonType); }
+            | LBRACE ConstInitVal COMMA ConstInitVal RBRACE     { $$ = append(ConstInitVal, $4, NULL, $2, 0, 0, NULL, NonType); }
+            ;
 
-            /* 声明  */
-            Decl: {
-                    print_indent();
-                    indent_level++;
-                    printf("Decl\n"); 
-                }
-                ConstDecl           
-                | {
-                    print_indent();
-                    indent_level++;
-                    printf("Decl\n"); 
-                }
-                VarDecl
-                ;
+ConstExp: MulExp                { $$ = append(ConstExp, NULL, NULL, $1, 0, 0, NULL, NonType); }
+        | MulExp PLUS Exp       { $$ = append(ConstExp, $3, NULL, $1, PLUS, 0, NULL, NonType); }
+        | MulExp MINUS Exp      { $$ = append(ConstExp, $3, NULL, $1, MINUS, 0, NULL, NonType); }
+        ;
 
-       ConstDecl: CONST{
-                    print_indent(); 
-                    indent_level++;
-                    printf("ConstDecl (%d)\n", line_number);
-                }
-                BType ConstDef ConstDefTail
-                END{
-                    print_indent();
-                    indent_level++;
-                    printf("SEMICN\n");
-                }
-                ;     /* 常量声明  */  
+VarDecl: INT VarDef END      { $$ = append(VarDecl, NULL, NULL, $2, 0, 0, NULL, Int); }
+       | FLOAT VarDef END    { $$ = append(VarDecl, NULL, NULL, $2, 0, 0, NULL, Float); }
+       ;
+       
+VarDef: IDENT ConstExpArray                                { 
+                                                            if(!check_symbol($1, Var)) 
+                                                                add_symbol($1, Var);
+                                                            else
+                                                                yyerror($1, VarRedecleared);
+                                                            $$ = append(VarDef, NULL, $2, NULL, 0, 0, $1, NonType); 
+                                                        }
+      | IDENT ConstExpArray ASSIGN InitVal                 { 
+                                                            if(!check_symbol($1, Var)) 
+                                                                add_symbol($1, Var);
+                                                            else
+                                                                yyerror($1, VarRedecleared);
+                                                            $$ = append(VarDef, NULL, $2, $4, 0, 0, $1, NonType); 
+                                                        }
+      | IDENT ConstExpArray COMMA VarDef                   { 
+                                                            if(!check_symbol($1, Var)) 
+                                                                add_symbol($1, Var);
+                                                            else
+                                                                yyerror($1, VarRedecleared);
+                                                            $$ = append(VarDef, $4, $2, NULL, 0, 0, $1, NonType); 
+                                                        }
+      | IDENT ConstExpArray ASSIGN InitVal COMMA VarDef    { 
+                                                            if(!check_symbol($1, Var)) 
+                                                                add_symbol($1, Var);
+                                                            else
+                                                                yyerror($1, VarRedecleared);
+                                                            $$ = append(VarDef, $6, $2, $4, 0, 0, $1, NonType); 
+                                                        }
+      ;
 
+InitVal: Exp            { $$ = append(InitVal, NULL, NULL, $1, Exp, 0, NULL, NonType); }
+       | LBRACE RBRACE          { $$ = append(InitVal, NULL, NULL, NULL, InitVals, 0, NULL, NonType); }
+       | LBRACE InitVals RBRACE { $$ = append(InitVal, NULL, NULL, $2, InitVals, 0, NULL, NonType); }
+       ;
 
-        /* 基本类型  */
-           BType: {
-                    print_indent();
-                    indent_level++;
-                    printf("BType (%d)\n", line_number);
-                }
-                INT{
-                    print_indent();
-                    indent_level--;
-                    printf("Type: %s\n", $2);
-                } 
-                | {
-                    print_indent();
-                    indent_level++;
-                    printf("BType (%d)\n", line_number);
-                }
-                FLOAT{
-                    print_indent();
-                    indent_level--;
-                    printf("Type: %s\n", $2);
-                }
-                ;
+InitVals: InitVal                       { $$ = append(InitVals, NULL, NULL, $1, 0, 0, NULL, NonType); }
+        | InitVal COMMA InitVals        { $$ = append(InitVals, $3, NULL, $1, 0, 0, NULL, NonType); }
+        ;
 
-           
+FuncDef: INT IDENT LPARENT RPARENT Block                     { 
+                                                    if(!check_symbol($2, Func)) 
+                                                        add_symbol($2, Func);
+                                                    else
+                                                        yyerror($2, FuncRedecleared);
+                                                    $$ = append(FuncDef, NULL, NULL, $5, 0, 0, $2, Int); 
+                                                }
+       | FLOAT IDENT LPARENT RPARENT Block                   { 
+                                                    if(!check_symbol($2, Func)) 
+                                                        add_symbol($2, Func);
+                                                    else
+                                                        yyerror($2, FuncRedecleared);
+                                                    $$ = append(FuncDef, NULL, NULL, $5, 0, 0, $2, Float); 
+                                                }
+       | VOID IDENT LPARENT RPARENT Block                    { 
+                                                    if(!check_symbol($2, Func)) 
+                                                        add_symbol($2, Func);
+                                                    else
+                                                        yyerror($2, FuncRedecleared);
+                                                    $$ = append(FuncDef, NULL, NULL, $5, 0, 0, $2, Void); 
+                                                }
+       | INT IDENT LPARENT FuncFParam RPARENT Block          { 
+                                                    if(!check_symbol($2, Func)) 
+                                                        add_symbol($2, Func);
+                                                    else
+                                                        yyerror($2, FuncRedecleared);
+                                                    $$ = append(FuncDef, NULL, $4, $6, 0, 0, $2, Int); 
+                                                }
+       | FLOAT IDENT LPARENT FuncFParam RPARENT Block        { 
+                                                    if(!check_symbol($2, Func)) 
+                                                        add_symbol($2, Func);
+                                                    else
+                                                        yyerror($2, FuncRedecleared);
+                                                    $$ = append(FuncDef, NULL, $4, $6, 0, 0, $2, Float); 
+                                                }
+       | VOID IDENT LPARENT FuncFParam RPARENT Block         { 
+                                                    if(!check_symbol($2, Func)) 
+                                                        add_symbol($2, Func);
+                                                    else
+                                                        yyerror($2, FuncRedecleared);
+                                                    $$ = append(FuncDef, NULL, $4, $6, 0, 0, $2, Void); 
+                                                }
+       ;
 
-        ConstDef: IDENT{
-                    print_indent();
-                    indent_level++;
-                    printf("ConstDef (%d)\n", line_number);
-                    print_indent();
-                    indent_level--;
-                    printf("Ident: %s\n", $1);
-                }
-                ConstExpTail
-                ASSIGN{
-                    print_indent();
-                    indent_level++;
-                    printf("ASSIGN\n");
-                }
-                ConstInitVal
-                ;
+FuncFParam: INT IDENT                                      { 
+                                                            if(!check_symbol($2,Param))
+                                                                add_symbol($2,Param);
+                                                            $$ = append(FuncFParam, NULL, NULL, NULL, 0, 0, $2, Int); 
+                                                        }
+          | FLOAT IDENT                                    { 
+                                                            if(!check_symbol($2,Param))
+                                                                add_symbol($2,Param);
+                                                            $$ = append(FuncFParam, NULL, NULL, NULL, 0, 0, $2, Float); 
+                                                        }
+          | INT IDENT LBRACKET RBRACKET ExpArray                       { 
+                                                            if(!check_symbol($2,Param))
+                                                                add_symbol($2,Param);
+                                                            $$ = append(FuncFParam, NULL, NULL, $5, 0, 0, $2, Int); 
+                                                        }
+          | FLOAT IDENT LBRACKET RBRACKET ExpArray                     { 
+                                                            if(!check_symbol($2,Param))
+                                                                add_symbol($2,Param);
+                                                            $$ = append(FuncFParam, NULL, NULL, $5, 0, 0, $2, Float); 
+                                                        }
+          | INT IDENT COMMA FuncFParam                     {   
+                                                            if(!check_symbol($2,Param))
+                                                                add_symbol($2,Param);
+                                                            $$ = append(FuncFParam, $4, NULL, NULL, 0, 0, $2, Int); 
+                                                        }
+          | FLOAT IDENT COMMA FuncFParam                   { 
+                                                            if(!check_symbol($2,Param))
+                                                                add_symbol($2,Param);
+                                                            $$ = append(FuncFParam, $4, NULL, NULL, 0, 0, $2, Float); 
+                                                        }
+          | INT IDENT LBRACKET RBRACKET ExpArray COMMA FuncFParam      {
+                                                            if(!check_symbol($2,Param))
+                                                                add_symbol($2,Param);
+                                                            $$ = append(FuncFParam, $7, NULL, $5, 0, 0, $2, Int); 
+                                                        }
+          | FLOAT IDENT LBRACKET RBRACKET ExpArray COMMA FuncFParam    { 
+                                                            if(!check_symbol($2,Param))
+                                                                add_symbol($2,Param);
+                                                            $$ = append(FuncFParam, $7, NULL, $5, 0, 0, $2, Float); 
+                                                        }
+          ;
 
-        ConstExp: AddExp           /* 常量表达式  */  
-                ;
+Block: LBRACE BlockItem RBRACE { $$ = append(Block, NULL, NULL, $2, 0, 0, NULL, NonType); };
 
-    ConstExpTail: LBRACKET{
-                    print_indent(); 
-                    printf("LBRACKET\n");
-                }
-                ConstExp
-                RBRACKET{
-                    print_indent(); 
-                    printf("RBRACKET\n");
-                }
-                ConstExpTail 
-                | /* empty */
-                ;
+BlockItem: /* empty */          { $$ = NULL; }
+         | ConstDecl BlockItem  { $$ = append(BlockItem, $2, NULL, $1, 0, 0, NULL, NonType); }
+         | VarDecl BlockItem    { $$ = append(BlockItem, $2, NULL, $1, 0, 0, NULL, NonType); }
+         | Stmt BlockItem       { $$ = append(BlockItem, $2, NULL, $1, 0, 0, NULL, NonType); }
+         ;
 
-    ConstInitVal: ConstExp              /* 常量初值  */  
-                | LBRACE{
-                    print_indent(); 
-                    printf("LBRACE\n");
-                }
-                ConstInitValOpt
-                RBRACE{
-                    print_indent(); 
-                    printf("RBRACE\n");
-                }
-                ;
+Stmt: LVal ASSIGN Exp END         { $$ = append(AssignStmt, $3, NULL, $1, 0, 0, NULL, NonType); }
+    | Exp END                     { $$ = append(ExpStmt, NULL, NULL, $1, 0, 0, NULL, NonType); }
+    | Block                          { $$ = append(BlockStmt, NULL, NULL, $1, 0, 0, NULL, NonType); }
+    | IF LPARENT Cond RPARENT Stmt             { $$ = append(IfStmt, $5, NULL, $3, 0, 0, NULL, NonType); }
+    | IF LPARENT Cond RPARENT Stmt ELSE Stmt   { $$ = append(IfElseStmt, $7, $5, $3, 0, 0, NULL, NonType); }
+    | WHILE LPARENT Cond RPARENT Stmt          { $$ = append(WhileStmt, $5, NULL, $3, 0, 0, NULL, NonType); }
+    | BREAK END                   { $$ = append(BreakStmt, NULL, NULL, NULL, 0, 0, NULL, NonType); }
+    | CONTINUE END                { $$ = append(ContinueStmt, NULL, NULL, NULL, 0, 0, NULL, NonType); }
+    | RETURN Exp END              { $$ = append(ReturnStmt, NULL, NULL, $2, 0, 0, NULL, NonType); }
+    | RETURN END                  { $$ = append(BlankReturnStmt, NULL, NULL, NULL, 0, 0, NULL, NonType); }
+    | error                          { 
+                                        if(error_cur_line != yylineno) 
+                                        {
+                                            yyerror("", Stmt_Error);
+                                            error_cur_line = yylineno;
+                                        } 
+                                        yyclearin; 
+                                        yyerrok; 
+                                     }
+    ;
 
- ConstInitValOpt: ConstInitVal ConstInitValTail
-                | /* empty */
-                ;
+Exp: AddExp     { $$ = append(Exp, NULL, NULL, $1, 0, 0, NULL, NonType); };
 
-ConstInitValTail: COMMA{
-                    print_indent(); 
-                    printf("COMMA\n");
-                }
-                ConstInitVal ConstInitValTail
-                | /* empty */
-                ;
+AddExp: MulExp                  { $$ = append(AddExp, NULL, NULL, $1, Mul, 0, NULL, NonType); }
+      | MulExp PLUS AddExp      { $$ = append(AddExp, $3, NULL, $1, Plus, 0, NULL, NonType); }
+      | MulExp MINUS AddExp     { $$ = append(AddExp, $3, NULL, $1, Minus, 0, NULL, NonType); }
+      ;
 
+MulExp: UnaryExp                { $$ = append(MulExp, NULL, NULL, $1, UnaryExp, 0, NULL, NonType); }
+      | UnaryExp MUL MulExp     { $$ = append(MulExp, $3, NULL, $1, Mul, 0, NULL, NonType); }
+      | UnaryExp DIV MulExp     { $$ = append(MulExp, $3, NULL, $1, Div, 0, NULL, NonType); }
+      | UnaryExp MOD MulExp     { $$ = append(MulExp, $3, NULL, $1, Mod, 0, NULL, NonType); }
+      ;
 
-    ConstDefTail: COMMA{
-                    print_indent(); 
-                    printf("COMMA\n");
-                }
-                ConstDef ConstDefTail
-                | /* empty */
-                ;
-
-         /* 变量声明  */ 
-         VarDecl: {
-                    print_indent(); 
-                    indent_level++;
-                    printf("VarDecl (%d)\n", line_number);
-                }
-                BType
-                VarDef
-                VarDeclTail
-                END{
-                    print_indent();
-                    printf("SEMICN\n");
-                }
-                ;
-
-     VarDeclTail: COMMA{
-                    print_indent(); 
-                    printf("COMMA\n");
-                }
-                VarDef VarDeclTail
-                | /* empty */
-                ;
-
-          /* 变量定义  */
-          VarDef: IDENT{
-                    print_indent();
-                    indent_level++;
-                    printf("VarDef1 (%d)\n", line_number);
-                    print_indent();
-                    indent_level--;
-                    printf("Ident: %s\n", $1);
-                }
-                ConstExpTail
-                | IDENT{
-                    print_indent();
-                    indent_level++;
-                    printf("VarDef2 (%d)\n", line_number);
-                    print_indent();
-                    indent_level--;
-                    printf("Ident: %s\n", $1);
-                }
-                ConstExpTail
-                ASSIGN{
-                    print_indent(); 
-                    printf("ASSIGN\n");
-                }
-                InitVal
-                ;
-
-         InitVal: Exp                   /* 变量初值  */ 
-                | LBRACE{
-                    print_indent(); 
-                    printf("LBRACE\n");
-                }
-                InitValOpt
-                RBRACE{
-                    print_indent(); 
-                    printf("RBRACE\n");
-                }  
-                ;
-
-      InitValOpt: InitVal InitValTail
-                | /* empty */
-                ;
-
-     InitValTail: COMMA{
-                    print_indent(); 
-                    printf("COMMA\n");
-                }
-                InitVal InitValTail
-                | /* empty */
-                ;
- 
-         /* 函数定义  */
-         FuncDef: {
-                    print_indent(); 
-                    indent_level++;
-                    printf("FuncDef (%d)\n", line_number); 
-                }
-                FuncType
-                IDENT LPARENT{
-                    print_indent();
-                    printf("Ident: %s\n", $3);
-                    print_indent();
-                    printf("LPARENT\n");
-                } 
-                FuncFParamsOpt RPARENT{
-                    print_indent();
-                    printf("RPARENT\n");
-                } 
-                Block {  
-                    indent_level++;
-                }
-                ;
-        /* 函数类型 */
-        FuncType: {
-                    print_indent();
-                    indent_level++;
-                    printf("FuncType (%d)\n", line_number);
-                } 
-                VOID{
-                    print_indent();
-                    indent_level--;
-                    printf("Type: %s\n", $2);
-                }
-                | {
-                    print_indent();
-                    indent_level++;
-                    printf("FuncType (%d)\n", line_number);
-                }
-                INT{
-                    print_indent();
-                    indent_level--;
-                    printf("Type: %s\n", $2);
-                }     
-                | {
-                    print_indent();
-                    indent_level++;
-                    printf("FuncType (%d)\n", line_number);
-                }
-                FLOAT{
-                    print_indent();
-                    indent_level--;
-                    printf("Type: %s\n", $2);
-                }   
-                ;
-
-
-     FuncFParams: {
-                    print_indent(); 
-                    indent_level++;
-                    printf("FuncFParams (%d)\n", line_number);
-                }
-                FuncFParam FuncFParamTail     /* 函数形参表 */
-                ;
-    /* 函数形参 */
-      FuncFParam: {
-                    print_indent(); 
-                    indent_level++;
-                    printf("FuncFParam (%d)\n", line_number);
-                }
-                BType
-                IDENT{
-                    print_indent();
-                    indent_level--;
-                    printf("Ident: %s\n", $2);
-                } 
-                ExpOPT   
-                ;
-
-          ExpOPT: LBRACKET RBRACKET{
-                    print_indent(); 
-                    printf("LBRACKET\n");
-                    print_indent(); 
-                    printf("RBRACKET\n");
-                }
-                ExpTail
-                | /* empty */
-                ;
-
-         ExpTail: LBRACKET{
-                    print_indent(); 
-                    printf("LBRACKET\n");
-                } 
-                Exp 
-                RBRACKET{
-                    print_indent(); 
-                    printf("RBRACKET\n");
-                } 
-                ExpTail
-                | /* empty */
-                ;
-
-
-  FuncFParamTail: COMMA{
-                    print_indent();
-                    printf("COMMA (%d)\n", line_number);
-                } 
-                FuncFParam FuncFParamTail
-                | /* empty */
-                ;
-    
-
-
-  FuncFParamsOpt: FuncFParams
-                | /* empty */
-                ;
-
-
-            /* 语句  */
-            Stmt: {
-                    print_indent();
-                    indent_level++;
-                    printf("Stmt (%d)\n", line_number);
-                }
-                LVal
-                ASSIGN{
-                    print_indent(); 
-                    printf("ASSIGN\n");
-                }
-                Exp
-                END{
-                    print_indent(); 
-                    printf("SEMICN\n");
-                }         
-                | {
-                    print_indent();
-                    indent_level++;
-                    printf("Stmt (%d)\n", line_number);
-                }
-                ExpOpt
-                END{
-                    print_indent(); 
-                    indent_level++;
-                    printf("SEMICN\n");
-                }
-                | {
-                    print_indent();
-                    indent_level++;
-                    printf("Stmt (%d)\n", line_number);
-                }
-                Block
-                | {
-                    print_indent();
-                    indent_level++;
-                    printf("Stmt (%d)\n", line_number);
-                }
-                IF LPARENT{
-                    print_indent();
-                    printf("IF\n");
-                    print_indent();
-                    printf("LPARENT\n");
-                }
-                Cond
-                RPARENT{
-                    print_indent();
-                    printf("RPARENT\n");
-                }
-                Stmt StmtOpt
-                | {
-                    print_indent();
-                    indent_level++;
-                    printf("Stmt (%d)\n", line_number);
-                }
-                WHILE LPARENT{
-                    print_indent();
-                    printf("WHILE\n");
-                    print_indent();
-                    printf("LPARENT\n");
-                }
-                Cond
-                RPARENT{
-                    print_indent();
-                    printf("RPARENT\n");
-                }
-                Stmt
-                | {
-                    print_indent();
-                    indent_level++;
-                    printf("Stmt (%d)\n", line_number);
-                }
-                BREAK END{
-                    print_indent();
-                    printf("BREAK\n");
-                    print_indent();
-                    printf("SEMICN\n");
-                }
-                | {
-                    print_indent();
-                    indent_level++;
-                    printf("Stmt (%d)\n", line_number);
-                }
-                CONTINUE END{
-                    print_indent();
-                    printf("CONTINUE\n");
-                    print_indent();
-                    printf("SEMICN\n");
-                }
-                | {
-                    print_indent();
-                    indent_level++;
-                    printf("Stmt (%d)\n", line_number);
-                }
-                RETURN{
-                    print_indent();
-                    printf("RETURN\n");
-                }
-                ExpOpt
-                END{
-                    print_indent();
-                    printf("SEMICN\n");
-                }
-                ;
+UnaryExp: PrimaryExp            { $$ = append(UnaryExp, NULL, NULL, $1, PrimaryExp, 0, NULL, NonType); }
+        | IDENT LPARENT RPARENT              { 
+                                    if(check_symbol($1, Var))
+                                        yyerror($1, UseVarAsFunc);
+                                    else if(!check_symbol($1, Func))
+                                        yyerror($1, FuncUndecleared);
+                                    $$ = append(UnaryExp, NULL, NULL, NULL, FuncRParams, 0, $1, NonType); 
+                                }
+        | IDENT LPARENT FuncRParams RPARENT  { 
+                                    if(check_symbol($1, Var))
+                                        yyerror($1, UseVarAsFunc);
+                                    else if(!check_symbol($1, Func))
+                                        yyerror($1, FuncUndecleared);
+                                    $$ = append(UnaryExp, NULL, NULL, $3, FuncRParams, 0, $1, NonType); 
+                                }
+        | PLUS UnaryExp         { $$ = append(UnaryExp, NULL, NULL, $2, PLUS, 0, NULL, NonType); }
+        | MINUS UnaryExp        { $$ = append(UnaryExp, NULL, NULL, $2, MINUS, 0, NULL, NonType); }
+        | NOT UnaryExp          { $$ = append(UnaryExp, NULL, NULL, $2, Not, 0, NULL, NonType); }
+        ;
         
-         StmtOpt: ELSE{
-                    print_indent();
-                    printf("ELSE\n");
-                }Stmt
-                | /* empty */
-                ;
+FuncRParams: Exp                        { $$ = append(FuncRParams, NULL, NULL, $1, 0, 0, NULL, NonType); }
+           | Exp COMMA FuncRParams      { $$ = append(FuncRParams, $3, NULL, $1, 0, 0, NULL, NonType); }
+           ;
 
-           /* 语句块  */  
-           Block: {
-                    print_indent();
-                    indent_level++;
-                    printf("Block (%d)\n", line_number);
-                }
-                LBRACE{
-                    print_indent();
-                    printf("LBRACE\n");
-                } 
-                BlockItemTail 
-                RBRACE{
-                    print_indent();
-                    printf("RBRACE\n");
-                }   
-                ;
-       /* 语句块项  */ 
-       BlockItem: {
-                    if(count < indent_level) indent_level = count;
-                    else count = indent_level;
-                    print_indent();
-                    indent_level++;
-                    printf("BlockItem (%d)\n", line_number);
-                }
-                Decl           
-                | {
-                    if(count < indent_level) indent_level = count;
-                    else count = indent_level;
-                    print_indent();
-                    indent_level++;
-                    printf("BlockItem (%d)\n", line_number);
-                }
-                Stmt
-                ;
+PrimaryExp: LPARENT Exp RPARENT   { $$ = append(PrimaryExp, NULL, NULL, $2, Exp, 0, NULL, NonType); }
+          | LVal        { $$ = append(PrimaryExp, NULL, NULL, $1, LVal, 0, NULL, NonType); }
+          | INTCONST     { $$ = append(PrimaryExp, NULL, NULL, NULL, $1, 0, NULL, Int); }
+          | FLOATCONST   { $$ = append(PrimaryExp, NULL, NULL, NULL, 0, $1, NULL, Float); }
+          ;
 
-   BlockItemTail: BlockItem BlockItemTail
-                | /* empty */
-                ;
+LVal: IDENT ExpArray       { 
+                            if(check_symbol($1, Func))
+                                yyerror($1, UseFuncAsVar);
+                            else if(!check_symbol($1,Var) && !check_symbol($1,Param))
+                                yyerror($1, VarUndecleared); 
+                            $$ = append(LVal, NULL, NULL, $2, 0, 0, $1, NonType); 
+                        };
 
-      /* 基本表达式  */
-      PrimaryExp: {
-                    print_indent();
-                    indent_level++;
-                    printf("PrimaryExp (%d)\n", line_number);
-                }
-                LPARENT{
-                    print_indent();
-                    printf("LPARENT\n");
-                } 
-                Exp 
-                RPARENT{
-                    print_indent();
-                    printf("RPARENT\n");
-                }      
-                | LVal     
-                | {
-                    print_indent();
-                    indent_level++;
-                    printf("PrimaryExp (%d)\n", line_number);
-                }
-                INTCONST{
-                    print_indent();
-                    indent_level++;
-                    printf("Number (%d)\n", line_number);
-                    print_indent();
-                    indent_level--;
-                    printf("INTCON: %d\n", $2);
-                }  
-                | {
-                    print_indent();
-                    indent_level++;
-                    printf("PrimaryExp (%d)\n", line_number);
-                }
-                FLOATCONST{
-                    print_indent();
-                    indent_level++;
-                    printf("Number (%d)\n", line_number);
-                    print_indent();
-                    indent_level--;
-                    printf("FLOATCON: %s\n", $2);
-                }  
-                ;
+Cond: LOrExp            { $$ = append(Cond, NULL, NULL, $1, 0, 0, NULL, NonType); };
 
-             /* 表达式  */
-             Exp: {
-                    print_indent();
-                    indent_level++;
-                    printf("Exp (%d)\n", line_number);
-                }
-                AddExp        
-                ;
+LOrExp: LAndExp                 { $$ = append(Cond, NULL, NULL, $1, 0, 0, NULL, NonType); }
+      | LAndExp OR LOrExp       { $$ = append(Cond, $3, NULL, $1, OR, 0, 0, NonType); }
+      ;
 
-          ExpOpt: Exp
-                | /* empty */
-                ;
+LAndExp: EqExp                  { $$ = append(LAndExp, NULL, NULL, $1, 0, 0, NULL, NonType); }
+       | EqExp AND LAndExp      { $$ = append(LAndExp, $3, NULL, $1, AND, 0, NULL, NonType); }
+       ;
 
-            Cond: {
-                    print_indent();
-                    indent_level++;
-                    printf("Cond (%d)\n", line_number);
-                }
-                LOrExp        /* 条件表达式  */  
-                ;
+EqExp: RelExp           { $$ = append(EqExp, NULL, NULL, $1, 0, 0, NULL, NonType); }
+     | RelExp EQUAL EqExp  { $$ = append(EqExp, $3, NULL, $1, EQUAL, 0, NULL, NonType); }
+     | RelExp NEQUAL EqExp  { $$ = append(EqExp, $3, NULL, $1, NEQUAL, 0, NULL, NonType); }
+     ;
 
-          AddExp: {         /* 加减表达式  */
-                    print_indent();
-                    indent_level++;
-                    printf("AddExp (%d)\n", line_number);
-                }
-                MulExp AddExpTail  
-                ;
+RelExp: AddExp           { $$ = append(RelExp, NULL, NULL, $1, 0, 0, NULL, NonType); }
+      | AddExp LT RelExp { $$ = append(RelExp, $3, NULL, $1, LT, 0, NULL, NonType); }
+      | AddExp GT RelExp { $$ = append(RelExp, $3, NULL, $1, GT, 0, NULL, NonType); }
+      | AddExp LE RelExp { $$ = append(RelExp, $3, NULL, $1, LE, 0, NULL, NonType); }
+      | AddExp GE RelExp { $$ = append(RelExp, $3, NULL, $1, GE, 0, NULL, NonType); }
+      ;
 
-      AddExpTail: PLUS{
-                    print_indent();
-                    indent_level++;
-                    printf("PLUS: %s\n", $1);
-                }
-                MulExp AddExpTail
-                | MINUS{
-                    print_indent();
-                    indent_level++;
-                    printf("MINUS: %s\n", $1);
-                }
-                MulExp AddExpTail
-                | /* empty */
-                ;
-
-          MulExp: {
-                    print_indent();
-                    indent_level++;
-                    printf(" MulExp (%d)\n", line_number);
-                }
-                UnaryExp MulExpTail   /* 乘除模表达式  */
-                ;
-
-      MulExpTail: MUL{
-                    print_indent();
-                    indent_level++;
-                    printf("MUL: %s\n", $1);
-                }
-                UnaryExp MulExpTail
-                | /* empty */
-                ;
-
-        UnaryExp: {
-                    print_indent();
-                    indent_level++;
-                    printf("UnaryExp (%d)\n", line_number);
-                }
-                PrimaryExp    /* 单目运算符 注：!仅出现在条件表达式中   */
-                | {
-                    print_indent();
-                    indent_level++;
-                    printf("UnaryExp (%d)\n", line_number);
-                }
-                IDENT LPARENT{
-                    print_indent();
-                    indent_level--;
-                    printf("Ident: %s\n", $2);
-                    print_indent();
-                    printf("LPARENT\n");
-                }
-                FuncRParamsOpt
-                RPARENT{
-                    print_indent();
-                    printf("RPARENT\n");
-                }
-                | UNARYOP{
-                    print_indent();
-                    indent_level++;
-                    printf("UNARYOP: %s\n", $1);
-                }
-                UnaryExp
-                ;
-
-  FuncRParamsOpt: /* empty */
-                | FuncRParams
-                ;
-
-    /* 函数实参表  */
-     FuncRParams: Exp           
-                | Exp COMMA{
-                    print_indent();
-                    printf("COMMA\n");
-                }
-                FuncRParams    
-                ;
-
-            /* 左值表达式  */
-            LVal: IDENT{
-                    print_indent();
-                    indent_level++;
-                    printf("Lavl (%d)\n", line_number);
-                    print_indent();
-                    indent_level--;
-                    printf("Ident: %s\n", $1);
-                } 
-                LValTail
-                ;
-
-        LValTail: LBRACKET{
-                    print_indent();
-                    printf("LBRACKET\n");
-                }
-                Exp
-                RBRACKET{
-                    print_indent();
-                    printf("RBRACKET\n");
-                }
-                LValTail
-                | /* empty */   
-                ;
-
-
-    /* 关系表达式  */
-          RelExp: {
-                    print_indent();
-                    indent_level++;
-                    printf("RelExp (%d)\n", line_number);
-                }AddExp RelExpTail
-                ;
-
-      RelExpTail: WEIGHT{
-                    print_indent();
-                    indent_level--;
-                    printf("WEIGHT: %s\n",$1);
-                }
-                AddExp RelExpTail
-                | /* empty */
-                ;
-
-
-    /* 相等性表达式  */  
-           EqExp: {
-                    print_indent();
-                    indent_level++;
-                    printf("EqExp (%d)\n", line_number);
-                }RelExp EqExpTail
-                ;
-
-       EqExpTail: EQUAL{
-                    print_indent();
-                    printf("EQUAL\n");
-                } RelExp EqExpTail
-                | /* empty */
-                ;
-
-    /* 逻辑与表达式  */  
-         LAndExp: {
-                    print_indent();
-                    indent_level++;
-                    printf("LAndExp (%d)\n", line_number);
-                }
-                EqExp LAndExpTail
-                ;
-
-     LAndExpTail: AND{
-                    print_indent();
-                    printf("AND\n");
-                }
-                EqExp LAndExpTail
-                | /* empty */
-                ;
-
-    /* 逻辑或表达式  */  
-          LOrExp: {
-                    print_indent();
-                    indent_level++;
-                    printf("LOrExp (%d)\n", line_number);
-                }
-                LAndExp LOrExpTail
-                ;
-
-      LOrExpTail: OR{
-                    print_indent();
-                    printf("OR\n");
-                }
-                LAndExp LOrExpTail
-                | /* empty */
-                ;
-
+ExpArray: /* empty */           { $$ = NULL; }
+        | LBRACKET Exp RBRACKET ExpArray    { $$ = append(ExpArray, $4, NULL, $2, 0, 0, NULL, NonType); }
+        ;
 
 %%
 
-void yyerror(char *str){
-    fprintf(stderr,"Error :%s\n",str);
-}
-
-int yywrap(){
-    return 1;
-}
-int main(int argc, char *argv[])
+void yyerror(const char *fmt, ...)
 {
-    if (argc != 2) {  // 确保命令行参数正确
-        //fprintf(stderr, "Usage: ./lexer <filename>\n");
-        yyparse();
-        return 0;
-    }
+    extern int yylineno;
+    extern char *yytext;
+    extern int yychar;
 
-    // 打开输入文件
-    yyin = fopen(argv[1], "r");
-    if (yyin == NULL) {  // 如果文件打开失败
-        perror("Error opening file");
+    va_list args;
+    va_start(args, fmt);
+
+    if(fmt!="syntax error")
+        switch(va_arg(args, int))
+        {
+            case VarUndecleared:
+                fprintf(stderr, "Error type %d at line %d : var '%s' undeclared\n", VarUndecleared, yylineno, fmt);
+                break;
+            case VarRedecleared:
+                fprintf(stderr, "Error type %d at line %d : var '%s' redeclared\n", VarRedecleared, yylineno, fmt);
+                break;
+            case FuncUndecleared:
+                fprintf(stderr, "Error type %d at line %d : func '%s' undeclared\n", FuncUndecleared, yylineno, fmt);
+                break;
+            case FuncRedecleared:
+                fprintf(stderr, "Error type %d at line %d : func '%s' redeclared\n", FuncRedecleared, yylineno, fmt);
+                break;
+            case UseVarAsFunc:
+                fprintf(stderr, "Error type %d at line %d : var '%s' be used as func\n", UseVarAsFunc, yylineno, fmt);
+                break;
+            case UseFuncAsVar:
+                fprintf(stderr, "Error type %d at line %d : func '%s' be used as var\n", UseFuncAsVar, yylineno, fmt);
+                break;
+            case Stmt_Error:
+                fprintf(stderr, "Error type %d at line %d : semantic error\n", Stmt_Error, yylineno);
+                break;
+            default:
+                fprintf(stderr, "Undefined error at line %d : %s\n", yylineno, fmt);
+        }
+        /* fprintf(stderr, "Error type %d at line %d : '%s'\n", va_arg(args, int), yylineno, fmt); */
+
+    va_end(args);
+
+    error_flag = true;
+}
+
+int main(int argc, char **argv)
+{
+    if (argc < 2)
+    {
+        fprintf(stderr, "Usage: %s <filename>\n", argv[0]);
         return 1;
     }
 
-    // 调用解析器
+    FILE *f = fopen(argv[1], "r");
+    if (!f)
+    {
+        perror("fopen");
+        return 1;
+    }
+
+    YY_BUFFER_STATE bp = yy_create_buffer(f, YY_BUF_SIZE);
+    yy_switch_to_buffer(bp);
+
     yyparse();
 
-    // 关闭文件
-    fclose(yyin);
+    yy_delete_buffer(bp);
+
+    fclose(f);
+
+    if(!error_flag) 
+        print_tree(root,0);
     return 0;
 }
-

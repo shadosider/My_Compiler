@@ -1,21 +1,28 @@
-# Makefile
+LEX = flex
+YACC = bison
+CC = gcc
 
-# 定义变量，默认值为test
-NAME = lexer
+LEX_FILE = lexer.l
+YACC_FILE = lexer.y
 
-# 目标：编译生成可执行文件
-$(NAME): y.tab.c lex.yy.c
-	gcc -o $(NAME) y.tab.c lex.yy.c
+LEX_OUTPUT = lex.yy.c
+YACC_OUTPUT = y.tab.c
+YACC_HEADER = y.tab.h
 
-# 目标：生成y.tab.c文件
-y.tab.c: $(NAME).y
-	bison --yacc -dv $(NAME).y
+CST_FUNC = cst.c 
 
-# 目标：生成lex.yy.c文件
-lex.yy.c: $(NAME).l
-	flex $(NAME).l
+EXEC = lexer
 
-# 默认目标
-.PHONY: clean
+all: $(EXEC)
+
+$(LEX_OUTPUT): $(LEX_FILE)
+	$(LEX) $(LEX_FILE)
+
+$(YACC_OUTPUT) $(YACC_HEADER): $(YACC_FILE)
+	$(YACC) -vdty $(YACC_FILE)
+
+$(EXEC): $(LEX_OUTPUT) $(YACC_OUTPUT) $(CST_FUNC)
+	$(CC) -o $(EXEC) $(LEX_OUTPUT) $(YACC_OUTPUT) $(CST_FUNC) -lfl
+
 clean:
-	rm -f $(NAME) y.tab.c lex.yy.c y.tab.h y.output
+	rm -f $(LEX_OUTPUT) $(YACC_OUTPUT) $(YACC_HEADER) $(EXEC) y.output
