@@ -1,5 +1,5 @@
-const int a=3;
-int main(float b)
-{
-    
+int main(){
+    int a[10][12];
+    int i;
+    a[5][3]=~5;
 }
