@@ -94,7 +94,7 @@ ConstExpArray: /* empty */                      { $$ = NULL; }
              | LBRACKET ConstExp RBRACKET ConstExpArray     { $$ = append(ConstExpArray, $4, NULL, $2, 0, 0, NULL, NonType, @1.first_line); }
              ;
 
-ConstInitVal: ConstExp                                  { $$ = append(ConstInitVal, NULL, NULL, $1, 0, 0, NULL, NonType, @1.first_line); }
+ConstInitVal: ConstExp                                  { $$ = append(ConstInitVal, NULL, NULL, $1, 1, 0, NULL, NonType, @1.first_line); }
             | LBRACE RBRACE                                     { $$ = append(ConstInitVal, NULL, NULL, NULL, 0, 0, NULL, NonType, @1.first_line); }
             | LBRACE ConstInitVal RBRACE                        { $$ = append(ConstInitVal, NULL, NULL, $2, 0, 0, NULL, NonType, @1.first_line); }
             | LBRACE ConstInitVal COMMA ConstInitVal RBRACE     { $$ = append(ConstInitVal, $4, NULL, $2, 0, 0, NULL, NonType, @1.first_line); }
@@ -205,12 +205,12 @@ FuncFParam: INT IDENT                                      {
           | INT IDENT LBRACKET RBRACKET ExpArray                       { 
                                                             if(!check_symbol($2,Param))
                                                                 add_symbol($2,Param);
-                                                            $$ = append(FuncFParam, NULL, NULL, $5, 0, 0, $2, Int, @1.first_line); 
+                                                            $$ = append(FuncFParam, NULL, NULL, $5, 1, 0, $2, Int, @1.first_line); 
                                                         }
           | FLOAT IDENT LBRACKET RBRACKET ExpArray                     { 
                                                             if(!check_symbol($2,Param))
                                                                 add_symbol($2,Param);
-                                                            $$ = append(FuncFParam, NULL, NULL, $5, 0, 0, $2, Float, @1.first_line); 
+                                                            $$ = append(FuncFParam, NULL, NULL, $5, 1, 0, $2, Float, @1.first_line); 
                                                         }
           | INT IDENT COMMA FuncFParam                     {   
                                                             if(!check_symbol($2,Param))
@@ -225,12 +225,12 @@ FuncFParam: INT IDENT                                      {
           | INT IDENT LBRACKET RBRACKET ExpArray COMMA FuncFParam      {
                                                             if(!check_symbol($2,Param))
                                                                 add_symbol($2,Param);
-                                                            $$ = append(FuncFParam, $7, NULL, $5, 0, 0, $2, Int, @1.first_line); 
+                                                            $$ = append(FuncFParam, $7, NULL, $5, 1, 0, $2, Int, @1.first_line); 
                                                         }
           | FLOAT IDENT LBRACKET RBRACKET ExpArray COMMA FuncFParam    { 
                                                             if(!check_symbol($2,Param))
                                                                 add_symbol($2,Param);
-                                                            $$ = append(FuncFParam, $7, NULL, $5, 0, 0, $2, Float, @1.first_line); 
+                                                            $$ = append(FuncFParam, $7, NULL, $5, 1, 0, $2, Float, @1.first_line); 
                                                         }
           ;
 

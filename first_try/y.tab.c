@@ -1649,7 +1649,7 @@ yyreduce:
 
   case 15: /* ConstInitVal: ConstExp  */
 #line 97 "lexer.y"
-                                                        { (yyval.node_val) = append(ConstInitVal, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType, (yylsp[0]).first_line); }
+                                                        { (yyval.node_val) = append(ConstInitVal, NULL, NULL, (yyvsp[0].node_val), 1, 0, NULL, NonType, (yylsp[0]).first_line); }
 #line 1654 "y.tab.c"
     break;
 
@@ -1876,7 +1876,7 @@ yyreduce:
                                                                        { 
                                                             if(!check_symbol((yyvsp[-3].strval),Param))
                                                                 add_symbol((yyvsp[-3].strval),Param);
-                                                            (yyval.node_val) = append(FuncFParam, NULL, NULL, (yyvsp[0].node_val), 0, 0, (yyvsp[-3].strval), Int, (yylsp[-4]).first_line); 
+                                                            (yyval.node_val) = append(FuncFParam, NULL, NULL, (yyvsp[0].node_val), 1, 0, (yyvsp[-3].strval), Int, (yylsp[-4]).first_line); 
                                                         }
 #line 1882 "y.tab.c"
     break;
@@ -1886,7 +1886,7 @@ yyreduce:
                                                                        { 
                                                             if(!check_symbol((yyvsp[-3].strval),Param))
                                                                 add_symbol((yyvsp[-3].strval),Param);
-                                                            (yyval.node_val) = append(FuncFParam, NULL, NULL, (yyvsp[0].node_val), 0, 0, (yyvsp[-3].strval), Float, (yylsp[-4]).first_line); 
+                                                            (yyval.node_val) = append(FuncFParam, NULL, NULL, (yyvsp[0].node_val), 1, 0, (yyvsp[-3].strval), Float, (yylsp[-4]).first_line); 
                                                         }
 #line 1892 "y.tab.c"
     break;
@@ -1916,7 +1916,7 @@ yyreduce:
                                                                        {
                                                             if(!check_symbol((yyvsp[-5].strval),Param))
                                                                 add_symbol((yyvsp[-5].strval),Param);
-                                                            (yyval.node_val) = append(FuncFParam, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 0, 0, (yyvsp[-5].strval), Int, (yylsp[-6]).first_line); 
+                                                            (yyval.node_val) = append(FuncFParam, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 1, 0, (yyvsp[-5].strval), Int, (yylsp[-6]).first_line); 
                                                         }
 #line 1922 "y.tab.c"
     break;
@@ -1926,7 +1926,7 @@ yyreduce:
                                                                        { 
                                                             if(!check_symbol((yyvsp[-5].strval),Param))
                                                                 add_symbol((yyvsp[-5].strval),Param);
-                                                            (yyval.node_val) = append(FuncFParam, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 0, 0, (yyvsp[-5].strval), Float, (yylsp[-6]).first_line); 
+                                                            (yyval.node_val) = append(FuncFParam, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 1, 0, (yyvsp[-5].strval), Float, (yylsp[-6]).first_line); 
                                                         }
 #line 1932 "y.tab.c"
     break;

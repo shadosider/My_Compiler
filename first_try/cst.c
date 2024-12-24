@@ -86,14 +86,28 @@ void print_tree(node *root, int depth)
 
     case ConstExpArray:
         printf("ConstExpArray\n");
+        printline(depth+1);
+        printf("LBRACKET\n");
         print_tree(root->right, depth + 1);
+        printline(depth+1);
+        printf("RBRACKET\n");
         print_tree(root->left, depth + 1);
         break;
 
     case ConstInitVal:
         printf("ConstInitVal\n");
-        print_tree(root->right, depth + 1);
-        print_tree(root->left, depth + 1);
+        if(root->int_val == 1){
+            print_tree(root->right, depth + 1);
+            print_tree(root->left, depth + 1);
+        }else{
+            printline(depth+1);
+            printf("LBRACE\n");
+            print_tree(root->right, depth + 1);
+            print_tree(root->left, depth + 1);
+            printline(depth+1);
+            printf("RBRACE\n");
+        }
+        
         break;
 
     case ConstExp:
@@ -148,7 +162,16 @@ void print_tree(node *root, int depth)
 
     case InitVal:
         printf("InitVal\n");
-        print_tree(root->right, depth + 1);
+        if(root->int_val == Exp){
+            print_tree(root->right, depth + 1);
+        }else{
+            printline(depth+1);
+            printf("LBRACE\n");
+            print_tree(root->right, depth + 1);
+            printline(depth+1);
+            printf("RBRACE\n");
+        }
+        
         break;
 
     case InitVals:
@@ -183,21 +206,32 @@ void print_tree(node *root, int depth)
         for (int i = 0; i < depth+1; i++)
             printf(" ");
         printf("Ident: %s\n", root->id);
-        if(!root->mid){
-            printline(depth+1);
-            printf("LPARENT\n");
-            printline(depth+1);
-            printf("RPARENT\n");
-        }else 
-            print_tree(root->mid, depth + 1);
+        
+        printline(depth+1);
+        printf("LPARENT\n"); 
+        print_tree(root->mid, depth + 1);
+        printline(depth+1);
+        printf("RPARENT\n");
         print_tree(root->right, depth + 1);
         
         break;
 
     case FuncFParam:
         printf("FuncFParam: %s\n", root->id);
-        print_tree(root->right, depth + 1);
-        print_tree(root->left, depth + 1);
+        if(root->int_val == 1){
+            printline(depth+1);
+            printf("LBRACKET\n"); 
+            printline(depth+1);
+            printf("RBRACKET\n");
+            print_tree(root->right, depth + 1);
+            print_tree(root->left, depth + 1);
+        }else{
+            print_tree(root->right, depth + 1);
+            print_tree(root->left, depth + 1);
+        }
+
+        
+
         break;
 
     case Block:
@@ -240,13 +274,21 @@ void print_tree(node *root, int depth)
 
     case IfStmt:
         printf("IfStmt\n");
+        printline(depth);
+        printf("LPARENT\n");
         print_tree(root->right, depth + 1);
+        printline(depth);
+        printf("RPARENT\n");
         print_tree(root->left, depth + 1);
         break;
 
     case IfElseStmt:
         printf("IfElseStmt\n");
+        printline(depth);
+        printf("LPARENT\n");
         print_tree(root->right, depth + 1);
+        printline(depth);
+        printf("RPARENT\n");
         print_tree(root->mid, depth + 1);
         print_tree(root->left, depth + 1);
         break;
@@ -349,7 +391,18 @@ void print_tree(node *root, int depth)
                 printf(" ");
             printf("ExpType: --\n");
         }
-        print_tree(root->right, depth + 1);
+        if(root->int_val == FuncRParams){
+            printline(depth+1);
+            printf("LPARENT\n");
+            print_tree(root->right, depth + 1);
+            printline(depth+1);
+            printf("RPARENT\n");
+
+        }else{
+            print_tree(root->right, depth + 1);
+        }
+
+        
         break;
 
     case FuncRParams:
@@ -372,7 +425,14 @@ void print_tree(node *root, int depth)
                 printf(" ");
             printf("FLOATCON: %f\n", root->float_val);
         }
-        print_tree(root->right, depth + 1);
+        if(root->int_val == Exp){
+            printline(depth);
+            printf("LPARENT\n");
+            print_tree(root->right, depth + 1);
+            printline(depth);
+            printf("RPARENT\n");
+        }else
+            print_tree(root->right, depth + 1);
         break;
 
     case LVal:
@@ -384,8 +444,13 @@ void print_tree(node *root, int depth)
 
     case ExpArray:
         printf("ExpArray\n");
+        printline(depth+1);
+        printf("LBRACKET\n");
         print_tree(root->right, depth + 1);
+        printline(depth+1);
+        printf("RBRACKET\n");
         print_tree(root->left, depth + 1);
+        
         break;
 
     case Cond:
