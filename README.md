@@ -1,6 +1,6 @@
 # My_Compiler
 
-这是504小组的编译原理大作业
+这是504小组的编译原理大作业，基于不知名前辈的lab4完成
 
 个人理解：flex用于简单的声明，bison实现复杂的逻辑
 
@@ -38,7 +38,7 @@
 │   ├── lex.yy.c
 │   ├── lexer
 │   └── lexer.l
-├── lab4        #陌生人的项目
+├── lab4        #前辈的项目
 ├── pattern.md
 └── template    #模板定义
     ├── SysY2022语言定义-V1.pdf
