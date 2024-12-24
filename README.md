@@ -14,7 +14,7 @@
 │   ├── test3.sy    #while循环语句  ✔
 │   ├── test4.sy    #函数调用
 │   ├── test5.sy    #int型数组
-│   ├── test6.sy    #int型二维数组和循环嵌套
+│   ├── test6.sy    #int型二维数组
 │   ├── test7.sy    #常量和全局变量 
 │   ├── test8.sy    #逻辑与和逻辑或
 │   └── test9.sy    #float型的加减乘除  ✔
