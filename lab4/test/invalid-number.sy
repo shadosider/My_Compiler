@@ -1,6 +1,6 @@
 int main()
 {
-    int a = 0xg;
+    int a = 0xg3;
     int b = 09;
     return a + b;
 }

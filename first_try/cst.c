@@ -2,6 +2,11 @@
 
 Symbol *symbol_table = NULL;
 
+void printline(int depth){
+    for (int i = 0; i < depth; i++)
+        printf(" ");
+}
+
 bool add_symbol(const char *name, symbol_type type)
 {
     Symbol *symbol = symbol_table;
@@ -31,7 +36,7 @@ bool check_symbol(const char *name, symbol_type type)
     return false;
 }
 
-node *append(node_type type, node *left, node *mid, node *right, int int_val, float float_val, char *id, node_type ntype)
+node *append(node_type type, node *left, node *mid, node *right, int int_val, float float_val, char *id, node_type ntype,int line)
 {
     node *n = (node *)malloc(sizeof(node));
     n->type = type;
@@ -42,6 +47,7 @@ node *append(node_type type, node *left, node *mid, node *right, int int_val, fl
     n->float_val = float_val;
     n->id = id;
     n->ntype = ntype;
+    n->line = line;
     return n;
 }
 
@@ -54,12 +60,12 @@ void print_tree(node *root, int depth)
     switch (root->type)
     {
     case Root:
-        printf("Root\n");
+        //printf("Root\n");
         print_tree(root->right, depth);
         break;
 
     case CompUnit:
-        printf("CompUnit\n");
+        printf("CompUnit (%d)\n", root->line);
         print_tree(root->right, depth + 1);
         print_tree(root->left, depth);
         break;
@@ -67,6 +73,8 @@ void print_tree(node *root, int depth)
     case ConstDecl:
         printf("ConstDecl\n");
         print_tree(root->right, depth + 1);
+        printline(depth+2);
+        printf("SEMICN\n");
         break;
 
     case ConstDef:
@@ -107,12 +115,32 @@ void print_tree(node *root, int depth)
         break;
 
     case VarDecl:
-        printf("VarDecl\n");
-        print_tree(root->right, depth + 1);
+        printf("Decl (%d)\n",root->line);
+        printline(depth+1);
+        printf("VarDecl(%d)\n",root->line);
+        if (root->ntype == Int)
+        {
+            printline(depth+2);
+            printf("BType(%d)\n",root->line);
+            printline(depth+3);
+            printf("Type: int\n");
+        }
+        if (root->ntype == Float)
+        {
+            printline(depth+2);
+            printf("BType(%d)\n",root->line);
+            printline(depth+3   );
+            printf("Type: int\n");
+        }
+        print_tree(root->right, depth + 2);
+        printline(depth+2);
+        printf("SEMICN\n");
         break;
 
     case VarDef:
-        printf("VarDef: %s\n", root->id);
+        printf("VarDef: (%d)\n", root->line);
+        printline(depth+1);
+        printf("Ident: %s\n", root->id);
         print_tree(root->mid, depth + 1);
         print_tree(root->right, depth + 1);
         print_tree(root->left, depth + 1);
@@ -130,9 +158,40 @@ void print_tree(node *root, int depth)
         break;
 
     case FuncDef:
-        printf("FuncDef: %s\n", root->id);
-        print_tree(root->mid, depth + 1);
+        printf("FuncDef (%d) \n", root->line);
+        for (int i = 0; i < depth + 1; i++)
+            printf(" ");
+        printf("FuncType (%d) \n", root->line);
+        if (root->ntype == Int)
+        {
+            for (int i = 0; i < depth + 2; i++)
+                printf(" ");
+            printf("Type: int\n");
+        }
+        if (root->ntype == Float)
+        {
+            for (int i = 0; i < depth + 2; i++)
+                printf(" ");
+            printf("Type: float\n");
+        }
+        if (root->ntype == Void)
+        {
+            for (int i = 0; i < depth + 2; i++)
+                printf(" ");
+            printf("Type: void\n");
+        }
+        for (int i = 0; i < depth+1; i++)
+            printf(" ");
+        printf("Ident: %s\n", root->id);
+        if(!root->mid){
+            printline(depth+1);
+            printf("LPARENT\n");
+            printline(depth+1);
+            printf("RPARENT\n");
+        }else 
+            print_tree(root->mid, depth + 1);
         print_tree(root->right, depth + 1);
+        
         break;
 
     case FuncFParam:
@@ -142,25 +201,36 @@ void print_tree(node *root, int depth)
         break;
 
     case Block:
-        printf("Block\n");
+        printf("Block (%d) \n", root->line);
+        int D=depth+1;
+        printline(D);
+        printf("LBRACE\n");
         print_tree(root->right, depth + 1);
+        printline(D);
+        printf("RBRACE\n");
         break;
 
     case BlockItem:
-        printf("BlockItem\n");
+        printf("BlockItem(%d) \n", root->line);
         print_tree(root->right, depth + 1);
         print_tree(root->left, depth);
         break;
 
     case AssignStmt:
-        printf("AssignStmt\n");
+        printf("AssignStmt(%d)\n",root->line);
         print_tree(root->right, depth + 1);
+        printline(depth+1);
+        printf("ASSIGN\n");
         print_tree(root->left, depth + 1);
+        printline(depth+2);
+        printf("SEMICN\n");
         break;
 
     case ExpStmt:
         printf("ExpStmt\n");
         print_tree(root->right, depth + 1);
+        printline(depth+2);
+        printf("SEMICN\n");
         break;
 
     case BlockStmt:
@@ -189,75 +259,83 @@ void print_tree(node *root, int depth)
 
     case BreakStmt:
         printf("BreakStmt\n");
+        printline(depth+2);
+        printf("SEMICN\n");
         break;
 
     case ContinueStmt:
         printf("ContinueStmt\n");
+        printline(depth+2);
+        printf("SEMICN\n");
         break;
 
     case ReturnStmt:
         printf("ReturnStmt\n");
         print_tree(root->right, depth + 1);
+        printline(depth+2);
+        printf("SEMICN\n");
         break;
 
     case BlankReturnStmt:
         printf("BlankReturnStmt\n");
+        printline(depth+2);
+        printf("SEMICN\n");
         break;
 
     case Exp:
-        printf("Exp\n");
+        printf("Exp(%d)\n", root->line);
         print_tree(root->right, depth + 1);
         break;
 
     case AddExp:
-        printf("AddExp\n");
+        printf("AddExp(%d)\n", root->line);
         print_tree(root->right, depth + 1);
         if (root->int_val == Plus)
         {
             for (int i = 0; i < depth + 1; i++)
                 printf(" ");
-            printf("ExpType: +\n");
+            printf("ExpType:PLUS +\n");
         }
         else if (root->int_val == Minus)
         {
             for (int i = 0; i < depth + 1; i++)
                 printf(" ");
-            printf("ExpType: -\n");
+            printf("ExpType:MINUS -\n");
         }
         print_tree(root->left, depth + 1);
         break;
 
     case MulExp:
-        printf("MulExp\n");
+        printf("MulExp(%d)\n", root->line);
         print_tree(root->right, depth + 1);
         if (root->int_val == Mul)
         {
             for (int i = 0; i < depth + 1; i++)
                 printf(" ");
-            printf("ExpType: *\n");
+            printf("ExpType:MUL *\n");
         }
         else if (root->int_val == Div)
         {
             for (int i = 0; i < depth + 1; i++)
                 printf(" ");
-            printf("ExpType: /\n");
+            printf("ExpType:DIV /\n");
         }
         else if (root->int_val == Mod)
         {
             for (int i = 0; i < depth + 1; i++)
                 printf(" ");
-            printf("ExpType: %%\n");
+            printf("ExpType:MOD %%\n");
         }
         print_tree(root->left, depth + 1);
         break;
 
     case UnaryExp:
-        printf("UnaryExp\n");
+        printf("UnaryExp(%d)\n", root->line);
         if (root->int_val == Not)
         {
             for (int i = 0; i < depth + 1; i++)
                 printf(" ");
-            printf("ExpType: !\n");
+            printf("ExpType:NOT !\n");
         }
         else if (root->int_val == PLUS)
         {
@@ -281,24 +359,26 @@ void print_tree(node *root, int depth)
         break;
 
     case PrimaryExp:
-        printf("PrimaryExp\n");
+        printf("PrimaryExp(%d)\n", root->line);
         if (root->ntype == Int)
         {
             for (int i = 0; i < depth + 1; i++)
                 printf(" ");
-            printf("Int: %d\n", root->int_val);
+            printf("INTCON: %d\n", root->int_val);
         }
         else if (root->ntype == Float)
         {
             for (int i = 0; i < depth + 1; i++)
                 printf(" ");
-            printf("Float: %f\n", root->float_val);
+            printf("FLOATCON: %f\n", root->float_val);
         }
         print_tree(root->right, depth + 1);
         break;
 
     case LVal:
-        printf("LVal: %s\n", root->id);
+        printf("LVal (%d)\n", root->line);
+        printline(depth+1);
+        printf("Ident: %s\n",root->id);
         print_tree(root->right, depth + 1);
         break;
 

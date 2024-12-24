@@ -79,6 +79,8 @@
 
 int yylex(void);
 
+
+
 typedef const enum Error_type{
     Undefined,
     VarUndecleared,
@@ -101,7 +103,7 @@ int error_cur_line = -1;
 extern Symbol *symbol_table;
 
 
-#line 105 "y.tab.c"
+#line 107 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -230,14 +232,14 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 35 "lexer.y"
+#line 37 "lexer.y"
 
     int ival;      // 用于存储整数
     float fval;    // 用于存储浮点数
     char *strval;  // 用于存储字符串
     struct Node *node_val;  //用于构建AST树
 
-#line 241 "y.tab.c"
+#line 243 "y.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -245,9 +247,23 @@ typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_DECLARED 1
 #endif
 
+/* Location type.  */
+#if ! defined YYLTYPE && ! defined YYLTYPE_IS_DECLARED
+typedef struct YYLTYPE YYLTYPE;
+struct YYLTYPE
+{
+  int first_line;
+  int first_column;
+  int last_line;
+  int last_column;
+};
+# define YYLTYPE_IS_DECLARED 1
+# define YYLTYPE_IS_TRIVIAL 1
+#endif
+
 
 extern YYSTYPE yylval;
-
+extern YYLTYPE yylloc;
 
 int yyparse (void);
 
@@ -592,13 +608,15 @@ void free (void *); /* INFRINGES ON USER NAME SPACE */
 
 #if (! defined yyoverflow \
      && (! defined __cplusplus \
-         || (defined YYSTYPE_IS_TRIVIAL && YYSTYPE_IS_TRIVIAL)))
+         || (defined YYLTYPE_IS_TRIVIAL && YYLTYPE_IS_TRIVIAL \
+             && defined YYSTYPE_IS_TRIVIAL && YYSTYPE_IS_TRIVIAL)))
 
 /* A type that is properly aligned for any stack member.  */
 union yyalloc
 {
   yy_state_t yyss_alloc;
   YYSTYPE yyvs_alloc;
+  YYLTYPE yyls_alloc;
 };
 
 /* The size of the maximum gap between one aligned stack and the next.  */
@@ -607,8 +625,9 @@ union yyalloc
 /* The size of an array large to enough to hold all stacks, each with
    N elements.  */
 # define YYSTACK_BYTES(N) \
-     ((N) * (YYSIZEOF (yy_state_t) + YYSIZEOF (YYSTYPE)) \
-      + YYSTACK_GAP_MAXIMUM)
+     ((N) * (YYSIZEOF (yy_state_t) + YYSIZEOF (YYSTYPE) \
+             + YYSIZEOF (YYLTYPE)) \
+      + 2 * YYSTACK_GAP_MAXIMUM)
 
 # define YYCOPY_NEEDED 1
 
@@ -715,16 +734,16 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    59,    59,    61,    62,    63,    64,    65,    66,    69,
-      70,    73,    80,    89,    90,    93,    94,    95,    96,    99,
-     100,   101,   104,   105,   108,   115,   122,   129,   138,   139,
-     140,   143,   144,   147,   154,   161,   168,   175,   182,   191,
-     196,   201,   206,   211,   216,   221,   226,   233,   235,   236,
-     237,   238,   241,   242,   243,   244,   245,   246,   247,   248,
-     249,   250,   251,   262,   264,   265,   266,   269,   270,   271,
-     272,   275,   276,   283,   290,   291,   292,   295,   296,   299,
-     300,   301,   302,   305,   313,   315,   316,   319,   320,   323,
-     324,   325,   328,   329,   330,   331,   332,   335,   336
+       0,    63,    63,    65,    66,    67,    68,    69,    70,    73,
+      74,    77,    84,    93,    94,    97,    98,    99,   100,   103,
+     104,   105,   108,   109,   112,   119,   126,   133,   142,   143,
+     144,   147,   148,   151,   158,   165,   172,   179,   186,   195,
+     200,   205,   210,   215,   220,   225,   230,   237,   239,   240,
+     241,   242,   245,   246,   247,   248,   249,   250,   251,   252,
+     253,   254,   255,   266,   268,   269,   270,   273,   274,   275,
+     276,   279,   280,   287,   294,   295,   296,   299,   300,   303,
+     304,   305,   306,   309,   317,   319,   320,   323,   324,   327,
+     328,   329,   332,   333,   334,   335,   336,   339,   340
 };
 #endif
 
@@ -1000,6 +1019,32 @@ enum { YYENOMEM = -2 };
    Use YYerror or YYUNDEF. */
 #define YYERRCODE YYUNDEF
 
+/* YYLLOC_DEFAULT -- Set CURRENT to span from RHS[1] to RHS[N].
+   If N is 0, then set CURRENT to the empty location which ends
+   the previous symbol: RHS[0] (always defined).  */
+
+#ifndef YYLLOC_DEFAULT
+# define YYLLOC_DEFAULT(Current, Rhs, N)                                \
+    do                                                                  \
+      if (N)                                                            \
+        {                                                               \
+          (Current).first_line   = YYRHSLOC (Rhs, 1).first_line;        \
+          (Current).first_column = YYRHSLOC (Rhs, 1).first_column;      \
+          (Current).last_line    = YYRHSLOC (Rhs, N).last_line;         \
+          (Current).last_column  = YYRHSLOC (Rhs, N).last_column;       \
+        }                                                               \
+      else                                                              \
+        {                                                               \
+          (Current).first_line   = (Current).last_line   =              \
+            YYRHSLOC (Rhs, 0).last_line;                                \
+          (Current).first_column = (Current).last_column =              \
+            YYRHSLOC (Rhs, 0).last_column;                              \
+        }                                                               \
+    while (0)
+#endif
+
+#define YYRHSLOC(Rhs, K) ((Rhs)[K])
+
 
 /* Enable debugging if requested.  */
 #if YYDEBUG
@@ -1016,6 +1061,63 @@ do {                                            \
 } while (0)
 
 
+/* YYLOCATION_PRINT -- Print the location on the stream.
+   This macro was not mandated originally: define only if we know
+   we won't break user code: when these are the locations we know.  */
+
+# ifndef YYLOCATION_PRINT
+
+#  if defined YY_LOCATION_PRINT
+
+   /* Temporary convenience wrapper in case some people defined the
+      undocumented and private YY_LOCATION_PRINT macros.  */
+#   define YYLOCATION_PRINT(File, Loc)  YY_LOCATION_PRINT(File, *(Loc))
+
+#  elif defined YYLTYPE_IS_TRIVIAL && YYLTYPE_IS_TRIVIAL
+
+/* Print *YYLOCP on YYO.  Private, do not rely on its existence. */
+
+YY_ATTRIBUTE_UNUSED
+static int
+yy_location_print_ (FILE *yyo, YYLTYPE const * const yylocp)
+{
+  int res = 0;
+  int end_col = 0 != yylocp->last_column ? yylocp->last_column - 1 : 0;
+  if (0 <= yylocp->first_line)
+    {
+      res += YYFPRINTF (yyo, "%d", yylocp->first_line);
+      if (0 <= yylocp->first_column)
+        res += YYFPRINTF (yyo, ".%d", yylocp->first_column);
+    }
+  if (0 <= yylocp->last_line)
+    {
+      if (yylocp->first_line < yylocp->last_line)
+        {
+          res += YYFPRINTF (yyo, "-%d", yylocp->last_line);
+          if (0 <= end_col)
+            res += YYFPRINTF (yyo, ".%d", end_col);
+        }
+      else if (0 <= end_col && yylocp->first_column < end_col)
+        res += YYFPRINTF (yyo, "-%d", end_col);
+    }
+  return res;
+}
+
+#   define YYLOCATION_PRINT  yy_location_print_
+
+    /* Temporary convenience wrapper in case some people defined the
+       undocumented and private YY_LOCATION_PRINT macros.  */
+#   define YY_LOCATION_PRINT(File, Loc)  YYLOCATION_PRINT(File, &(Loc))
+
+#  else
+
+#   define YYLOCATION_PRINT(File, Loc) ((void) 0)
+    /* Temporary convenience wrapper in case some people defined the
+       undocumented and private YY_LOCATION_PRINT macros.  */
+#   define YY_LOCATION_PRINT  YYLOCATION_PRINT
+
+#  endif
+# endif /* !defined YYLOCATION_PRINT */
 
 
 # define YY_SYMBOL_PRINT(Title, Kind, Value, Location)                    \
@@ -1024,7 +1126,7 @@ do {                                                                      \
     {                                                                     \
       YYFPRINTF (stderr, "%s ", Title);                                   \
       yy_symbol_print (stderr,                                            \
-                  Kind, Value); \
+                  Kind, Value, Location); \
       YYFPRINTF (stderr, "\n");                                           \
     }                                                                     \
 } while (0)
@@ -1036,10 +1138,11 @@ do {                                                                      \
 
 static void
 yy_symbol_value_print (FILE *yyo,
-                       yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep)
+                       yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp)
 {
   FILE *yyoutput = yyo;
   YY_USE (yyoutput);
+  YY_USE (yylocationp);
   if (!yyvaluep)
     return;
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
@@ -1054,12 +1157,14 @@ yy_symbol_value_print (FILE *yyo,
 
 static void
 yy_symbol_print (FILE *yyo,
-                 yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep)
+                 yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp)
 {
   YYFPRINTF (yyo, "%s %s (",
              yykind < YYNTOKENS ? "token" : "nterm", yysymbol_name (yykind));
 
-  yy_symbol_value_print (yyo, yykind, yyvaluep);
+  YYLOCATION_PRINT (yyo, yylocationp);
+  YYFPRINTF (yyo, ": ");
+  yy_symbol_value_print (yyo, yykind, yyvaluep, yylocationp);
   YYFPRINTF (yyo, ")");
 }
 
@@ -1092,7 +1197,7 @@ do {                                                            \
 `------------------------------------------------*/
 
 static void
-yy_reduce_print (yy_state_t *yyssp, YYSTYPE *yyvsp,
+yy_reduce_print (yy_state_t *yyssp, YYSTYPE *yyvsp, YYLTYPE *yylsp,
                  int yyrule)
 {
   int yylno = yyrline[yyrule];
@@ -1106,7 +1211,8 @@ yy_reduce_print (yy_state_t *yyssp, YYSTYPE *yyvsp,
       YYFPRINTF (stderr, "   $%d = ", yyi + 1);
       yy_symbol_print (stderr,
                        YY_ACCESSING_SYMBOL (+yyssp[yyi + 1 - yynrhs]),
-                       &yyvsp[(yyi + 1) - (yynrhs)]);
+                       &yyvsp[(yyi + 1) - (yynrhs)],
+                       &(yylsp[(yyi + 1) - (yynrhs)]));
       YYFPRINTF (stderr, "\n");
     }
 }
@@ -1114,7 +1220,7 @@ yy_reduce_print (yy_state_t *yyssp, YYSTYPE *yyvsp,
 # define YY_REDUCE_PRINT(Rule)          \
 do {                                    \
   if (yydebug)                          \
-    yy_reduce_print (yyssp, yyvsp, Rule); \
+    yy_reduce_print (yyssp, yyvsp, yylsp, Rule); \
 } while (0)
 
 /* Nonzero means print parse trace.  It is left uninitialized so that
@@ -1155,9 +1261,10 @@ int yydebug;
 
 static void
 yydestruct (const char *yymsg,
-            yysymbol_kind_t yykind, YYSTYPE *yyvaluep)
+            yysymbol_kind_t yykind, YYSTYPE *yyvaluep, YYLTYPE *yylocationp)
 {
   YY_USE (yyvaluep);
+  YY_USE (yylocationp);
   if (!yymsg)
     yymsg = "Deleting";
   YY_SYMBOL_PRINT (yymsg, yykind, yyvaluep, yylocationp);
@@ -1173,6 +1280,12 @@ int yychar;
 
 /* The semantic value of the lookahead symbol.  */
 YYSTYPE yylval;
+/* Location data for the lookahead symbol.  */
+YYLTYPE yylloc
+# if defined YYLTYPE_IS_TRIVIAL && YYLTYPE_IS_TRIVIAL
+  = { 1, 1, 1, 1 }
+# endif
+;
 /* Number of syntax errors so far.  */
 int yynerrs;
 
@@ -1206,6 +1319,11 @@ yyparse (void)
     YYSTYPE *yyvs = yyvsa;
     YYSTYPE *yyvsp = yyvs;
 
+    /* The location stack: array, bottom, top.  */
+    YYLTYPE yylsa[YYINITDEPTH];
+    YYLTYPE *yyls = yylsa;
+    YYLTYPE *yylsp = yyls;
+
   int yyn;
   /* The return value of yyparse.  */
   int yyresult;
@@ -1214,10 +1332,14 @@ yyparse (void)
   /* The variables used to return semantic value and location from the
      action routines.  */
   YYSTYPE yyval;
+  YYLTYPE yyloc;
+
+  /* The locations where the error started and ended.  */
+  YYLTYPE yyerror_range[3];
 
 
 
-#define YYPOPSTACK(N)   (yyvsp -= (N), yyssp -= (N))
+#define YYPOPSTACK(N)   (yyvsp -= (N), yyssp -= (N), yylsp -= (N))
 
   /* The number of symbols on the RHS of the reduced rule.
      Keep to zero when no symbol should be popped.  */
@@ -1227,6 +1349,7 @@ yyparse (void)
 
   yychar = YYEMPTY; /* Cause a token to be read.  */
 
+  yylsp[0] = yylloc;
   goto yysetstate;
 
 
@@ -1265,6 +1388,7 @@ yysetstate:
            memory.  */
         yy_state_t *yyss1 = yyss;
         YYSTYPE *yyvs1 = yyvs;
+        YYLTYPE *yyls1 = yyls;
 
         /* Each stack pointer address is followed by the size of the
            data in use in that stack, in bytes.  This used to be a
@@ -1273,9 +1397,11 @@ yysetstate:
         yyoverflow (YY_("memory exhausted"),
                     &yyss1, yysize * YYSIZEOF (*yyssp),
                     &yyvs1, yysize * YYSIZEOF (*yyvsp),
+                    &yyls1, yysize * YYSIZEOF (*yylsp),
                     &yystacksize);
         yyss = yyss1;
         yyvs = yyvs1;
+        yyls = yyls1;
       }
 # else /* defined YYSTACK_RELOCATE */
       /* Extend the stack our own way.  */
@@ -1294,6 +1420,7 @@ yysetstate:
           YYNOMEM;
         YYSTACK_RELOCATE (yyss_alloc, yyss);
         YYSTACK_RELOCATE (yyvs_alloc, yyvs);
+        YYSTACK_RELOCATE (yyls_alloc, yyls);
 #  undef YYSTACK_RELOCATE
         if (yyss1 != yyssa)
           YYSTACK_FREE (yyss1);
@@ -1302,6 +1429,7 @@ yysetstate:
 
       yyssp = yyss + yysize - 1;
       yyvsp = yyvs + yysize - 1;
+      yylsp = yyls + yysize - 1;
 
       YY_IGNORE_USELESS_CAST_BEGIN
       YYDPRINTF ((stderr, "Stack size increased to %ld\n",
@@ -1355,6 +1483,7 @@ yybackup:
          loop in error recovery. */
       yychar = YYUNDEF;
       yytoken = YYSYMBOL_YYerror;
+      yyerror_range[1] = yylloc;
       goto yyerrlab1;
     }
   else
@@ -1388,6 +1517,7 @@ yybackup:
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
   *++yyvsp = yylval;
   YY_IGNORE_MAYBE_UNINITIALIZED_END
+  *++yylsp = yylloc;
 
   /* Discard the shifted token.  */
   yychar = YYEMPTY;
@@ -1421,476 +1551,478 @@ yyreduce:
      GCC warning that YYVAL may be used uninitialized.  */
   yyval = yyvsp[1-yylen];
 
-
+  /* Default location. */
+  YYLLOC_DEFAULT (yyloc, (yylsp - yylen), yylen);
+  yyerror_range[1] = yyloc;
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
   case 2: /* Root: CompUnit  */
-#line 59 "lexer.y"
-               { root = append(Root, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
-#line 1432 "y.tab.c"
+#line 63 "lexer.y"
+               {root = append(Root, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType, (yylsp[0]).first_line); }
+#line 1564 "y.tab.c"
     break;
 
   case 3: /* CompUnit: ConstDecl  */
-#line 61 "lexer.y"
-                                { (yyval.node_val) = append(CompUnit, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
-#line 1438 "y.tab.c"
+#line 65 "lexer.y"
+                                { (yyval.node_val) = append(CompUnit, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType, (yylsp[0]).first_line); }
+#line 1570 "y.tab.c"
     break;
 
   case 4: /* CompUnit: VarDecl  */
-#line 62 "lexer.y"
-                                { (yyval.node_val) = append(CompUnit, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
-#line 1444 "y.tab.c"
+#line 66 "lexer.y"
+                                { (yyval.node_val) = append(CompUnit, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType, (yylsp[0]).first_line); }
+#line 1576 "y.tab.c"
     break;
 
   case 5: /* CompUnit: FuncDef  */
-#line 63 "lexer.y"
-                                { (yyval.node_val) = append(CompUnit, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
-#line 1450 "y.tab.c"
+#line 67 "lexer.y"
+                                { (yyval.node_val) = append(CompUnit, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType, (yylsp[0]).first_line); }
+#line 1582 "y.tab.c"
     break;
 
   case 6: /* CompUnit: ConstDecl CompUnit  */
-#line 64 "lexer.y"
-                                { (yyval.node_val) = append(CompUnit, (yyvsp[0].node_val), NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType); }
-#line 1456 "y.tab.c"
+#line 68 "lexer.y"
+                                { (yyval.node_val) = append(CompUnit, (yyvsp[0].node_val), NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType, (yylsp[-1]).first_line); }
+#line 1588 "y.tab.c"
     break;
 
   case 7: /* CompUnit: VarDecl CompUnit  */
-#line 65 "lexer.y"
-                                { (yyval.node_val) = append(CompUnit, (yyvsp[0].node_val), NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType); }
-#line 1462 "y.tab.c"
+#line 69 "lexer.y"
+                                { (yyval.node_val) = append(CompUnit, (yyvsp[0].node_val), NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType, (yylsp[-1]).first_line); }
+#line 1594 "y.tab.c"
     break;
 
   case 8: /* CompUnit: FuncDef CompUnit  */
-#line 66 "lexer.y"
-                                { (yyval.node_val) = append(CompUnit, (yyvsp[0].node_val), NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType); }
-#line 1468 "y.tab.c"
+#line 70 "lexer.y"
+                                { (yyval.node_val) = append(CompUnit, (yyvsp[0].node_val), NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType, (yylsp[-1]).first_line); }
+#line 1600 "y.tab.c"
     break;
 
   case 9: /* ConstDecl: CONST INT ConstDef END  */
-#line 69 "lexer.y"
-                                     { (yyval.node_val) = append(ConstDecl, NULL, NULL, (yyvsp[-1].node_val), 0, 0, NULL, Int); }
-#line 1474 "y.tab.c"
+#line 73 "lexer.y"
+                                     { (yyval.node_val) = append(ConstDecl, NULL, NULL, (yyvsp[-1].node_val), END, 0, NULL, Int, (yylsp[-3]).first_line); }
+#line 1606 "y.tab.c"
     break;
 
   case 10: /* ConstDecl: CONST FLOAT ConstDef END  */
-#line 70 "lexer.y"
-                                     {  (yyval.node_val) = append(ConstDecl, NULL, NULL, (yyvsp[-1].node_val), 0, 0, NULL, Float); }
-#line 1480 "y.tab.c"
+#line 74 "lexer.y"
+                                     {  (yyval.node_val) = append(ConstDecl, NULL, NULL, (yyvsp[-1].node_val), END, 0, NULL, Float, (yylsp[-3]).first_line); }
+#line 1612 "y.tab.c"
     break;
 
   case 11: /* ConstDef: IDENT ConstExpArray ASSIGN ConstInitVal  */
-#line 73 "lexer.y"
+#line 77 "lexer.y"
                                                                    { 
                                                                     if(!check_symbol((yyvsp[-3].strval), Var)) 
                                                                         add_symbol((yyvsp[-3].strval), Var);
                                                                     else
                                                                         yyerror((yyvsp[-3].strval), VarRedecleared);
-                                                                    (yyval.node_val) = append(ConstDef, NULL, (yyvsp[-2].node_val), (yyvsp[0].node_val), 0, 0, (yyvsp[-3].strval), NonType); 
+                                                                    (yyval.node_val) = append(ConstDef, NULL, (yyvsp[-2].node_val), (yyvsp[0].node_val), 0, 0, (yyvsp[-3].strval), NonType, (yylsp[-3]).first_line); 
                                                                 }
-#line 1492 "y.tab.c"
+#line 1624 "y.tab.c"
     break;
 
   case 12: /* ConstDef: IDENT ConstExpArray ASSIGN ConstInitVal COMMA ConstDef  */
-#line 80 "lexer.y"
+#line 84 "lexer.y"
                                                                    { 
                                                                     if(!check_symbol((yyvsp[-5].strval), Var)) 
                                                                         add_symbol((yyvsp[-5].strval), Var);
                                                                     else
                                                                         yyerror((yyvsp[-5].strval), VarRedecleared);
-                                                                    (yyval.node_val) = append(ConstDef, (yyvsp[0].node_val), (yyvsp[-4].node_val), (yyvsp[-2].node_val), 0, 0, (yyvsp[-5].strval), NonType); 
+                                                                    (yyval.node_val) = append(ConstDef, (yyvsp[0].node_val), (yyvsp[-4].node_val), (yyvsp[-2].node_val), 0, 0, (yyvsp[-5].strval), NonType, (yylsp[-5]).first_line); 
                                                                 }
-#line 1504 "y.tab.c"
+#line 1636 "y.tab.c"
     break;
 
   case 13: /* ConstExpArray: %empty  */
-#line 89 "lexer.y"
+#line 93 "lexer.y"
                                                 { (yyval.node_val) = NULL; }
-#line 1510 "y.tab.c"
+#line 1642 "y.tab.c"
     break;
 
   case 14: /* ConstExpArray: LBRACKET ConstExp RBRACKET ConstExpArray  */
-#line 90 "lexer.y"
-                                                            { (yyval.node_val) = append(ConstExpArray, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 0, 0, NULL, NonType); }
-#line 1516 "y.tab.c"
+#line 94 "lexer.y"
+                                                            { (yyval.node_val) = append(ConstExpArray, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 0, 0, NULL, NonType, (yylsp[-3]).first_line); }
+#line 1648 "y.tab.c"
     break;
 
   case 15: /* ConstInitVal: ConstExp  */
-#line 93 "lexer.y"
-                                                        { (yyval.node_val) = append(ConstInitVal, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
-#line 1522 "y.tab.c"
+#line 97 "lexer.y"
+                                                        { (yyval.node_val) = append(ConstInitVal, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType, (yylsp[0]).first_line); }
+#line 1654 "y.tab.c"
     break;
 
   case 16: /* ConstInitVal: LBRACE RBRACE  */
-#line 94 "lexer.y"
-                                                                { (yyval.node_val) = append(ConstInitVal, NULL, NULL, NULL, 0, 0, NULL, NonType); }
-#line 1528 "y.tab.c"
+#line 98 "lexer.y"
+                                                                { (yyval.node_val) = append(ConstInitVal, NULL, NULL, NULL, 0, 0, NULL, NonType, (yylsp[-1]).first_line); }
+#line 1660 "y.tab.c"
     break;
 
   case 17: /* ConstInitVal: LBRACE ConstInitVal RBRACE  */
-#line 95 "lexer.y"
-                                                                { (yyval.node_val) = append(ConstInitVal, NULL, NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType); }
-#line 1534 "y.tab.c"
+#line 99 "lexer.y"
+                                                                { (yyval.node_val) = append(ConstInitVal, NULL, NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType, (yylsp[-2]).first_line); }
+#line 1666 "y.tab.c"
     break;
 
   case 18: /* ConstInitVal: LBRACE ConstInitVal COMMA ConstInitVal RBRACE  */
-#line 96 "lexer.y"
-                                                                { (yyval.node_val) = append(ConstInitVal, (yyvsp[-1].node_val), NULL, (yyvsp[-3].node_val), 0, 0, NULL, NonType); }
-#line 1540 "y.tab.c"
+#line 100 "lexer.y"
+                                                                { (yyval.node_val) = append(ConstInitVal, (yyvsp[-1].node_val), NULL, (yyvsp[-3].node_val), 0, 0, NULL, NonType, (yylsp[-4]).first_line); }
+#line 1672 "y.tab.c"
     break;
 
   case 19: /* ConstExp: MulExp  */
-#line 99 "lexer.y"
-                                { (yyval.node_val) = append(ConstExp, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
-#line 1546 "y.tab.c"
+#line 103 "lexer.y"
+                                { (yyval.node_val) = append(ConstExp, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType, (yylsp[0]).first_line); }
+#line 1678 "y.tab.c"
     break;
 
   case 20: /* ConstExp: MulExp PLUS Exp  */
-#line 100 "lexer.y"
-                                { (yyval.node_val) = append(ConstExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), PLUS, 0, NULL, NonType); }
-#line 1552 "y.tab.c"
+#line 104 "lexer.y"
+                                { (yyval.node_val) = append(ConstExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), PLUS, 0, NULL, NonType, (yylsp[-2]).first_line); }
+#line 1684 "y.tab.c"
     break;
 
   case 21: /* ConstExp: MulExp MINUS Exp  */
-#line 101 "lexer.y"
-                                { (yyval.node_val) = append(ConstExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), MINUS, 0, NULL, NonType); }
-#line 1558 "y.tab.c"
+#line 105 "lexer.y"
+                                { (yyval.node_val) = append(ConstExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), MINUS, 0, NULL, NonType, (yylsp[-2]).first_line); }
+#line 1690 "y.tab.c"
     break;
 
   case 22: /* VarDecl: INT VarDef END  */
-#line 104 "lexer.y"
-                             { (yyval.node_val) = append(VarDecl, NULL, NULL, (yyvsp[-1].node_val), 0, 0, NULL, Int); }
-#line 1564 "y.tab.c"
+#line 108 "lexer.y"
+                             { (yyval.node_val) = append(VarDecl, NULL, NULL, (yyvsp[-1].node_val), 0, 0, NULL, Int, (yylsp[-2]).first_line); }
+#line 1696 "y.tab.c"
     break;
 
   case 23: /* VarDecl: FLOAT VarDef END  */
-#line 105 "lexer.y"
-                             { (yyval.node_val) = append(VarDecl, NULL, NULL, (yyvsp[-1].node_val), 0, 0, NULL, Float); }
-#line 1570 "y.tab.c"
+#line 109 "lexer.y"
+                             { (yyval.node_val) = append(VarDecl, NULL, NULL, (yyvsp[-1].node_val), 0, 0, NULL, Float, (yylsp[-2]).first_line); }
+#line 1702 "y.tab.c"
     break;
 
   case 24: /* VarDef: IDENT ConstExpArray  */
-#line 108 "lexer.y"
+#line 112 "lexer.y"
                                                            { 
                                                             if(!check_symbol((yyvsp[-1].strval), Var)) 
                                                                 add_symbol((yyvsp[-1].strval), Var);
                                                             else
                                                                 yyerror((yyvsp[-1].strval), VarRedecleared);
-                                                            (yyval.node_val) = append(VarDef, NULL, (yyvsp[0].node_val), NULL, 0, 0, (yyvsp[-1].strval), NonType); 
+                                                            (yyval.node_val) = append(VarDef, NULL, (yyvsp[0].node_val), NULL, 0, 0, (yyvsp[-1].strval), NonType, (yylsp[-1]).first_line); 
                                                         }
-#line 1582 "y.tab.c"
+#line 1714 "y.tab.c"
     break;
 
   case 25: /* VarDef: IDENT ConstExpArray ASSIGN InitVal  */
-#line 115 "lexer.y"
+#line 119 "lexer.y"
                                                            { 
                                                             if(!check_symbol((yyvsp[-3].strval), Var)) 
                                                                 add_symbol((yyvsp[-3].strval), Var);
                                                             else
                                                                 yyerror((yyvsp[-3].strval), VarRedecleared);
-                                                            (yyval.node_val) = append(VarDef, NULL, (yyvsp[-2].node_val), (yyvsp[0].node_val), 0, 0, (yyvsp[-3].strval), NonType); 
+                                                            (yyval.node_val) = append(VarDef, NULL, (yyvsp[-2].node_val), (yyvsp[0].node_val), 0, 0, (yyvsp[-3].strval), NonType, (yylsp[-3]).first_line); 
                                                         }
-#line 1594 "y.tab.c"
+#line 1726 "y.tab.c"
     break;
 
   case 26: /* VarDef: IDENT ConstExpArray COMMA VarDef  */
-#line 122 "lexer.y"
+#line 126 "lexer.y"
                                                            { 
                                                             if(!check_symbol((yyvsp[-3].strval), Var)) 
                                                                 add_symbol((yyvsp[-3].strval), Var);
                                                             else
                                                                 yyerror((yyvsp[-3].strval), VarRedecleared);
-                                                            (yyval.node_val) = append(VarDef, (yyvsp[0].node_val), (yyvsp[-2].node_val), NULL, 0, 0, (yyvsp[-3].strval), NonType); 
+                                                            (yyval.node_val) = append(VarDef, (yyvsp[0].node_val), (yyvsp[-2].node_val), NULL, 0, 0, (yyvsp[-3].strval), NonType, (yylsp[-3]).first_line); 
                                                         }
-#line 1606 "y.tab.c"
+#line 1738 "y.tab.c"
     break;
 
   case 27: /* VarDef: IDENT ConstExpArray ASSIGN InitVal COMMA VarDef  */
-#line 129 "lexer.y"
+#line 133 "lexer.y"
                                                            { 
                                                             if(!check_symbol((yyvsp[-5].strval), Var)) 
                                                                 add_symbol((yyvsp[-5].strval), Var);
                                                             else
                                                                 yyerror((yyvsp[-5].strval), VarRedecleared);
-                                                            (yyval.node_val) = append(VarDef, (yyvsp[0].node_val), (yyvsp[-4].node_val), (yyvsp[-2].node_val), 0, 0, (yyvsp[-5].strval), NonType); 
-                                                        }
-#line 1618 "y.tab.c"
-    break;
-
-  case 28: /* InitVal: Exp  */
-#line 138 "lexer.y"
-                        { (yyval.node_val) = append(InitVal, NULL, NULL, (yyvsp[0].node_val), Exp, 0, NULL, NonType); }
-#line 1624 "y.tab.c"
-    break;
-
-  case 29: /* InitVal: LBRACE RBRACE  */
-#line 139 "lexer.y"
-                                { (yyval.node_val) = append(InitVal, NULL, NULL, NULL, InitVals, 0, NULL, NonType); }
-#line 1630 "y.tab.c"
-    break;
-
-  case 30: /* InitVal: LBRACE InitVals RBRACE  */
-#line 140 "lexer.y"
-                                { (yyval.node_val) = append(InitVal, NULL, NULL, (yyvsp[-1].node_val), InitVals, 0, NULL, NonType); }
-#line 1636 "y.tab.c"
-    break;
-
-  case 31: /* InitVals: InitVal  */
-#line 143 "lexer.y"
-                                        { (yyval.node_val) = append(InitVals, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
-#line 1642 "y.tab.c"
-    break;
-
-  case 32: /* InitVals: InitVal COMMA InitVals  */
-#line 144 "lexer.y"
-                                        { (yyval.node_val) = append(InitVals, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 0, 0, NULL, NonType); }
-#line 1648 "y.tab.c"
-    break;
-
-  case 33: /* FuncDef: INT IDENT LPARENT RPARENT Block  */
-#line 147 "lexer.y"
-                                                             { 
-                                                    if(!check_symbol((yyvsp[-3].strval), Func)) 
-                                                        add_symbol((yyvsp[-3].strval), Func);
-                                                    else
-                                                        yyerror((yyvsp[-3].strval), FuncRedecleared);
-                                                    (yyval.node_val) = append(FuncDef, NULL, NULL, (yyvsp[0].node_val), 0, 0, (yyvsp[-3].strval), Int); 
-                                                }
-#line 1660 "y.tab.c"
-    break;
-
-  case 34: /* FuncDef: FLOAT IDENT LPARENT RPARENT Block  */
-#line 154 "lexer.y"
-                                                             { 
-                                                    if(!check_symbol((yyvsp[-3].strval), Func)) 
-                                                        add_symbol((yyvsp[-3].strval), Func);
-                                                    else
-                                                        yyerror((yyvsp[-3].strval), FuncRedecleared);
-                                                    (yyval.node_val) = append(FuncDef, NULL, NULL, (yyvsp[0].node_val), 0, 0, (yyvsp[-3].strval), Float); 
-                                                }
-#line 1672 "y.tab.c"
-    break;
-
-  case 35: /* FuncDef: VOID IDENT LPARENT RPARENT Block  */
-#line 161 "lexer.y"
-                                                             { 
-                                                    if(!check_symbol((yyvsp[-3].strval), Func)) 
-                                                        add_symbol((yyvsp[-3].strval), Func);
-                                                    else
-                                                        yyerror((yyvsp[-3].strval), FuncRedecleared);
-                                                    (yyval.node_val) = append(FuncDef, NULL, NULL, (yyvsp[0].node_val), 0, 0, (yyvsp[-3].strval), Void); 
-                                                }
-#line 1684 "y.tab.c"
-    break;
-
-  case 36: /* FuncDef: INT IDENT LPARENT FuncFParam RPARENT Block  */
-#line 168 "lexer.y"
-                                                             { 
-                                                    if(!check_symbol((yyvsp[-4].strval), Func)) 
-                                                        add_symbol((yyvsp[-4].strval), Func);
-                                                    else
-                                                        yyerror((yyvsp[-4].strval), FuncRedecleared);
-                                                    (yyval.node_val) = append(FuncDef, NULL, (yyvsp[-2].node_val), (yyvsp[0].node_val), 0, 0, (yyvsp[-4].strval), Int); 
-                                                }
-#line 1696 "y.tab.c"
-    break;
-
-  case 37: /* FuncDef: FLOAT IDENT LPARENT FuncFParam RPARENT Block  */
-#line 175 "lexer.y"
-                                                             { 
-                                                    if(!check_symbol((yyvsp[-4].strval), Func)) 
-                                                        add_symbol((yyvsp[-4].strval), Func);
-                                                    else
-                                                        yyerror((yyvsp[-4].strval), FuncRedecleared);
-                                                    (yyval.node_val) = append(FuncDef, NULL, (yyvsp[-2].node_val), (yyvsp[0].node_val), 0, 0, (yyvsp[-4].strval), Float); 
-                                                }
-#line 1708 "y.tab.c"
-    break;
-
-  case 38: /* FuncDef: VOID IDENT LPARENT FuncFParam RPARENT Block  */
-#line 182 "lexer.y"
-                                                             { 
-                                                    if(!check_symbol((yyvsp[-4].strval), Func)) 
-                                                        add_symbol((yyvsp[-4].strval), Func);
-                                                    else
-                                                        yyerror((yyvsp[-4].strval), FuncRedecleared);
-                                                    (yyval.node_val) = append(FuncDef, NULL, (yyvsp[-2].node_val), (yyvsp[0].node_val), 0, 0, (yyvsp[-4].strval), Void); 
-                                                }
-#line 1720 "y.tab.c"
-    break;
-
-  case 39: /* FuncFParam: INT IDENT  */
-#line 191 "lexer.y"
-                                                           { 
-                                                            if(!check_symbol((yyvsp[0].strval),Param))
-                                                                add_symbol((yyvsp[0].strval),Param);
-                                                            (yyval.node_val) = append(FuncFParam, NULL, NULL, NULL, 0, 0, (yyvsp[0].strval), Int); 
-                                                        }
-#line 1730 "y.tab.c"
-    break;
-
-  case 40: /* FuncFParam: FLOAT IDENT  */
-#line 196 "lexer.y"
-                                                           { 
-                                                            if(!check_symbol((yyvsp[0].strval),Param))
-                                                                add_symbol((yyvsp[0].strval),Param);
-                                                            (yyval.node_val) = append(FuncFParam, NULL, NULL, NULL, 0, 0, (yyvsp[0].strval), Float); 
-                                                        }
-#line 1740 "y.tab.c"
-    break;
-
-  case 41: /* FuncFParam: INT IDENT LBRACKET RBRACKET ExpArray  */
-#line 201 "lexer.y"
-                                                                       { 
-                                                            if(!check_symbol((yyvsp[-3].strval),Param))
-                                                                add_symbol((yyvsp[-3].strval),Param);
-                                                            (yyval.node_val) = append(FuncFParam, NULL, NULL, (yyvsp[0].node_val), 0, 0, (yyvsp[-3].strval), Int); 
+                                                            (yyval.node_val) = append(VarDef, (yyvsp[0].node_val), (yyvsp[-4].node_val), (yyvsp[-2].node_val), 0, 0, (yyvsp[-5].strval), NonType, (yylsp[-5]).first_line); 
                                                         }
 #line 1750 "y.tab.c"
     break;
 
-  case 42: /* FuncFParam: FLOAT IDENT LBRACKET RBRACKET ExpArray  */
-#line 206 "lexer.y"
-                                                                       { 
-                                                            if(!check_symbol((yyvsp[-3].strval),Param))
-                                                                add_symbol((yyvsp[-3].strval),Param);
-                                                            (yyval.node_val) = append(FuncFParam, NULL, NULL, (yyvsp[0].node_val), 0, 0, (yyvsp[-3].strval), Float); 
-                                                        }
-#line 1760 "y.tab.c"
+  case 28: /* InitVal: Exp  */
+#line 142 "lexer.y"
+                        { (yyval.node_val) = append(InitVal, NULL, NULL, (yyvsp[0].node_val), Exp, 0, NULL, NonType, (yylsp[0]).first_line); }
+#line 1756 "y.tab.c"
     break;
 
-  case 43: /* FuncFParam: INT IDENT COMMA FuncFParam  */
-#line 211 "lexer.y"
-                                                           {   
-                                                            if(!check_symbol((yyvsp[-2].strval),Param))
-                                                                add_symbol((yyvsp[-2].strval),Param);
-                                                            (yyval.node_val) = append(FuncFParam, (yyvsp[0].node_val), NULL, NULL, 0, 0, (yyvsp[-2].strval), Int); 
-                                                        }
-#line 1770 "y.tab.c"
+  case 29: /* InitVal: LBRACE RBRACE  */
+#line 143 "lexer.y"
+                                { (yyval.node_val) = append(InitVal, NULL, NULL, NULL, InitVals, 0, NULL, NonType, (yylsp[-1]).first_line); }
+#line 1762 "y.tab.c"
     break;
 
-  case 44: /* FuncFParam: FLOAT IDENT COMMA FuncFParam  */
-#line 216 "lexer.y"
-                                                           { 
-                                                            if(!check_symbol((yyvsp[-2].strval),Param))
-                                                                add_symbol((yyvsp[-2].strval),Param);
-                                                            (yyval.node_val) = append(FuncFParam, (yyvsp[0].node_val), NULL, NULL, 0, 0, (yyvsp[-2].strval), Float); 
-                                                        }
+  case 30: /* InitVal: LBRACE InitVals RBRACE  */
+#line 144 "lexer.y"
+                                { (yyval.node_val) = append(InitVal, NULL, NULL, (yyvsp[-1].node_val), InitVals, 0, NULL, NonType, (yylsp[-2]).first_line); }
+#line 1768 "y.tab.c"
+    break;
+
+  case 31: /* InitVals: InitVal  */
+#line 147 "lexer.y"
+                                        { (yyval.node_val) = append(InitVals, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType, (yylsp[0]).first_line); }
+#line 1774 "y.tab.c"
+    break;
+
+  case 32: /* InitVals: InitVal COMMA InitVals  */
+#line 148 "lexer.y"
+                                        { (yyval.node_val) = append(InitVals, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 0, 0, NULL, NonType, (yylsp[-2]).first_line); }
 #line 1780 "y.tab.c"
     break;
 
-  case 45: /* FuncFParam: INT IDENT LBRACKET RBRACKET ExpArray COMMA FuncFParam  */
-#line 221 "lexer.y"
-                                                                       {
-                                                            if(!check_symbol((yyvsp[-5].strval),Param))
-                                                                add_symbol((yyvsp[-5].strval),Param);
-                                                            (yyval.node_val) = append(FuncFParam, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 0, 0, (yyvsp[-5].strval), Int); 
+  case 33: /* FuncDef: INT IDENT LPARENT RPARENT Block  */
+#line 151 "lexer.y"
+                                                             { 
+                                                    if(!check_symbol((yyvsp[-3].strval), Func)) 
+                                                        add_symbol((yyvsp[-3].strval), Func);
+                                                    else
+                                                        yyerror((yyvsp[-3].strval), FuncRedecleared);
+                                                    (yyval.node_val) = append(FuncDef, NULL, NULL, (yyvsp[0].node_val), 0, 0, (yyvsp[-3].strval), Int, (yylsp[-4]).first_line); 
+                                                }
+#line 1792 "y.tab.c"
+    break;
+
+  case 34: /* FuncDef: FLOAT IDENT LPARENT RPARENT Block  */
+#line 158 "lexer.y"
+                                                             { 
+                                                    if(!check_symbol((yyvsp[-3].strval), Func)) 
+                                                        add_symbol((yyvsp[-3].strval), Func);
+                                                    else
+                                                        yyerror((yyvsp[-3].strval), FuncRedecleared);
+                                                    (yyval.node_val) = append(FuncDef, NULL, NULL, (yyvsp[0].node_val), 0, 0, (yyvsp[-3].strval), Float, (yylsp[-4]).first_line); 
+                                                }
+#line 1804 "y.tab.c"
+    break;
+
+  case 35: /* FuncDef: VOID IDENT LPARENT RPARENT Block  */
+#line 165 "lexer.y"
+                                                             { 
+                                                    if(!check_symbol((yyvsp[-3].strval), Func)) 
+                                                        add_symbol((yyvsp[-3].strval), Func);
+                                                    else
+                                                        yyerror((yyvsp[-3].strval), FuncRedecleared);
+                                                    (yyval.node_val) = append(FuncDef, NULL, NULL, (yyvsp[0].node_val), 0, 0, (yyvsp[-3].strval), Void, (yylsp[-4]).first_line); 
+                                                }
+#line 1816 "y.tab.c"
+    break;
+
+  case 36: /* FuncDef: INT IDENT LPARENT FuncFParam RPARENT Block  */
+#line 172 "lexer.y"
+                                                             { 
+                                                    if(!check_symbol((yyvsp[-4].strval), Func)) 
+                                                        add_symbol((yyvsp[-4].strval), Func);
+                                                    else
+                                                        yyerror((yyvsp[-4].strval), FuncRedecleared);
+                                                    (yyval.node_val) = append(FuncDef, NULL, (yyvsp[-2].node_val), (yyvsp[0].node_val), 0, 0, (yyvsp[-4].strval), Int, (yylsp[-5]).first_line); 
+                                                }
+#line 1828 "y.tab.c"
+    break;
+
+  case 37: /* FuncDef: FLOAT IDENT LPARENT FuncFParam RPARENT Block  */
+#line 179 "lexer.y"
+                                                             { 
+                                                    if(!check_symbol((yyvsp[-4].strval), Func)) 
+                                                        add_symbol((yyvsp[-4].strval), Func);
+                                                    else
+                                                        yyerror((yyvsp[-4].strval), FuncRedecleared);
+                                                    (yyval.node_val) = append(FuncDef, NULL, (yyvsp[-2].node_val), (yyvsp[0].node_val), 0, 0, (yyvsp[-4].strval), Float, (yylsp[-5]).first_line); 
+                                                }
+#line 1840 "y.tab.c"
+    break;
+
+  case 38: /* FuncDef: VOID IDENT LPARENT FuncFParam RPARENT Block  */
+#line 186 "lexer.y"
+                                                             { 
+                                                    if(!check_symbol((yyvsp[-4].strval), Func)) 
+                                                        add_symbol((yyvsp[-4].strval), Func);
+                                                    else
+                                                        yyerror((yyvsp[-4].strval), FuncRedecleared);
+                                                    (yyval.node_val) = append(FuncDef, NULL, (yyvsp[-2].node_val), (yyvsp[0].node_val), 0, 0, (yyvsp[-4].strval), Void, (yylsp[-5]).first_line); 
+                                                }
+#line 1852 "y.tab.c"
+    break;
+
+  case 39: /* FuncFParam: INT IDENT  */
+#line 195 "lexer.y"
+                                                           { 
+                                                            if(!check_symbol((yyvsp[0].strval),Param))
+                                                                add_symbol((yyvsp[0].strval),Param);
+                                                            (yyval.node_val) = append(FuncFParam, NULL, NULL, NULL, 0, 0, (yyvsp[0].strval), Int, (yylsp[-1]).first_line); 
                                                         }
-#line 1790 "y.tab.c"
+#line 1862 "y.tab.c"
     break;
 
-  case 46: /* FuncFParam: FLOAT IDENT LBRACKET RBRACKET ExpArray COMMA FuncFParam  */
-#line 226 "lexer.y"
-                                                                       { 
-                                                            if(!check_symbol((yyvsp[-5].strval),Param))
-                                                                add_symbol((yyvsp[-5].strval),Param);
-                                                            (yyval.node_val) = append(FuncFParam, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 0, 0, (yyvsp[-5].strval), Float); 
+  case 40: /* FuncFParam: FLOAT IDENT  */
+#line 200 "lexer.y"
+                                                           { 
+                                                            if(!check_symbol((yyvsp[0].strval),Param))
+                                                                add_symbol((yyvsp[0].strval),Param);
+                                                            (yyval.node_val) = append(FuncFParam, NULL, NULL, NULL, 0, 0, (yyvsp[0].strval), Float, (yylsp[-1]).first_line); 
                                                         }
-#line 1800 "y.tab.c"
-    break;
-
-  case 47: /* Block: LBRACE BlockItem RBRACE  */
-#line 233 "lexer.y"
-                               { (yyval.node_val) = append(Block, NULL, NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType); }
-#line 1806 "y.tab.c"
-    break;
-
-  case 48: /* BlockItem: %empty  */
-#line 235 "lexer.y"
-                                { (yyval.node_val) = NULL; }
-#line 1812 "y.tab.c"
-    break;
-
-  case 49: /* BlockItem: ConstDecl BlockItem  */
-#line 236 "lexer.y"
-                                { (yyval.node_val) = append(BlockItem, (yyvsp[0].node_val), NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType); }
-#line 1818 "y.tab.c"
-    break;
-
-  case 50: /* BlockItem: VarDecl BlockItem  */
-#line 237 "lexer.y"
-                                { (yyval.node_val) = append(BlockItem, (yyvsp[0].node_val), NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType); }
-#line 1824 "y.tab.c"
-    break;
-
-  case 51: /* BlockItem: Stmt BlockItem  */
-#line 238 "lexer.y"
-                                { (yyval.node_val) = append(BlockItem, (yyvsp[0].node_val), NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType); }
-#line 1830 "y.tab.c"
-    break;
-
-  case 52: /* Stmt: LVal ASSIGN Exp END  */
-#line 241 "lexer.y"
-                                  { (yyval.node_val) = append(AssignStmt, (yyvsp[-1].node_val), NULL, (yyvsp[-3].node_val), 0, 0, NULL, NonType); }
-#line 1836 "y.tab.c"
-    break;
-
-  case 53: /* Stmt: Exp END  */
-#line 242 "lexer.y"
-                                  { (yyval.node_val) = append(ExpStmt, NULL, NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType); }
-#line 1842 "y.tab.c"
-    break;
-
-  case 54: /* Stmt: Block  */
-#line 243 "lexer.y"
-                                     { (yyval.node_val) = append(BlockStmt, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
-#line 1848 "y.tab.c"
-    break;
-
-  case 55: /* Stmt: IF LPARENT Cond RPARENT Stmt  */
-#line 244 "lexer.y"
-                                               { (yyval.node_val) = append(IfStmt, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 0, 0, NULL, NonType); }
-#line 1854 "y.tab.c"
-    break;
-
-  case 56: /* Stmt: IF LPARENT Cond RPARENT Stmt ELSE Stmt  */
-#line 245 "lexer.y"
-                                               { (yyval.node_val) = append(IfElseStmt, (yyvsp[0].node_val), (yyvsp[-2].node_val), (yyvsp[-4].node_val), 0, 0, NULL, NonType); }
-#line 1860 "y.tab.c"
-    break;
-
-  case 57: /* Stmt: WHILE LPARENT Cond RPARENT Stmt  */
-#line 246 "lexer.y"
-                                               { (yyval.node_val) = append(WhileStmt, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 0, 0, NULL, NonType); }
-#line 1866 "y.tab.c"
-    break;
-
-  case 58: /* Stmt: BREAK END  */
-#line 247 "lexer.y"
-                                  { (yyval.node_val) = append(BreakStmt, NULL, NULL, NULL, 0, 0, NULL, NonType); }
 #line 1872 "y.tab.c"
     break;
 
-  case 59: /* Stmt: CONTINUE END  */
+  case 41: /* FuncFParam: INT IDENT LBRACKET RBRACKET ExpArray  */
+#line 205 "lexer.y"
+                                                                       { 
+                                                            if(!check_symbol((yyvsp[-3].strval),Param))
+                                                                add_symbol((yyvsp[-3].strval),Param);
+                                                            (yyval.node_val) = append(FuncFParam, NULL, NULL, (yyvsp[0].node_val), 0, 0, (yyvsp[-3].strval), Int, (yylsp[-4]).first_line); 
+                                                        }
+#line 1882 "y.tab.c"
+    break;
+
+  case 42: /* FuncFParam: FLOAT IDENT LBRACKET RBRACKET ExpArray  */
+#line 210 "lexer.y"
+                                                                       { 
+                                                            if(!check_symbol((yyvsp[-3].strval),Param))
+                                                                add_symbol((yyvsp[-3].strval),Param);
+                                                            (yyval.node_val) = append(FuncFParam, NULL, NULL, (yyvsp[0].node_val), 0, 0, (yyvsp[-3].strval), Float, (yylsp[-4]).first_line); 
+                                                        }
+#line 1892 "y.tab.c"
+    break;
+
+  case 43: /* FuncFParam: INT IDENT COMMA FuncFParam  */
+#line 215 "lexer.y"
+                                                           {   
+                                                            if(!check_symbol((yyvsp[-2].strval),Param))
+                                                                add_symbol((yyvsp[-2].strval),Param);
+                                                            (yyval.node_val) = append(FuncFParam, (yyvsp[0].node_val), NULL, NULL, 0, 0, (yyvsp[-2].strval), Int, (yylsp[-3]).first_line); 
+                                                        }
+#line 1902 "y.tab.c"
+    break;
+
+  case 44: /* FuncFParam: FLOAT IDENT COMMA FuncFParam  */
+#line 220 "lexer.y"
+                                                           { 
+                                                            if(!check_symbol((yyvsp[-2].strval),Param))
+                                                                add_symbol((yyvsp[-2].strval),Param);
+                                                            (yyval.node_val) = append(FuncFParam, (yyvsp[0].node_val), NULL, NULL, 0, 0, (yyvsp[-2].strval), Float, (yylsp[-3]).first_line); 
+                                                        }
+#line 1912 "y.tab.c"
+    break;
+
+  case 45: /* FuncFParam: INT IDENT LBRACKET RBRACKET ExpArray COMMA FuncFParam  */
+#line 225 "lexer.y"
+                                                                       {
+                                                            if(!check_symbol((yyvsp[-5].strval),Param))
+                                                                add_symbol((yyvsp[-5].strval),Param);
+                                                            (yyval.node_val) = append(FuncFParam, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 0, 0, (yyvsp[-5].strval), Int, (yylsp[-6]).first_line); 
+                                                        }
+#line 1922 "y.tab.c"
+    break;
+
+  case 46: /* FuncFParam: FLOAT IDENT LBRACKET RBRACKET ExpArray COMMA FuncFParam  */
+#line 230 "lexer.y"
+                                                                       { 
+                                                            if(!check_symbol((yyvsp[-5].strval),Param))
+                                                                add_symbol((yyvsp[-5].strval),Param);
+                                                            (yyval.node_val) = append(FuncFParam, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 0, 0, (yyvsp[-5].strval), Float, (yylsp[-6]).first_line); 
+                                                        }
+#line 1932 "y.tab.c"
+    break;
+
+  case 47: /* Block: LBRACE BlockItem RBRACE  */
+#line 237 "lexer.y"
+                               {  (yyval.node_val) = append(Block, NULL, NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType, (yylsp[-2]).first_line); }
+#line 1938 "y.tab.c"
+    break;
+
+  case 48: /* BlockItem: %empty  */
+#line 239 "lexer.y"
+                                { (yyval.node_val) = NULL; }
+#line 1944 "y.tab.c"
+    break;
+
+  case 49: /* BlockItem: ConstDecl BlockItem  */
+#line 240 "lexer.y"
+                                { (yyval.node_val) = append(BlockItem, (yyvsp[0].node_val), NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType, (yylsp[-1]).first_line); }
+#line 1950 "y.tab.c"
+    break;
+
+  case 50: /* BlockItem: VarDecl BlockItem  */
+#line 241 "lexer.y"
+                                { (yyval.node_val) = append(BlockItem, (yyvsp[0].node_val), NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType, (yylsp[-1]).first_line); }
+#line 1956 "y.tab.c"
+    break;
+
+  case 51: /* BlockItem: Stmt BlockItem  */
+#line 242 "lexer.y"
+                                { (yyval.node_val) = append(BlockItem, (yyvsp[0].node_val), NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType, (yylsp[-1]).first_line); }
+#line 1962 "y.tab.c"
+    break;
+
+  case 52: /* Stmt: LVal ASSIGN Exp END  */
+#line 245 "lexer.y"
+                                  { (yyval.node_val) = append(AssignStmt, (yyvsp[-1].node_val), NULL, (yyvsp[-3].node_val), 0, 0, NULL, NonType, (yylsp[-3]).first_line); }
+#line 1968 "y.tab.c"
+    break;
+
+  case 53: /* Stmt: Exp END  */
+#line 246 "lexer.y"
+                                  { (yyval.node_val) = append(ExpStmt, NULL, NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType, (yylsp[-1]).first_line); }
+#line 1974 "y.tab.c"
+    break;
+
+  case 54: /* Stmt: Block  */
+#line 247 "lexer.y"
+                                     { (yyval.node_val) = append(BlockStmt, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType, (yylsp[0]).first_line); }
+#line 1980 "y.tab.c"
+    break;
+
+  case 55: /* Stmt: IF LPARENT Cond RPARENT Stmt  */
 #line 248 "lexer.y"
-                                  { (yyval.node_val) = append(ContinueStmt, NULL, NULL, NULL, 0, 0, NULL, NonType); }
-#line 1878 "y.tab.c"
+                                               { (yyval.node_val) = append(IfStmt, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 0, 0, NULL, NonType, (yylsp[-4]).first_line); }
+#line 1986 "y.tab.c"
+    break;
+
+  case 56: /* Stmt: IF LPARENT Cond RPARENT Stmt ELSE Stmt  */
+#line 249 "lexer.y"
+                                               { (yyval.node_val) = append(IfElseStmt, (yyvsp[0].node_val), (yyvsp[-2].node_val), (yyvsp[-4].node_val), 0, 0, NULL, NonType, (yylsp[-6]).first_line); }
+#line 1992 "y.tab.c"
+    break;
+
+  case 57: /* Stmt: WHILE LPARENT Cond RPARENT Stmt  */
+#line 250 "lexer.y"
+                                               { (yyval.node_val) = append(WhileStmt, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 0, 0, NULL, NonType, (yylsp[-4]).first_line); }
+#line 1998 "y.tab.c"
+    break;
+
+  case 58: /* Stmt: BREAK END  */
+#line 251 "lexer.y"
+                                  { (yyval.node_val) = append(BreakStmt, NULL, NULL, NULL, 0, 0, NULL, NonType, (yylsp[-1]).first_line); }
+#line 2004 "y.tab.c"
+    break;
+
+  case 59: /* Stmt: CONTINUE END  */
+#line 252 "lexer.y"
+                                  { (yyval.node_val) = append(ContinueStmt, NULL, NULL, NULL, 0, 0, NULL, NonType, (yylsp[-1]).first_line); }
+#line 2010 "y.tab.c"
     break;
 
   case 60: /* Stmt: RETURN Exp END  */
-#line 249 "lexer.y"
-                                  { (yyval.node_val) = append(ReturnStmt, NULL, NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType); }
-#line 1884 "y.tab.c"
+#line 253 "lexer.y"
+                                  { (yyval.node_val) = append(ReturnStmt, NULL, NULL, (yyvsp[-1].node_val), 0, 0, NULL, NonType, (yylsp[-2]).first_line); }
+#line 2016 "y.tab.c"
     break;
 
   case 61: /* Stmt: RETURN END  */
-#line 250 "lexer.y"
-                                  { (yyval.node_val) = append(BlankReturnStmt, NULL, NULL, NULL, 0, 0, NULL, NonType); }
-#line 1890 "y.tab.c"
+#line 254 "lexer.y"
+                                  { (yyval.node_val) = append(BlankReturnStmt, NULL, NULL, NULL, 0, 0, NULL, NonType, (yylsp[-1]).first_line); }
+#line 2022 "y.tab.c"
     break;
 
   case 62: /* Stmt: error  */
-#line 251 "lexer.y"
+#line 255 "lexer.y"
                                      { 
                                         if(error_cur_line != yylineno) 
                                         {
@@ -1900,245 +2032,245 @@ yyreduce:
                                         yyclearin; 
                                         yyerrok; 
                                      }
-#line 1904 "y.tab.c"
+#line 2036 "y.tab.c"
     break;
 
   case 63: /* Exp: AddExp  */
-#line 262 "lexer.y"
-                { (yyval.node_val) = append(Exp, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
-#line 1910 "y.tab.c"
+#line 266 "lexer.y"
+                { (yyval.node_val) = append(Exp, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType, (yylsp[0]).first_line); }
+#line 2042 "y.tab.c"
     break;
 
   case 64: /* AddExp: MulExp  */
-#line 264 "lexer.y"
-                                { (yyval.node_val) = append(AddExp, NULL, NULL, (yyvsp[0].node_val), Mul, 0, NULL, NonType); }
-#line 1916 "y.tab.c"
+#line 268 "lexer.y"
+                                { (yyval.node_val) = append(AddExp, NULL, NULL, (yyvsp[0].node_val), Mul, 0, NULL, NonType, (yylsp[0]).first_line); }
+#line 2048 "y.tab.c"
     break;
 
   case 65: /* AddExp: MulExp PLUS AddExp  */
-#line 265 "lexer.y"
-                                { (yyval.node_val) = append(AddExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), Plus, 0, NULL, NonType); }
-#line 1922 "y.tab.c"
+#line 269 "lexer.y"
+                                { (yyval.node_val) = append(AddExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), Plus, 0, NULL, NonType, (yylsp[-2]).first_line); }
+#line 2054 "y.tab.c"
     break;
 
   case 66: /* AddExp: MulExp MINUS AddExp  */
-#line 266 "lexer.y"
-                                { (yyval.node_val) = append(AddExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), Minus, 0, NULL, NonType); }
-#line 1928 "y.tab.c"
+#line 270 "lexer.y"
+                                { (yyval.node_val) = append(AddExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), Minus, 0, NULL, NonType, (yylsp[-2]).first_line); }
+#line 2060 "y.tab.c"
     break;
 
   case 67: /* MulExp: UnaryExp  */
-#line 269 "lexer.y"
-                                { (yyval.node_val) = append(MulExp, NULL, NULL, (yyvsp[0].node_val), UnaryExp, 0, NULL, NonType); }
-#line 1934 "y.tab.c"
+#line 273 "lexer.y"
+                                { (yyval.node_val) = append(MulExp, NULL, NULL, (yyvsp[0].node_val), UnaryExp, 0, NULL, NonType, (yylsp[0]).first_line); }
+#line 2066 "y.tab.c"
     break;
 
   case 68: /* MulExp: UnaryExp MUL MulExp  */
-#line 270 "lexer.y"
-                                { (yyval.node_val) = append(MulExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), Mul, 0, NULL, NonType); }
-#line 1940 "y.tab.c"
+#line 274 "lexer.y"
+                                { (yyval.node_val) = append(MulExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), Mul, 0, NULL, NonType, (yylsp[-2]).first_line); }
+#line 2072 "y.tab.c"
     break;
 
   case 69: /* MulExp: UnaryExp DIV MulExp  */
-#line 271 "lexer.y"
-                                { (yyval.node_val) = append(MulExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), Div, 0, NULL, NonType); }
-#line 1946 "y.tab.c"
+#line 275 "lexer.y"
+                                { (yyval.node_val) = append(MulExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), Div, 0, NULL, NonType, (yylsp[-2]).first_line); }
+#line 2078 "y.tab.c"
     break;
 
   case 70: /* MulExp: UnaryExp MOD MulExp  */
-#line 272 "lexer.y"
-                                { (yyval.node_val) = append(MulExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), Mod, 0, NULL, NonType); }
-#line 1952 "y.tab.c"
+#line 276 "lexer.y"
+                                { (yyval.node_val) = append(MulExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), Mod, 0, NULL, NonType, (yylsp[-2]).first_line); }
+#line 2084 "y.tab.c"
     break;
 
   case 71: /* UnaryExp: PrimaryExp  */
-#line 275 "lexer.y"
-                                { (yyval.node_val) = append(UnaryExp, NULL, NULL, (yyvsp[0].node_val), PrimaryExp, 0, NULL, NonType); }
-#line 1958 "y.tab.c"
+#line 279 "lexer.y"
+                                { (yyval.node_val) = append(UnaryExp, NULL, NULL, (yyvsp[0].node_val), PrimaryExp, 0, NULL, NonType, (yylsp[0]).first_line); }
+#line 2090 "y.tab.c"
     break;
 
   case 72: /* UnaryExp: IDENT LPARENT RPARENT  */
-#line 276 "lexer.y"
+#line 280 "lexer.y"
                                              { 
                                     if(check_symbol((yyvsp[-2].strval), Var))
                                         yyerror((yyvsp[-2].strval), UseVarAsFunc);
                                     else if(!check_symbol((yyvsp[-2].strval), Func))
                                         yyerror((yyvsp[-2].strval), FuncUndecleared);
-                                    (yyval.node_val) = append(UnaryExp, NULL, NULL, NULL, FuncRParams, 0, (yyvsp[-2].strval), NonType); 
+                                    (yyval.node_val) = append(UnaryExp, NULL, NULL, NULL, FuncRParams, 0, (yyvsp[-2].strval), NonType, (yylsp[-2]).first_line); 
                                 }
-#line 1970 "y.tab.c"
+#line 2102 "y.tab.c"
     break;
 
   case 73: /* UnaryExp: IDENT LPARENT FuncRParams RPARENT  */
-#line 283 "lexer.y"
+#line 287 "lexer.y"
                                              { 
                                     if(check_symbol((yyvsp[-3].strval), Var))
                                         yyerror((yyvsp[-3].strval), UseVarAsFunc);
                                     else if(!check_symbol((yyvsp[-3].strval), Func))
                                         yyerror((yyvsp[-3].strval), FuncUndecleared);
-                                    (yyval.node_val) = append(UnaryExp, NULL, NULL, (yyvsp[-1].node_val), FuncRParams, 0, (yyvsp[-3].strval), NonType); 
+                                    (yyval.node_val) = append(UnaryExp, NULL, NULL, (yyvsp[-1].node_val), FuncRParams, 0, (yyvsp[-3].strval), NonType, (yylsp[-3]).first_line); 
                                 }
-#line 1982 "y.tab.c"
+#line 2114 "y.tab.c"
     break;
 
   case 74: /* UnaryExp: PLUS UnaryExp  */
-#line 290 "lexer.y"
-                                { (yyval.node_val) = append(UnaryExp, NULL, NULL, (yyvsp[0].node_val), PLUS, 0, NULL, NonType); }
-#line 1988 "y.tab.c"
+#line 294 "lexer.y"
+                                { (yyval.node_val) = append(UnaryExp, NULL, NULL, (yyvsp[0].node_val), PLUS, 0, NULL, NonType, (yylsp[-1]).first_line); }
+#line 2120 "y.tab.c"
     break;
 
   case 75: /* UnaryExp: MINUS UnaryExp  */
-#line 291 "lexer.y"
-                                { (yyval.node_val) = append(UnaryExp, NULL, NULL, (yyvsp[0].node_val), MINUS, 0, NULL, NonType); }
-#line 1994 "y.tab.c"
+#line 295 "lexer.y"
+                                { (yyval.node_val) = append(UnaryExp, NULL, NULL, (yyvsp[0].node_val), MINUS, 0, NULL, NonType, (yylsp[-1]).first_line); }
+#line 2126 "y.tab.c"
     break;
 
   case 76: /* UnaryExp: NOT UnaryExp  */
-#line 292 "lexer.y"
-                                { (yyval.node_val) = append(UnaryExp, NULL, NULL, (yyvsp[0].node_val), Not, 0, NULL, NonType); }
-#line 2000 "y.tab.c"
+#line 296 "lexer.y"
+                                { (yyval.node_val) = append(UnaryExp, NULL, NULL, (yyvsp[0].node_val), Not, 0, NULL, NonType, (yylsp[-1]).first_line); }
+#line 2132 "y.tab.c"
     break;
 
   case 77: /* FuncRParams: Exp  */
-#line 295 "lexer.y"
-                                        { (yyval.node_val) = append(FuncRParams, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
-#line 2006 "y.tab.c"
+#line 299 "lexer.y"
+                                        { (yyval.node_val) = append(FuncRParams, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType, (yylsp[0]).first_line); }
+#line 2138 "y.tab.c"
     break;
 
   case 78: /* FuncRParams: Exp COMMA FuncRParams  */
-#line 296 "lexer.y"
-                                        { (yyval.node_val) = append(FuncRParams, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 0, 0, NULL, NonType); }
-#line 2012 "y.tab.c"
+#line 300 "lexer.y"
+                                        { (yyval.node_val) = append(FuncRParams, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 0, 0, NULL, NonType, (yylsp[-2]).first_line); }
+#line 2144 "y.tab.c"
     break;
 
   case 79: /* PrimaryExp: LPARENT Exp RPARENT  */
-#line 299 "lexer.y"
-                                  { (yyval.node_val) = append(PrimaryExp, NULL, NULL, (yyvsp[-1].node_val), Exp, 0, NULL, NonType); }
-#line 2018 "y.tab.c"
+#line 303 "lexer.y"
+                                  { (yyval.node_val) = append(PrimaryExp, NULL, NULL, (yyvsp[-1].node_val), Exp, 0, NULL, NonType, (yylsp[-2]).first_line); }
+#line 2150 "y.tab.c"
     break;
 
   case 80: /* PrimaryExp: LVal  */
-#line 300 "lexer.y"
-                        { (yyval.node_val) = append(PrimaryExp, NULL, NULL, (yyvsp[0].node_val), LVal, 0, NULL, NonType); }
-#line 2024 "y.tab.c"
+#line 304 "lexer.y"
+                        { (yyval.node_val) = append(PrimaryExp, NULL, NULL, (yyvsp[0].node_val), LVal, 0, NULL, NonType, (yylsp[0]).first_line); }
+#line 2156 "y.tab.c"
     break;
 
   case 81: /* PrimaryExp: INTCONST  */
-#line 301 "lexer.y"
-                         { (yyval.node_val) = append(PrimaryExp, NULL, NULL, NULL, (yyvsp[0].ival), 0, NULL, Int); }
-#line 2030 "y.tab.c"
+#line 305 "lexer.y"
+                         { (yyval.node_val) = append(PrimaryExp, NULL, NULL, NULL, (yyvsp[0].ival), 0, NULL, Int, (yylsp[0]).first_line); }
+#line 2162 "y.tab.c"
     break;
 
   case 82: /* PrimaryExp: FLOATCONST  */
-#line 302 "lexer.y"
-                         { (yyval.node_val) = append(PrimaryExp, NULL, NULL, NULL, 0, (yyvsp[0].fval), NULL, Float); }
-#line 2036 "y.tab.c"
+#line 306 "lexer.y"
+                         { (yyval.node_val) = append(PrimaryExp, NULL, NULL, NULL, 0, (yyvsp[0].fval), NULL, Float, (yylsp[0]).first_line); }
+#line 2168 "y.tab.c"
     break;
 
   case 83: /* LVal: IDENT ExpArray  */
-#line 305 "lexer.y"
-                           { 
+#line 309 "lexer.y"
+                           {
                             if(check_symbol((yyvsp[-1].strval), Func))
                                 yyerror((yyvsp[-1].strval), UseFuncAsVar);
                             else if(!check_symbol((yyvsp[-1].strval),Var) && !check_symbol((yyvsp[-1].strval),Param))
                                 yyerror((yyvsp[-1].strval), VarUndecleared); 
-                            (yyval.node_val) = append(LVal, NULL, NULL, (yyvsp[0].node_val), 0, 0, (yyvsp[-1].strval), NonType); 
+                            (yyval.node_val) = append(LVal, NULL, NULL, (yyvsp[0].node_val), 0, 0, (yyvsp[-1].strval), NonType, (yylsp[-1]).first_line); 
                         }
-#line 2048 "y.tab.c"
+#line 2180 "y.tab.c"
     break;
 
   case 84: /* Cond: LOrExp  */
-#line 313 "lexer.y"
-                        { (yyval.node_val) = append(Cond, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
-#line 2054 "y.tab.c"
+#line 317 "lexer.y"
+                        { (yyval.node_val) = append(Cond, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType, (yylsp[0]).first_line); }
+#line 2186 "y.tab.c"
     break;
 
   case 85: /* LOrExp: LAndExp  */
-#line 315 "lexer.y"
-                                { (yyval.node_val) = append(Cond, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
-#line 2060 "y.tab.c"
+#line 319 "lexer.y"
+                                { (yyval.node_val) = append(Cond, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType, (yylsp[0]).first_line); }
+#line 2192 "y.tab.c"
     break;
 
   case 86: /* LOrExp: LAndExp OR LOrExp  */
-#line 316 "lexer.y"
-                                { (yyval.node_val) = append(Cond, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), OR, 0, 0, NonType); }
-#line 2066 "y.tab.c"
+#line 320 "lexer.y"
+                                { (yyval.node_val) = append(Cond, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), OR, 0, 0, NonType, (yylsp[-2]).first_line); }
+#line 2198 "y.tab.c"
     break;
 
   case 87: /* LAndExp: EqExp  */
-#line 319 "lexer.y"
-                                { (yyval.node_val) = append(LAndExp, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
-#line 2072 "y.tab.c"
+#line 323 "lexer.y"
+                                { (yyval.node_val) = append(LAndExp, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType, (yylsp[0]).first_line); }
+#line 2204 "y.tab.c"
     break;
 
   case 88: /* LAndExp: EqExp AND LAndExp  */
-#line 320 "lexer.y"
-                                { (yyval.node_val) = append(LAndExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), AND, 0, NULL, NonType); }
-#line 2078 "y.tab.c"
+#line 324 "lexer.y"
+                                { (yyval.node_val) = append(LAndExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), AND, 0, NULL, NonType, (yylsp[-2]).first_line); }
+#line 2210 "y.tab.c"
     break;
 
   case 89: /* EqExp: RelExp  */
-#line 323 "lexer.y"
-                        { (yyval.node_val) = append(EqExp, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
-#line 2084 "y.tab.c"
+#line 327 "lexer.y"
+                        { (yyval.node_val) = append(EqExp, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType, (yylsp[0]).first_line); }
+#line 2216 "y.tab.c"
     break;
 
   case 90: /* EqExp: RelExp EQUAL EqExp  */
-#line 324 "lexer.y"
-                           { (yyval.node_val) = append(EqExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), EQUAL, 0, NULL, NonType); }
-#line 2090 "y.tab.c"
+#line 328 "lexer.y"
+                           { (yyval.node_val) = append(EqExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), EQUAL, 0, NULL, NonType, (yylsp[-2]).first_line); }
+#line 2222 "y.tab.c"
     break;
 
   case 91: /* EqExp: RelExp NEQUAL EqExp  */
-#line 325 "lexer.y"
-                            { (yyval.node_val) = append(EqExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), NEQUAL, 0, NULL, NonType); }
-#line 2096 "y.tab.c"
+#line 329 "lexer.y"
+                            { (yyval.node_val) = append(EqExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), NEQUAL, 0, NULL, NonType, (yylsp[-2]).first_line); }
+#line 2228 "y.tab.c"
     break;
 
   case 92: /* RelExp: AddExp  */
-#line 328 "lexer.y"
-                         { (yyval.node_val) = append(RelExp, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType); }
-#line 2102 "y.tab.c"
+#line 332 "lexer.y"
+                         { (yyval.node_val) = append(RelExp, NULL, NULL, (yyvsp[0].node_val), 0, 0, NULL, NonType, (yylsp[0]).first_line); }
+#line 2234 "y.tab.c"
     break;
 
   case 93: /* RelExp: AddExp LT RelExp  */
-#line 329 "lexer.y"
-                         { (yyval.node_val) = append(RelExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), LT, 0, NULL, NonType); }
-#line 2108 "y.tab.c"
+#line 333 "lexer.y"
+                         { (yyval.node_val) = append(RelExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), LT, 0, NULL, NonType, (yylsp[-2]).first_line); }
+#line 2240 "y.tab.c"
     break;
 
   case 94: /* RelExp: AddExp GT RelExp  */
-#line 330 "lexer.y"
-                         { (yyval.node_val) = append(RelExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), GT, 0, NULL, NonType); }
-#line 2114 "y.tab.c"
+#line 334 "lexer.y"
+                         { (yyval.node_val) = append(RelExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), GT, 0, NULL, NonType, (yylsp[-2]).first_line); }
+#line 2246 "y.tab.c"
     break;
 
   case 95: /* RelExp: AddExp LE RelExp  */
-#line 331 "lexer.y"
-                         { (yyval.node_val) = append(RelExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), LE, 0, NULL, NonType); }
-#line 2120 "y.tab.c"
+#line 335 "lexer.y"
+                         { (yyval.node_val) = append(RelExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), LE, 0, NULL, NonType, (yylsp[-2]).first_line); }
+#line 2252 "y.tab.c"
     break;
 
   case 96: /* RelExp: AddExp GE RelExp  */
-#line 332 "lexer.y"
-                         { (yyval.node_val) = append(RelExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), GE, 0, NULL, NonType); }
-#line 2126 "y.tab.c"
+#line 336 "lexer.y"
+                         { (yyval.node_val) = append(RelExp, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), GE, 0, NULL, NonType, (yylsp[-2]).first_line); }
+#line 2258 "y.tab.c"
     break;
 
   case 97: /* ExpArray: %empty  */
-#line 335 "lexer.y"
+#line 339 "lexer.y"
                                 { (yyval.node_val) = NULL; }
-#line 2132 "y.tab.c"
+#line 2264 "y.tab.c"
     break;
 
   case 98: /* ExpArray: LBRACKET Exp RBRACKET ExpArray  */
-#line 336 "lexer.y"
-                                            { (yyval.node_val) = append(ExpArray, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 0, 0, NULL, NonType); }
-#line 2138 "y.tab.c"
+#line 340 "lexer.y"
+                                            { (yyval.node_val) = append(ExpArray, (yyvsp[0].node_val), NULL, (yyvsp[-2].node_val), 0, 0, NULL, NonType, (yylsp[-3]).first_line); }
+#line 2270 "y.tab.c"
     break;
 
 
-#line 2142 "y.tab.c"
+#line 2274 "y.tab.c"
 
       default: break;
     }
@@ -2159,6 +2291,7 @@ yyreduce:
   yylen = 0;
 
   *++yyvsp = yyval;
+  *++yylsp = yyloc;
 
   /* Now 'shift' the result of the reduction.  Determine what state
      that goes to, based on the state we popped back to and the rule
@@ -2188,6 +2321,7 @@ yyerrlab:
       yyerror (YY_("syntax error"));
     }
 
+  yyerror_range[1] = yylloc;
   if (yyerrstatus == 3)
     {
       /* If just tried and failed to reuse lookahead token after an
@@ -2202,7 +2336,7 @@ yyerrlab:
       else
         {
           yydestruct ("Error: discarding",
-                      yytoken, &yylval);
+                      yytoken, &yylval, &yylloc);
           yychar = YYEMPTY;
         }
     }
@@ -2256,9 +2390,9 @@ yyerrlab1:
       if (yyssp == yyss)
         YYABORT;
 
-
+      yyerror_range[1] = *yylsp;
       yydestruct ("Error: popping",
-                  YY_ACCESSING_SYMBOL (yystate), yyvsp);
+                  YY_ACCESSING_SYMBOL (yystate), yyvsp, yylsp);
       YYPOPSTACK (1);
       yystate = *yyssp;
       YY_STACK_PRINT (yyss, yyssp);
@@ -2268,6 +2402,9 @@ yyerrlab1:
   *++yyvsp = yylval;
   YY_IGNORE_MAYBE_UNINITIALIZED_END
 
+  yyerror_range[2] = yylloc;
+  ++yylsp;
+  YYLLOC_DEFAULT (*yylsp, yyerror_range, 2);
 
   /* Shift the error token.  */
   YY_SYMBOL_PRINT ("Shifting", YY_ACCESSING_SYMBOL (yyn), yyvsp, yylsp);
@@ -2311,7 +2448,7 @@ yyreturnlab:
          user semantic actions for why this is necessary.  */
       yytoken = YYTRANSLATE (yychar);
       yydestruct ("Cleanup: discarding lookahead",
-                  yytoken, &yylval);
+                  yytoken, &yylval, &yylloc);
     }
   /* Do not reclaim the symbols of the rule whose action triggered
      this YYABORT or YYACCEPT.  */
@@ -2320,7 +2457,7 @@ yyreturnlab:
   while (yyssp != yyss)
     {
       yydestruct ("Cleanup: popping",
-                  YY_ACCESSING_SYMBOL (+*yyssp), yyvsp);
+                  YY_ACCESSING_SYMBOL (+*yyssp), yyvsp, yylsp);
       YYPOPSTACK (1);
     }
 #ifndef yyoverflow
@@ -2331,7 +2468,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 339 "lexer.y"
+#line 343 "lexer.y"
 
 
 void yyerror(const char *fmt, ...)

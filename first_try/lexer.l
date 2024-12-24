@@ -9,7 +9,9 @@ int line_number = 1;
 bool error_flag = false;
 
 
-
+#define YY_USER_ACTION { \
+    yylloc.first_line = yylloc.last_line = yylineno; \
+}
 
 
 %}
@@ -35,6 +37,8 @@ hexadecimal-prefix  (0x|0X)
 hexadecimal-digit [0-9A-Fa-f]+
 hexadecimal-const  {hexadecimal-prefix}{hexadecimal-digit} 
 IntConst  ({decimal-const}|{octal-const}|{hexadecimal-const})
+
+INT_LIT     [1-9]+[0-9]*|0|0[xX][0-9a-zA-Z]+|0[0-9]+
 
 /* floatConst的声明  */
 digit-sequence       [0-9]+
@@ -77,7 +81,35 @@ Equal    "!="|"=="
 "return"             return RETURN;{printf("RETURN \n");}
 
 {Ident}              {yylval.strval = strdup(yytext);}return IDENT; {printf("ID %s\n", yytext);}
-{IntConst}           {yylval.ival = (int)strtol(yytext, NULL, 0);}return INTCONST;{printf("INTCON %d\n", (int)strtol(yytext, NULL, 0));}
+{INT_LIT}           {
+        int value;
+        if (yytext[0] == '0' && (yytext[1] == 'x' || yytext[1] == 'X'))
+        {
+            for (int i = 2; yytext[i] != '\0'; i++) {
+                if (yytext[i] < '0' || (yytext[i] > '9' && yytext[i] < 'A') || (yytext[i] > 'F' && yytext[i] < 'a') || yytext[i] > 'f') 
+                {
+                    fprintf(stderr, "\033[1;31mError type A at Line %d: Invalid hexadecimal number: %s\033[0m\n", yylineno, yytext);
+                    error_flag = true;
+                }
+            }
+            sscanf(yytext, "%x", &value);
+        }
+        else if (yytext[0] == '0')
+        {
+            for (int i = 1; yytext[i] != '\0'; i++) {
+                if (yytext[i] < '0' || yytext[i] > '7')
+                {
+                    fprintf(stderr, "\033[1;31mError type A at Line %d: Invalid octal number: %s\033[0m\n", yylineno, yytext);
+                    error_flag = true;    
+                }
+            }
+            sscanf(yytext, "%o", &value);
+        }
+        else
+            sscanf(yytext, "%d", &value);
+        yylval.ival = value;
+        return INTCONST;
+    }
 
 {floatConst}         {yylval.fval = atof(yytext); }return FLOATCONST;
 
@@ -112,24 +144,7 @@ Equal    "!="|"=="
 \n                  line_number++;
 
 
-0[89]           {
-                int value;
-                fprintf(stderr, "\033[1;31mError type A at Line %d: Invalid octal number: %s\033[0m\n", yylineno, yytext);
-                error_flag = true;
-                sscanf(yytext, "%o", &value);
-                yylval.ival = value;
-                return INTCONST;
-                }    /* 错误：非法八进制数字 */
 
-
-0[xX][0-9A-Fa-f]*[^0-9A-Fa-f]  {
-                                int value;
-                                fprintf(stderr, "\033[1;31mError type A at Line %d: Invalid hexadecimal number: %s\033[0m\n", yylineno, yytext);
-                                error_flag = true;
-                                sscanf(yytext, "%x", &value);
-                                yylval.ival = value;
-                                return INTCONST;
-                                }   /* 错误：非法十六进制数字 */
 
 
 .                     { printf("\033[1;31mError type A at Line %d: Invalid characters \'%s\'\033[0m\n", yylineno, yytext); error_flag = true; }

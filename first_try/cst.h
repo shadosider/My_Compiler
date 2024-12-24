@@ -66,6 +66,7 @@ typedef struct Node
     float float_val;
     char *id;
     node_type ntype;
+    int line;
 } node;
 
 typedef enum Symbol_Type
@@ -82,7 +83,7 @@ typedef struct Symbol
     struct Symbol *next;
 } Symbol;
 
-node *append(node_type type, node *left, node *mid, node *right, int int_val, float float_val, char *id, node_type ntype);
+node *append(node_type type, node *left, node *mid, node *right, int int_val, float float_val, char *id, node_type ntype, int line);
 
 void print_tree(node *root, int depth);
 
